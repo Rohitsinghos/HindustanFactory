@@ -75,11 +75,23 @@ class _RegisterPageState extends State<RegisterPage> {
           msg = "user registered successfully.";
           print("registered");
           print(getreg.body);
-          registered = true;
+          // registered = true;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OtpPage(
+                    adth: widget.adth, phoneNumber: createData['phone'])),
+          );
         } else if (getreg.statusCode == 400) {
           print(json.decode(getreg.body)['message']);
           msg = "user already registered here!.";
-          registered = true;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => OtpPage(
+                    adth: widget.adth, phoneNumber: createData['phone'])),
+          );
+          // registered = true;
         } else {
           print("user not registered getting errors.");
         }
@@ -335,13 +347,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Flexible(
-                        child: Text(
+                    child: Text(
                       (showRules)
                           ? "Please fill all the fields as : name must be more than 2 characters, email must be equal/more than 5 characters, phone number must be 10 digits, password must be more than 5-8 characters, and agree to terms and conditions.."
                           : msg,
                       style: TextStyle(color: Colors.red, fontSize: 9),
-                    )),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 5,
+                    ),
                   ),
                   SizedBox(height: 10),
                 ],

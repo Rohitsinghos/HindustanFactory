@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:Template/deepPage/razerpay.dart';
 import 'package:Template/models/categorymodel/cate.dart';
 import 'package:Template/profilePages/collection.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +30,9 @@ class _PremiumPageState extends State<PremiumPage> {
         print("success userrrrrrrrrrrrrrrrrrrr");
         // userData = json.decode(res.body)["data"];
 
-        Map<String, dynamic> auserData = json.decode(res.body)["data"];
-        prrr = auserData["isPremium"];
+        Map auserData = json.decode(res.body)["data"];
+        prrr = (auserData["isPremium"] == true);
+        print(auserData["isPremium"]);
         naamm = auserData["name"];
 
         if (!mounted) {
@@ -167,7 +169,15 @@ class _PremiumPageState extends State<PremiumPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RazerPay(
+                                    adth: widget.adth,
+                                    money: 3000,
+                                  )));
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
@@ -185,7 +195,15 @@ class _PremiumPageState extends State<PremiumPage> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RazerPay(
+                                    adth: widget.adth,
+                                    money: 3000,
+                                  )));
+                    },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(

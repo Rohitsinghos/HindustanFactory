@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:Template/deepPage/getverifymon.dart';
+import 'package:Template/deepPage/razerpay.dart';
 import 'package:Template/models/categorymodel/cate.dart';
 import 'package:Template/profilePages/collection.dart';
 import 'package:flutter/material.dart';
@@ -131,7 +133,15 @@ class _WalletPageState extends State<WalletPage> {
                 Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => RazerPay(
+                                        adth: widget.adth,
+                                        money: 3000,
+                                      )));
+                        },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: widget.adth,
                             shape: RoundedRectangleBorder(

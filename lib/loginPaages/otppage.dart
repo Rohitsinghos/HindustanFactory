@@ -4,7 +4,7 @@ import 'package:Template/main.dart';
 import 'package:Template/models/categorymodel/cate.dart';
 import 'package:Template/pages/home.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:pin_code_fields/pin_code_fields.dart';
 
@@ -92,7 +92,12 @@ class _OtpPageState extends State<OtpPage> {
           msg = "OTP varified successfully.";
         });
 
-        store.write("bota**@userloggedtoken", userToken);
+        final storage = FlutterSecureStorage();
+
+        await storage.write(
+          key: 'bota**@useryuwqdhsaahsjkhnxloggedtoken',
+          value: '$userToken',
+        );
         print(LoginData);
         // store.write("token", LoginData[0]["token"]);
         // if (createData != {}) {

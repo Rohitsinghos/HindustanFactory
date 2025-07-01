@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:Template/deepPage/razerpay.dart';
 import 'package:Template/extra/addaddr.dart';
 import 'package:Template/models/categorymodel/cate.dart';
 import 'package:Template/profilePages/Orders.dart';
@@ -18,52 +19,165 @@ class CheckOutPage extends StatefulWidget {
 
 class _CheckOutPageState extends State<CheckOutPage> {
   int checked = -1;
-  int addid = 1;
-  bool cod = false;
+  int addid = 0;
+  bool cod = true;
+  bool isprem = false;
+
+  int totalAmount11 = 3000;
+
+  bool cash = false;
+
+  String name2 = "Raj Patej";
+  String email2 = "rajtilak.socialsellers@gmail.com";
+  String phone2 = "1234567890";
 
   final namc = TextEditingController();
   final emailc = TextEditingController();
   final phonec = TextEditingController();
   // final passc = TextEditingController();
-
+  bool okk = false;
   Future<void> _getorderuser() async {
     try {
-      final res = await http.post(
-        Uri.parse("${BASE_URL}orders/checkout/razorpay"),
+      List cartItems = [];
+
+      final req = await http.get(
+        Uri.parse("${BASE_URL}cart/me"),
         headers: {
+          'Accept': 'application/json',
           'Content-type': 'application/json',
           'Authorization': "Bearer ${userToken}",
         },
-        body: jsonEncode({
-          "payment_mode": (cod) ? "COD" : "PREPAID",
-          "variants": [
-            {"VariantId": 3, "quantity": 2}
-          ],
-          "consumer": {
-            "name": (namc.text != "") ? namc.text : "Raj Patej",
-            "email": (emailc.text != "")
-                ? emailc.text
-                : "rajtilak.socialsellers@gmail.com",
-            "phone": (phonec.text != "") ? phonec.text : "9589534154",
-          },
-          // "UserID": 1,
-          // "StoreUserID":2,
-          "AddressId": addid
-          // "coupon_code": "SAVE20"
-        }),
       );
+
+      if (req.statusCode == 200) {
+        print(jsonDecode(req.body)["data"]);
+        usercartData = jsonDecode(req.body)["data"];
+
+        // usercartData = jsonDecode(req.body)["data"];
+
+        print(usercartData['Variants']);
+        print(usercartData['totalPrice']);
+        totalAmount11 = usercartData['totalPrice'];
+
+        for (var x in usercartData['Variants']) {
+          cartItems.add({
+            "VariantId": x["CartVariant"]["VariantId"],
+            "quantity": x["CartVariant"]["quantity"],
+          });
+          removeItCart(x["id"]);
+        }
+      }
+
+      for (var x in cartItems) {
+        final res = await http.post(
+          Uri.parse("${BASE_URL}orders/checkout/razorpay"),
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': "Bearer ${userToken}",
+          },
+          body: jsonEncode({
+            // {"variants":[{"VariantId":27,"quantity":1}],"consumer":{"name":"Rahul",
+            // "phone":"9770775021","email":"rahul@hmsms.in","isResellerOrder":false},
+            // "StoreUserID":24,"AddressId":47,"payment_mode":"COD"}
+
+            // ;
+            "payment_mode": (cash) ? "COD" : "PREPAID",
+            "variants": [
+              {"VariantId": x["VariantId"], "quantity": x["quantity"]}
+            ],
+            "consumer": {
+              "name": (namc.text != "") ? namc.text : name2,
+              "email": (emailc.text != "") ? emailc.text : email2,
+              "phone": (phonec.text != "") ? phonec.text : phone2,
+              "isResellerOrder": (namc.text != ""),
+            },
+            // "UserID": 1,
+            // "StoreUserID":2,
+            "AddressId": addid,
+            // "StoreUserID": 24,
+            // "coupon_code": "SAVE20"
+          }),
+        );
+
+        if (res.statusCode == 200) {
+          print("success userrrrrrrrrrrrrrrrrrrr");
+
+          if (cartItems[cartItems.length - 1] == x) {
+            if (cash == false) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => RazerPay(
+                            adth: widget.adth,
+                            money: totalAmount11,
+                          )));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => OrdersPage(
+                            adth: widget.adth,
+                            page: 0,
+                          )));
+            }
+          }
+        } else {
+          print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> removeItCart(int id) async {
+    try {
+      final req = await http.delete(
+        Uri.parse("${BASE_URL}cart/remove/$id"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+          // 'Params': id.toString(),
+        },
+      );
+
+      if (req.statusCode == 200) {
+        print(jsonDecode(req.body)["message"]);
+      } else {
+        print(jsonDecode(req.body)["message"]);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _getmeuser() async {
+    try {
+      final res =
+          await http.get(Uri.parse('${BASE_URL}store-users/me'), headers: {
+        'Authorization': "Bearer ${userToken}",
+      });
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
+        // userData = json.decode(res.body)["data"];
 
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => OrdersPage(
-                      adth: widget.adth,
-                    )));
+        userData = json.decode(res.body)["data"];
+
+        name2 = userData["name"];
+        email2 = userData["email"];
+        phone2 = userData["phone"];
+        isprem = userData["isPremium"] == true;
+
+        okk = true;
+
+        if (!mounted) {
+          return;
+        }
+        setState(() {});
+        print(userData);
       } else {
-        print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
       }
     } catch (e) {
       print(e);
@@ -122,6 +236,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
   void initState() {
     super.initState();
+    _getmeuser();
     _getdatatoCart();
 
     if (!mounted) {
@@ -226,7 +341,69 @@ class _CheckOutPageState extends State<CheckOutPage> {
                           borderRadius: BorderRadius.circular(10))),
                 ),
               ),
-
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: widget.adth),
+                      borderRadius: BorderRadius.circular(10),
+                      color: (!cash) ? widget.adth : Colors.white,
+                    ),
+                    child: MaterialButton(
+                      onPressed: () {
+                        cash = false;
+                        setState(() {});
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          children: [
+                            Text("Online Payment",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: (cash) ? widget.adth : Colors.white,
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: widget.adth),
+                      borderRadius: BorderRadius.circular(10),
+                      color: (cash) ? widget.adth : Colors.white,
+                    ),
+                    child: MaterialButton(
+                      onPressed: () {
+                        if (isprem) cash = true;
+                        setState(() {});
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          children: [
+                            Text("Cash on delivery",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  color: (!cash) ? widget.adth : Colors.white,
+                                )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
               // Address
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -315,8 +492,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
       required String area,
       required String phone,
       required String countryCode}) {
-    // int index = 0;
+    // int index =0 0;
 
+    if (index == chaddr) {
+      addid = id;
+    }
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -384,6 +564,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
   }
 
   _getme() {
+    if (chaddr >= addressdata.length) {
+      chaddr = 0;
+    }
     return Column(
       children: [
         for (int i = 0; i < addressdata.length; i++)

@@ -557,6 +557,8 @@ class _SearchPageState extends State<SearchPage> {
         onChanged: (ValueKey) {
           _getCatData(ValueKey);
         },
+        // enabled: true,
+        // enableInteractiveSelection: true,
         decoration: InputDecoration(
           hintText: 'Search for "Summer"',
           // labelText: "Search",

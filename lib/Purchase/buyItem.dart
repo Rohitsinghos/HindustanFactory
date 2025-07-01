@@ -210,7 +210,7 @@ class _BuyItemState extends State<BuyItem> {
         buyItemData = json.decode(res.body)["data"]["product"];
         MainPhoto =
             json.decode(res.body)["data"]["product"]['thumbnail']["url"];
-        // print(buyItemData);
+        print(buyItemData);
         setState(() {});
       } else {
         print("failure");
@@ -242,52 +242,6 @@ class _BuyItemState extends State<BuyItem> {
 
   bool premiii = false;
 
-  Future<void> _getdatatoCart(int id, int qu) async {
-    usercartData = {};
-    try {
-      //     final req = await http.post(
-      //   Uri.parse("${BASE_URL}cart/add"),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': "Bearer token", // Replace with actual token
-      //   },
-      //   body: jsonEncode({
-      //     "VariantId": id,
-      //     "quantity": qu,
-      //   }),
-      // );
-
-      final req = await http.get(
-        Uri.parse("${BASE_URL}cart/me"),
-        headers: {
-          'Accept': 'application/json',
-          'Content-type': 'application/json',
-          'Authorization': "Bearer ${userToken}",
-        },
-      );
-
-      if (req.statusCode == 200) {
-        usercartData = jsonDecode(req.body)["data"];
-        print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
-        premiii = true;
-
-        // setState(() {
-        //   usercartData = jsonDecode(req.body)["data"];
-        // });
-      } else {
-        print(
-            "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
-        usercartData = {};
-        // setState(() {
-        //   usercartData = {};
-        // });
-      }
-    } catch (e) {
-      print(e);
-      print("error  haiiaiia biroroo jdjdjjdjdjjdjjd");
-    }
-  }
-
   Future<void> _addtoCart(int id, int qu) async {
     try {
       //     final req = await http.post(
@@ -312,44 +266,16 @@ class _BuyItemState extends State<BuyItem> {
       if (req.statusCode == 200) {
         print(jsonDecode(req.body)["message"]);
         print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
-        usercartData = {};
 
-        _getdatatoCart(id, 1);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => CartDirPage(
+                      adth: widget.adth,
+                      admin: 1,
+                    )));
       } else {
         print("not added to cart... abbebebebbhhdshdhhdhnananannanan");
-      }
-    } catch (e) {
-      print(e);
-      print("jdjdjjdjdjjdjjd");
-    }
-  }
-
-  Future<void> _updatetoCart(int id, int qu) async {
-    try {
-      //     final req = await http.post(
-      //   Uri.parse("${BASE_URL}cart/add"),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': "Bearer token", // Replace with actual token
-      //   },
-      //   body: jsonEncode({
-      //     "VariantId": id,
-      //     "quantity": qu,
-      //   }),
-      // );
-
-      final req = await http.post(Uri.parse("${BASE_URL}cart/update"),
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': "Bearer ${userToken}",
-          },
-          body: jsonEncode({"VariantId": id, "quantity": qu}));
-
-      if (req.statusCode == 200) {
-        print(jsonDecode(req.body)["message"]);
-        print("jsdjjhdjdjjdjdjjd upodatettetette  ho gyayyaya");
-      } else {
-        print("not uypdateeee to cart... abbebebebbhhdshdhhdhnananannanan");
       }
     } catch (e) {
       print(e);
@@ -549,7 +475,7 @@ class _BuyItemState extends State<BuyItem> {
                             child: IconButton(
                               onPressed: () {
                                 copyText(
-                                    "https://wa.me/+916263365459?text=Hi, I love this product and sharing this amazing product. Check it out: " +
+                                    "https://wa.me/+919399274490?text=Hi, I love this product and sharing this amazing product. Check it out: " +
                                         "${(buyItemData != -1 && buyItemData['name'] != null) ? buyItemData['name'] : "The title of the product"} from Hindan Factory. https://hindustanfactory.socialseller.in/product/${widget.buyid}");
                               },
                               icon: Icon(
@@ -994,14 +920,6 @@ class _BuyItemState extends State<BuyItem> {
                                               ['id']
                                           : widget.buyid,
                                       1);
-
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => CartDirPage(
-                                                adth: widget.adth,
-                                                admin: 1,
-                                              )));
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(

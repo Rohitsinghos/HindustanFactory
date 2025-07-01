@@ -581,7 +581,7 @@ class _SerchTopPageState extends State<SerchTopPage> {
                       child: Center(
                         child: Text(
                             textAlign: TextAlign.center,
-                            "no data found do try with another " +
+                            "no data found from " +
                                 "${(widget.searchpro == "") ? "Category :${widget.index}" : "keyword :${widget.searchpro}"}."),
                       ),
                     ),

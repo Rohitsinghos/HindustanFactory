@@ -200,82 +200,56 @@ class _AddrPageState extends State<AddrPage> {
     // int index = 0;
     int ProInd = 0;
 
-    return Card(
-      elevation: 5,
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+    return GestureDetector(
+      onTap: () {
+        chaddr = index;
+        Navigator.pop(context);
+      },
+      child: Card(
+        elevation: 2,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Name: $name",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          "Phone: $phone",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Wrap(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Name: $name",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        "Phone: $phone",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
+                  Text(
+                    "House Number : $houseNumber, " +
+                        " address Line1 : $addressLine1, country code : $countryCode, pincode : $pincode, " +
+                        "area : $area, " +
+                        "addressLine : $addressLine2, " +
+                        "city : $city, " +
+                        "state : $state, " +
+                        "country : $country, ",
+                    style: TextStyle(fontSize: 12),
                   ),
                 ],
               ),
-            ),
-            Wrap(
-              children: [
-                Text(
-                  "House Number : $houseNumber, " +
-                      " address Line1 : $addressLine1, country code : $countryCode, pincode : $pincode, " +
-                      "area : $area, " +
-                      "addressLine : $addressLine2, " +
-                      "city : $city, " +
-                      "state : $state, " +
-                      "country : $country, ",
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CircleAvatar(
-                  radius: 19,
-                  child: IconButton(
-                    onPressed: () {
-                      // if (cartn > 0) {
-                      //   cartn = cartn - 1;
-                      //   cartIds.removeAt(index);
-                      //   cartCnts.removeAt(index);
-                      // }
-                      // // cartIds.removeAt(index);
-                      // // cartCnts.removeAt(index);
-                      // // restart();
-                      // didit = true;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => EditAddrePage(
-                                    adth: widget.adth,
-                                    userind: id,
-                                  )));
-
-                      setState(() {
-                        didit = true;
-                      });
-                    },
-                    icon: Icon(Icons.edit_outlined),
-                    iconSize: 19,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: CircleAvatar(
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CircleAvatar(
                     radius: 19,
                     child: IconButton(
                       onPressed: () {
@@ -287,44 +261,76 @@ class _AddrPageState extends State<AddrPage> {
                         // // cartIds.removeAt(index);
                         // // cartCnts.removeAt(index);
                         // // restart();
-                        // n--;
-
-                        _deletedatatoAddr(id);
+                        // didit = true;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EditAddrePage(
+                                      adth: widget.adth,
+                                      userind: id,
+                                    )));
 
                         setState(() {
                           didit = true;
                         });
                       },
-                      icon: Icon(Icons.delete),
+                      icon: Icon(Icons.edit_outlined),
                       iconSize: 19,
                     ),
                   ),
-                ),
-                // CircleAvatar(
-                //   radius: 19,
-                //   child: IconButton(
-                //     onPressed: () {
-                //       // if (cartn > 0) {
-                //       //   cartn = cartn - 1;
-                //       //   cartIds.removeAt(index);
-                //       //   cartCnts.removeAt(index);
-                //       // }
-                //       // // cartIds.removeAt(index);
-                //       // // cartCnts.removeAt(index);
-                //       // // restart();
-                //       numbbb = index;
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: CircleAvatar(
+                      radius: 19,
+                      child: IconButton(
+                        onPressed: () {
+                          // if (cartn > 0) {
+                          //   cartn = cartn - 1;
+                          //   cartIds.removeAt(index);
+                          //   cartCnts.removeAt(index);
+                          // }
+                          // // cartIds.removeAt(index);
+                          // // cartCnts.removeAt(index);
+                          // // restart();
+                          // n--;
 
-                //       setState(() {});
-                //     },
-                //     icon: (numbbb == index)
-                //         ? Icon(Icons.verified)
-                //         : Icon(Icons.hdr_on_select),
-                //     iconSize: 19,
-                //   ),
-                // ),
-              ],
-            ),
-          ],
+                          _deletedatatoAddr(id);
+
+                          setState(() {
+                            didit = true;
+                          });
+                        },
+                        icon: Icon(Icons.delete),
+                        iconSize: 19,
+                      ),
+                    ),
+                  ),
+                  // CircleAvatar(
+                  //   radius: 19,
+                  //   child: IconButton(
+                  //     onPressed: () {
+                  //       // if (cartn > 0) {
+                  //       //   cartn = cartn - 1;
+                  //       //   cartIds.removeAt(index);
+                  //       //   cartCnts.removeAt(index);
+                  //       // }
+                  //       // // cartIds.removeAt(index);
+                  //       // // cartCnts.removeAt(index);
+                  //       // // restart();
+                  //       numbbb = index;
+
+                  //       setState(() {});
+                  //     },
+                  //     icon: (numbbb == index)
+                  //         ? Icon(Icons.verified)
+                  //         : Icon(Icons.hdr_on_select),
+                  //     iconSize: 19,
+                  //   ),
+                  // ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

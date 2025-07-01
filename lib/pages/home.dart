@@ -55,13 +55,30 @@ class _MyHomeState extends State<MyHome> {
 
   Future<void> _openCamera() async {
     setState(() => _imgLoading = true);
-    final XFile? file = await picker.pickImage(source: ImageSource.camera);
-    setState(() {
-      _imgLoading = false;
-      if (file != null) {
-        _imageFile = File(file.path);
-      }
-    });
+
+    try {
+      final XFile? file = await picker.pickImage(source: ImageSource.camera);
+
+      if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {
+        _imgLoading = false;
+        if (file != null) {
+          _imageFile = File(file.path);
+        } else {
+          // User denied or canceled camera
+          print("📷 Camera access cancelled or denied.");
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _imgLoading = false);
+      print("❌ Camera error: $e");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Camera permission denied or not available.")),
+      );
+    }
   }
 
   Future<void> fetchProducts() async {
@@ -89,49 +106,8 @@ class _MyHomeState extends State<MyHome> {
           if (responseBanner1.statusCode == 200) {
             final jsonBody = json.decode(responseBanner1.body);
 
-            final List banners = jsonBody["data"];
-
             productData1 = jsonBody["data"];
             TopData1 = productData1;
-            // print(productData1);
-
-            // for (var product in banners) {
-            //   // productData1.add(product);
-
-            //   if (product["name"] != null &&
-            //       product["thumbnail"] != null &&
-            //       product["thumbnail"]["url"] != null) {
-            //     productData.add({
-            //       "name": product["name"],
-            //       "id": product["id"],
-            //       "categoryId": product["categoryId"],
-            //       "categoryName": product["category"]["name"], // do something
-            //       "image": product["thumbnail"]["url"], // do something
-            //       "price": product["variants"][0]["price"], // do something
-            //       "oldPrice": product["variants"][0]["strike_price"],
-            //       "rating": product["rating"],
-            //       "gallery": [],
-            //       "variants": []
-            //     });
-
-            //     for (int i = 0; i < product["gallery"].length; i++) {
-            //       productData[productData.length - 1]["gallery"]
-            //           .add(product["gallery"][i]["url"]);
-            //     }
-            //     for (int i = 0; i < product["variants"].length; i++) {
-            //       productData[productData.length - 1]["variants"]
-            //           .add(product["variants"][i]["quantity"]);
-            //     }
-
-            //     // while(product["gallery"].length>0){
-            //     //   productData[productData.length-1]["gallery"].add(product["gallery"][0]["url"]);
-            //     //   product["gallery"].removeAt(0);
-
-            //     // }
-            //   }
-            // }
-
-            // print(jsonBody);
           } else {
             print("Failed to load banner data");
           }
@@ -152,18 +128,21 @@ class _MyHomeState extends State<MyHome> {
         // }
 
         // print(bannerData);
+
+        if (!mounted) return;
+        setState(() {});
       } else {
         print("Failed to load banner data");
       }
     } catch (e) {
       print(e);
     }
-    setState(() {});
   }
 
   void initState() {
     super.initState();
     fetchProducts();
+    _getrand4();
 
     if (!mounted) {
       return;
@@ -171,10 +150,95 @@ class _MyHomeState extends State<MyHome> {
     setState(() {});
   }
 
+  List productData4i = [];
+  List productData2i = [];
+  List productData6i = [];
+  List productData13i = [];
+
+  _getrand4() async {
+    try {
+      final rs = await http.get(
+        Uri.parse(
+          BASE_URL + "products/4/random",
+        ),
+      );
+
+      if (rs.statusCode == 200) {
+        productData4i = json.decode(rs.body)["data"];
+        print("success to get random products");
+      } else {
+        print("failed to get random products");
+      }
+    } catch (e) {
+      print(e);
+    }
+    try {
+      final rs = await http.get(
+        Uri.parse(
+          BASE_URL + "products/2/random",
+        ),
+      );
+
+      if (rs.statusCode == 200) {
+        productData2i = json.decode(rs.body)["data"];
+        print("success to get random products");
+      } else {
+        print("failed to get random products");
+      }
+    } catch (e) {
+      print(e);
+    }
+    try {
+      final rs = await http.get(
+        Uri.parse(
+          BASE_URL + "products/12/random",
+        ),
+      );
+
+      if (rs.statusCode == 200) {
+        productData13i = json.decode(rs.body)["data"];
+        print("success to get random products");
+      } else {
+        print("failed to get random products");
+      }
+    } catch (e) {
+      print(e);
+    }
+    try {
+      final rs = await http.get(
+        Uri.parse(
+          BASE_URL + "products/6/random",
+        ),
+      );
+
+      if (rs.statusCode == 200) {
+        productData6i = json.decode(rs.body)["data"];
+        print("success to get random products");
+      } else {
+        print("failed to get random products");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _refreshData() async {
+    await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (productData1.isEmpty && ok) {
       fetchProducts();
+    }
+
+    int nfp = productData13i.length;
+
+    int nfpp = nfp ~/ 2;
+
+    if (nfp != nfpp * 2) {
+      nfpp = nfpp + 1;
     }
 
     // final store = GetStorage();
@@ -218,7 +282,7 @@ class _MyHomeState extends State<MyHome> {
             ),
             actions: [
               IconButton(
-                icon: Icon(Icons.barcode_reader, color: Colors.white),
+                icon: Icon(Icons.qr_code, color: Colors.white),
                 onPressed: () {
                   _openCamera();
                   // open the QR scanner
@@ -250,216 +314,290 @@ class _MyHomeState extends State<MyHome> {
             ],
             elevation: 3,
             backgroundColor: widget.adth,
-            toolbarHeight: 50,
+            toolbarHeight: 35,
           ),
-          body: SingleChildScrollView(
-            child: Container(
-              color: Colors.white,
-              child: Column(children: [
-                Column(
-                  children: [
-                    // Search bar
-                    SizedBox(
-                      height: 15,
-                    ),
-                    MaterialButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    SearchPage(adth: widget.adth)));
-                      },
-                      child: Container(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            height: 50,
-                            color: const Color.fromARGB(255, 245, 243, 243),
-                            child: Row(
-                              // crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.search_sharp,
-                                    size: 28,
+          body: RefreshIndicator(
+            onRefresh: _refreshData,
+            child: SingleChildScrollView(
+              child: Container(
+                color: Colors.white,
+                child: Column(children: [
+                  Column(
+                    children: [
+                      // Search bar
+                      SizedBox(
+                        height: 15,
+                      ),
+                      MaterialButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SearchPage(adth: widget.adth)));
+                        },
+                        child: Container(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              height: 50,
+                              color: const Color.fromARGB(255, 245, 243, 243),
+                              child: Row(
+                                // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.search_sharp,
+                                      size: 28,
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Search for "Summer"',
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.grey),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Search for "Summer"',
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.grey),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    // Horizontal Category List
+                      SizedBox(
+                        height: 10,
+                      ),
+                      // Horizontal Category List
 
-                    // ListView.builder(
-                    //     controller: cntr,
-                    //     scrollDirection: Axis.horizontal,
-                    //     itemCount: 3,
-                    //     itemBuilder: (BuildContext context, int index) {
-                    //       Image.network(
-                    //           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjJXDfQzJr29BNZBb0fHK2JwpJC7MBEi-3KQ&s');
-                    //     }),
+                      // ListView.builder(
+                      //     controller: cntr,
+                      //     scrollDirection: Axis.horizontal,
+                      //     itemCount: 3,
+                      //     itemBuilder: (BuildContext context, int index) {
+                      //       Image.network(
+                      //           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjJXDfQzJr29BNZBb0fHK2JwpJC7MBEi-3KQ&s');
+                      //     }),
 
-                    // Container(
-                    //   height: 80,
-                    //   child: ListView.builder(
-                    //     scrollDirection: Axis.horizontal,
-                    //     itemCount: categories.length,
-                    //     itemBuilder: (BuildContext context, index) {
-                    //       return Container(
-                    //         height: 67,
+                      // Container(
+                      //   height: 80,
+                      //   child: ListView.builder(
+                      //     scrollDirection: Axis.horizontal,
+                      //     itemCount: categories.length,
+                      //     itemBuilder: (BuildContext context, index) {
+                      //       return Container(
+                      //         height: 67,
 
-                    //         child: MaterialButton(
-                    //           onPressed: () {
-                    //             Navigator.push(
-                    //                 context,
-                    //                 MaterialPageRoute(
-                    //                     builder: (context) =>
-                    //                         CategoryPage(adth: widget.adth)));
-                    //           },
-                    //           child: ClipRRect(
-                    //             borderRadius: BorderRadius.circular(5),
-                    //             child:
-                    //                 Image.asset("${categories[index]['image']}"),
-                    //           ),
-                    //         ), // Replace with Image.asset
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
+                      //         child: MaterialButton(
+                      //           onPressed: () {
+                      //             Navigator.push(
+                      //                 context,
+                      //                 MaterialPageRoute(
+                      //                     builder: (context) =>
+                      //                         CategoryPage(adth: widget.adth)));
+                      //           },
+                      //           child: ClipRRect(
+                      //             borderRadius: BorderRadius.circular(5),
+                      //             child:
+                      //                 Image.asset("${categories[index]['image']}"),
+                      //           ),
+                      //         ), // Replace with Image.asset
+                      //       );
+                      //     },
+                      //   ),
+                      // ),
 
-                    // // Banner
-                    // Padding(
-                    //   padding: const EdgeInsets.all(12.0),
-                    //   child: Container(
-                    //     decoration: BoxDecoration(
-                    //       color: Colors.amber.shade100,
-                    //       borderRadius: BorderRadius.circular(12),
-                    //     ),
-                    //     padding: EdgeInsets.all(16),
-                    //     child: Row(
-                    //       children: [
-                    //         Expanded(
-                    //           child: Column(
-                    //             crossAxisAlignment: CrossAxisAlignment.start,
-                    //             children: [
-                    //               Text("SPECIAL DAY",
-                    //                   style: TextStyle(fontWeight: FontWeight.bold)),
-                    //               SizedBox(height: 5),
-                    //               Text("OPENING STORE",
-                    //                   style: TextStyle(
-                    //                       fontSize: 18, fontWeight: FontWeight.bold)),
-                    //               SizedBox(height: 5),
-                    //               Text("Get discount All Item up to 45% OFF"),
-                    //               SizedBox(height: 10),
-                    //               ElevatedButton(
-                    //                 onPressed: () {},
-                    //                 child: Text("SHOP NOW"),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //         SizedBox(width: 10),
-                    //         Icon(Icons.shopping_bag,
-                    //             size: 80), // Replace with banner image
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    // SizedBox(
-                    //   height: 20,
-                    // ),
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.stretch,
-                    //   children: [
-                    //     Center(
-                    //         child: Text(
-                    //       "View All Categories",
-                    //       style: TextStyle(
-                    //           fontSize: 12,
-                    //           fontWeight: FontWeight.bold,
-                    //           color: const Color.fromARGB(209, 128, 127, 127)),
-                    //     )),
-                    //   ],
-                    // ),
-                    _categoryBanner(4),
+                      // // Banner
+                      // Padding(
+                      //   padding: const EdgeInsets.all(12.0),
+                      //   child: Container(
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.amber.shade100,
+                      //       borderRadius: BorderRadius.circular(12),
+                      //     ),
+                      //     padding: EdgeInsets.all(16),
+                      //     child: Row(
+                      //       children: [
+                      //         Expanded(
+                      //           child: Column(
+                      //             crossAxisAlignment: CrossAxisAlignment.start,
+                      //             children: [
+                      //               Text("SPECIAL DAY",
+                      //                   style: TextStyle(fontWeight: FontWeight.bold)),
+                      //               SizedBox(height: 5),
+                      //               Text("OPENING STORE",
+                      //                   style: TextStyle(
+                      //                       fontSize: 18, fontWeight: FontWeight.bold)),
+                      //               SizedBox(height: 5),
+                      //               Text("Get discount All Item up to 45% OFF"),
+                      //               SizedBox(height: 10),
+                      //               ElevatedButton(
+                      //                 onPressed: () {},
+                      //                 child: Text("SHOP NOW"),
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ),
+                      //         SizedBox(width: 10),
+                      //         Icon(Icons.shopping_bag,
+                      //             size: 80), // Replace with banner image
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ),
+                      // Column(
+                      //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //   children: [
+                      //     Center(
+                      //         child: Text(
+                      //       "View All Categories",
+                      //       style: TextStyle(
+                      //           fontSize: 12,
+                      //           fontWeight: FontWeight.bold,
+                      //           color: const Color.fromARGB(209, 128, 127, 127)),
+                      //     )),
+                      //   ],
+                      // ),
+                      _categoryBanner(4),
 
-                    // Top Picks / New Arrivals
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    //   child: Row(
-                    //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //     children: [
-                    //       Text("Top Picks",
-                    //           style: TextStyle(
-                    //               fontSize: 16, fontWeight: FontWeight.bold)),
-                    //       Text("New Arrivals",
-                    //           style: TextStyle(
-                    //               fontSize: 16, fontWeight: FontWeight.bold)),
-                    //     ],
-                    //   ),
-                    // ),
+                      // Top Picks / New Arrivals
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Text("Top Picks",
+                      //           style: TextStyle(
+                      //               fontSize: 16, fontWeight: FontWeight.bold)),
+                      //       Text("New Arrivals",
+                      //           style: TextStyle(
+                      //               fontSize: 16, fontWeight: FontWeight.bold)),
+                      //     ],
+                      //   ),
+                      // ),
 
-                    // SizedBox(height: 20),
+                      // SizedBox(height: 20),
 
-                    // Sort & Filter
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    //   child: Row(
-                    //     children: [
-                    //       Icon(Icons.sort),
-                    //       SizedBox(width: 5),
-                    //       Text("Sort By"),
-                    //       Spacer(),
-                    //       Icon(Icons.filter_list),
-                    //       SizedBox(width: 5),
-                    //       Text("Filter"),
-                    //     ],
-                    //   ),
-                    // ),
+                      // Sort & Filter
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      //   child: Row(
+                      //     children: [
+                      //       Icon(Icons.sort),
+                      //       SizedBox(width: 5),
+                      //       Text("Sort By"),
+                      //       Spacer(),
+                      //       Icon(Icons.filter_list),
+                      //       SizedBox(width: 5),
+                      //       Text("Filter"),
+                      //     ],
+                      //   ),
+                      // ),
 
-                    // _buildCategoryTabs(),
+                      // _buildCategoryTabs(),
 
-                    // _buildSortFilterRow(),
+                      // _buildSortFilterRow(),
 
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15, bottom: 10),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Features Brand",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15.0, right: 15, bottom: 10),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Features Brand",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold)),
+                                GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SerchTopPage(
+                                                    searchpro: "",
+                                                    adth: widget.adth,
+                                                    index: -1,
+                                                  )));
+                                    },
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SerchTopPage(
+                                                      searchpro: "",
+                                                      adth: widget.adth,
+                                                      index: -1,
+                                                    )));
+                                      },
+                                      child: Text("view more",
+                                          style: TextStyle(color: Colors.grey)),
+                                    ))
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15.0, right: 15, bottom: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            for (int i = 0; i < 4; i++)
                               GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SerchTopPage(
-                                                  searchpro: "",
-                                                  adth: widget.adth,
-                                                  index: -1,
-                                                )));
-                                  },
-                                  child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SerchTopPage(
+                                                searchpro: "",
+                                                adth: widget.adth,
+                                                index: -1,
+                                              )));
+                                },
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Image.asset(
+                                          "assets/im.jpeg",
+                                          width: 78,
+                                          fit: BoxFit.cover,
+                                        )),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text("Laptop"),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15.0, right: 15, bottom: 5, top: 15),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Features Products",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold)),
+                                GestureDetector(
                                     onTap: () {
                                       Navigator.push(
                                           context,
@@ -472,368 +610,347 @@ class _MyHomeState extends State<MyHome> {
                                                   )));
                                     },
                                     child: Text("view more",
-                                        style: TextStyle(color: Colors.grey)),
-                                  ))
-                            ],
-                          )
-                        ],
+                                        style: TextStyle(color: Colors.grey)))
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15, bottom: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          for (int i = 0; i < 4; i++)
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SerchTopPage(
-                                              searchpro: "",
-                                              adth: widget.adth,
-                                              index: -1,
-                                            )));
-                              },
-                              child: Column(
-                                children: [
-                                  ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: Image.asset(
-                                        "assets/im.jpeg",
-                                        width: 78,
-                                        fit: BoxFit.cover,
-                                      )),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("Laptop"),
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15, bottom: 5, top: 15),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Features Products",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold)),
-                              GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SerchTopPage(
-                                                  searchpro: "",
-                                                  adth: widget.adth,
-                                                  index: -1,
-                                                )));
-                                  },
-                                  child: Text("view more",
-                                      style: TextStyle(color: Colors.grey)))
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      color: Colors.white,
-                      padding: const EdgeInsets.only(
-                          left: 15.0, right: 15, bottom: 5),
-                      child: Container(
-                        height: 230,
-                        child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: 7,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SerchTopPage(
-                                                    searchpro: "",
-                                                    adth: widget.adth,
-                                                    index: -1,
-                                                  )));
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 4.0),
-                                          child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: Image.asset(
-                                                "assets/jean.jpg",
-                                                height: 70,
-                                                fit: BoxFit.cover,
-                                              )),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Laptop"),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SerchTopPage(
-                                                    searchpro: "",
-                                                    adth: widget.adth,
-                                                    index: -1,
-                                                  )));
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 4.0),
-                                          child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: Image.asset(
-                                                "assets/jean.jpg",
-                                                height: 70,
-                                                fit: BoxFit.cover,
-                                              )),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Laptop"),
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              );
-                            }),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: EdgeInsets.all(15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("Domenstic Shipping",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-
-                    _buildItemsGridDom(2),
-
-                    Padding(
-                      padding: const EdgeInsets.only(top: 15.0, bottom: 20),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SerchTopPage(
-                                        searchpro: "",
-                                        adth: widget.adth,
-                                        index: -1,
-                                      )));
-                        },
-                        child: Center(
-                            child: Text(
-                          "View More",
-                          style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold),
-                        )),
-                      ),
-                    ),
-                    Container(
-                      color: const Color.fromARGB(255, 249, 246, 223),
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Padding(
-                              padding: EdgeInsets.all(15),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text("Trending Products",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: 10, left: 15),
-                            child: Container(
-                              height: 340,
-                              child: ListView(
-                                  scrollDirection: Axis.horizontal,
+                      Container(
+                        color: Colors.white,
+                        padding: const EdgeInsets.only(
+                            left: 15.0, right: 15, bottom: 5),
+                        child: Container(
+                          height: 270,
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: nfpp,
+                              itemBuilder: (context, index) {
+                                int xx = index * 2;
+                                int yy = (index * 2) + 1;
+                                return Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    for (int i = 0;
-                                        i < productData1.length;
-                                        i++)
-                                      productCard2(
-                                        name: (productData1.length > i)
-                                            ? productData1[i]["name"]
-                                            : "not found",
-                                        rating: productData1[i]["rating"],
-                                        left: productData1[i]["variants"][0]
-                                            ["quantity"],
-                                        price: productData1[i]["variants"][0]
-                                            ["price"],
-                                        oldPrice: productData1[i]["variants"][0]
-                                            ["strike_price"],
-                                        id: productData1[i]["id"],
-                                        image: (productData1.length > i)
-                                            ? productData1[i]["thumbnail"]
-                                                ["url"]
-                                            : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
-                                      ), // ok: false,
-                                  ]),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SerchTopPage(
+                                                      searchpro: "",
+                                                      adth: widget.adth,
+                                                      index: -1,
+                                                    )));
+                                      },
+                                      child: Container(
+                                        width: 80,
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 4.0),
+                                              child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  child: Image.network(
+                                                    (productData13i.length > xx)
+                                                        ? productData13i[xx]
+                                                            ["thumbnail"]["url"]
+                                                        : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                                    height: 90,
+                                                    fit: BoxFit.cover,
+                                                  )),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                (productData13i.length > xx)
+                                                    ? productData13i[xx]["name"]
+                                                    : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 9),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    (productData13i.length <= yy)
+                                        ? Container()
+                                        : GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          SerchTopPage(
+                                                            searchpro: "",
+                                                            adth: widget.adth,
+                                                            index: -1,
+                                                          )));
+                                            },
+                                            child: Container(
+                                              width: 80,
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 4.0),
+                                                    child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        child: Image.network(
+                                                          (productData13i
+                                                                      .length >
+                                                                  yy)
+                                                              ? productData13i[
+                                                                          yy][
+                                                                      "thumbnail"]
+                                                                  ["url"]
+                                                              : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                                          height: 90,
+                                                          fit: BoxFit.cover,
+                                                        )),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      (productData13i.length >
+                                                              yy)
+                                                          ? productData13i[yy]
+                                                              ["name"]
+                                                          : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 9),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                  ],
+                                );
+                              }),
+                        ),
+                      ),
+
+                      Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("Domenstic Shipping",
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+
+                      _buildItemsGridDom(2),
+
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15.0, bottom: 20),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SerchTopPage(
+                                          searchpro: "",
+                                          adth: widget.adth,
+                                          index: -1,
+                                        )));
+                          },
+                          child: Center(
+                              child: Text(
+                            "View More",
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold),
+                          )),
+                        ),
+                      ),
+                      Container(
+                        color: const Color.fromARGB(255, 249, 246, 223),
+                        child: Column(
+                          children: [
+                            Container(
+                              child: Padding(
+                                padding: EdgeInsets.all(15),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text("Trending Products",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold)),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(bottom: 10, left: 15),
+                              child: Container(
+                                height: 350,
+                                child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      for (int i = 0;
+                                          i < productData6i.length;
+                                          i++)
+                                        productCard2(
+                                          name: (productData6i.length > i)
+                                              ? productData6i[i]["name"]
+                                              : "not found",
+                                          rating:
+                                              "${productData6i[i]["rating"] ?? "0"}",
+                                          left: productData6i[i]["variants"][0]
+                                              ["quantity"],
+                                          price: productData6i[i]["variants"][0]
+                                              ["price"],
+                                          oldPrice: productData6i[i]["variants"]
+                                              [0]["strike_price"],
+                                          id: productData6i[i]["id"],
+                                          image: (productData6i.length > i)
+                                              ? productData6i[i]["thumbnail"]
+                                                  ["url"]
+                                              : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+                                          categoryN: productData6i[i]
+                                              ["category"]["name"],
+                                        ), // ok: false,
+                                    ]),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(15),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text("Deals for you",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                        ],
+                      Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("Deals for you",
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    _buildItemsGridDom(4),
+                      _buildItemsGridDom(4),
 
-                    _categoryBanner(-1),
+                      _categoryBanner(-1),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: _buildItemsGridDom(-1),
-                    ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: _buildItemsGridDom(-1),
+                      ),
 
-                    // ListView(
-                    //   children: Items.map((item) {
-                    //     return ListTile(
-                    //       title: productCard(
-                    //         name: 'jj', //'${item['name']}',
-                    //         rating: 2,
-                    //         left: 3,
-                    //         price: 200,
-                    //         oldPrice: 5000,
-                    //         // image: '${item['image']}',
-                    //       ),
-                    //     );
-                    //   }).toList(),
-                    // ),
-                    // _GridAlsoLike(),
+                      // ListView(
+                      //   children: Items.map((item) {
+                      //     return ListTile(
+                      //       title: productCard(
+                      //         name: 'jj', //'${item['name']}',
+                      //         rating: 2,
+                      //         left: 3,
+                      //         price: 200,
+                      //         oldPrice: 5000,
+                      //         // image: '${item['image']}',
+                      //       ),
+                      //     );
+                      //   }).toList(),
+                      // ),
+                      // _GridAlsoLike(),
 
-                    // SizedBox(
-                    //   width: 200,
-                    //   child: ListView.builder(
-                    //     itemCount: 10,
-                    //     itemBuilder: (context, index) => Text("hh $index"),
-                    //   ),
-                    // ),
+                      // SizedBox(
+                      //   width: 200,
+                      //   child: ListView.builder(
+                      //     itemCount: 10,
+                      //     itemBuilder: (context, index) => Text("hh $index"),
+                      //   ),
+                      // ),
 
-                    // Container(
-                    //   margin: EdgeInsets.all(5),
-                    //   child: ClipRRect(
-                    //     borderRadius: BorderRadius.circular(10),
-                    //     child: Container(
-                    //         color: widget.adth,
-                    //         child: Wrap(children: [
-                    //           Padding(
-                    //             padding: const EdgeInsets.all(8.0),
-                    //             child: Text(
-                    //               "You may also like this",
-                    //               style: TextStyle(
-                    //                   fontSize: 23,
-                    //                   fontWeight: FontWeight.bold,
-                    //                   color: Colors.white),
-                    //             ),
-                    //           ),
-                    //           _GridAlsoLike(),
-                    //         ])),
-                    //   ),
-                    // ),
+                      // Container(
+                      //   margin: EdgeInsets.all(5),
+                      //   child: ClipRRect(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     child: Container(
+                      //         color: widget.adth,
+                      //         child: Wrap(children: [
+                      //           Padding(
+                      //             padding: const EdgeInsets.all(8.0),
+                      //             child: Text(
+                      //               "You may also like this",
+                      //               style: TextStyle(
+                      //                   fontSize: 23,
+                      //                   fontWeight: FontWeight.bold,
+                      //                   color: Colors.white),
+                      //             ),
+                      //           ),
+                      //           _GridAlsoLike(),
+                      //         ])),
+                      //   ),
+                      // ),
 
-                    // SizedBox(
-                    //   height: 20,
-                    // ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ),
 
-                    // _categoryBanner("assets/sale.png"),
-                    // // GridView.count(
-                    // //   crossAxisCount: 2,
-                    // //   childAspectRatio: 0.7,
-                    // //   children: [
-                    // //     productCard(
-                    // //       name: 'Lamar Weaver',
-                    // //       rating: 5,
-                    // //       left: 755,
-                    // //       price: 652,
-                    // //       oldPrice: 746,
-                    // //     ),
-                    // //     productCard(
-                    // //       name: 'Product 1',
-                    // //       rating: 1,
-                    // //       left: 123,
-                    // //       price: 160,
-                    // //       oldPrice: 180,
-                    // //     ),
-                    // //   ],
-                    // // ),
+                      // _categoryBanner("assets/sale.png"),
+                      // // GridView.count(
+                      // //   crossAxisCount: 2,
+                      // //   childAspectRatio: 0.7,
+                      // //   children: [
+                      // //     productCard(
+                      // //       name: 'Lamar Weaver',
+                      // //       rating: 5,
+                      // //       left: 755,
+                      // //       price: 652,
+                      // //       oldPrice: 746,
+                      // //     ),
+                      // //     productCard(
+                      // //       name: 'Product 1',
+                      // //       rating: 1,
+                      // //       left: 123,
+                      // //       price: 160,
+                      // //       oldPrice: 180,
+                      // //     ),
+                      // //   ],
+                      // // ),
 
-                    // Container(
-                    //     child: Wrap(children: [
-                    //   Padding(
-                    //     padding: const EdgeInsets.only(top: 20.0, left: 15),
-                    //     child: Text(
-                    //       "Top selling products",
-                    //       style: TextStyle(
-                    //         fontSize: 23,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //   ),
-                    //   _buildItemsGrid(),
-                    // ])),
-                  ],
-                ),
-              ]),
+                      // Container(
+                      //     child: Wrap(children: [
+                      //   Padding(
+                      //     padding: const EdgeInsets.only(top: 20.0, left: 15),
+                      //     child: Text(
+                      //       "Top selling products",
+                      //       style: TextStyle(
+                      //         fontSize: 23,
+                      //         fontWeight: FontWeight.bold,
+                      //       ),
+                      //     ),
+                      //   ),
+                      //   _buildItemsGrid(),
+                      // ])),
+                    ],
+                  ),
+                ]),
+              ),
             ),
           ),
           bottomNavigationBar: BottomAppBar(
@@ -1085,16 +1202,17 @@ class _MyHomeState extends State<MyHome> {
   productCard2({
     required int id,
     required String name,
-    required int rating,
+    required String rating,
     required int left,
     required String price,
     required String oldPrice,
     required String image,
+    String? categoryN,
   }) {
     return Padding(
       padding: EdgeInsets.all(3.0),
       child: Card(
-        elevation: 2,
+        elevation: 1,
         child: GestureDetector(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -1105,7 +1223,7 @@ class _MyHomeState extends State<MyHome> {
             }));
           },
           child: Container(
-            width: 151,
+            width: 164,
             // height: 250,
 
             // color: Colors.white,
@@ -1195,7 +1313,7 @@ class _MyHomeState extends State<MyHome> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
-                        "07 LV8",
+                        categoryN!,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 10),
                         textScaler: MediaQuery.textScalerOf(context),
@@ -1218,7 +1336,7 @@ class _MyHomeState extends State<MyHome> {
                                     size: 15,
                                   ),
                                   Text(
-                                    "($rating.0)",
+                                    "($rating)",
                                     style: TextStyle(
                                         fontSize: 12, color: Colors.grey),
                                   ),
@@ -1265,7 +1383,7 @@ class _MyHomeState extends State<MyHome> {
                             radius: 10,
                             backgroundColor: Colors.brown,
                           ),
-                          Text("+$rating")
+                          Text("+0")
                         ],
                       ),
                     ),
@@ -1596,19 +1714,20 @@ class _MyHomeState extends State<MyHome> {
   productCard21({
     required int id,
     required String name,
-    required int rating,
+    required String rating,
     required int left,
     required String price,
     required String oldPrice,
     required String image,
     required bool ok,
+    String? categoryN,
   }) {
     return Padding(
       padding: const EdgeInsets.all(0.0),
       child: Card(
         elevation: 1,
         child: Container(
-          width: 155,
+          width: 164,
           child: GestureDetector(
             onTap: () {
               Navigator.push(
@@ -1672,16 +1791,16 @@ class _MyHomeState extends State<MyHome> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Text(
-                        name,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                        textScaler: MediaQuery.textScalerOf(context),
-                      ),
+                      child: Text(name,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                          // textScaler: MediaQuery.textScalerOf(context),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
-                        "07 LV8",
+                        categoryN!,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 12),
                         textScaler: MediaQuery.textScalerOf(context),
@@ -1752,7 +1871,7 @@ class _MyHomeState extends State<MyHome> {
                                   radius: 10,
                                   backgroundColor: Colors.brown,
                                 ),
-                                Text("+$rating")
+                                Text("+0")
                               ],
                             ),
                           )
@@ -1767,33 +1886,37 @@ class _MyHomeState extends State<MyHome> {
   }
 
   Widget _buildItemsGridDom(int mxi) {
-    int n = 0;
-    if (productData1 != null) {
-      n = productData1.length;
+    List showitm = [];
+
+    if (mxi == 2) {
+      showitm = productData2i;
+    } else if (mxi == 4) {
+      showitm = productData4i;
+    } else if (mxi == 6) {
+      showitm = productData6i;
+    } else {
+      showitm = productData1;
     }
 
-    if (mxi != -1 && productData1 != null && productData1.length > mxi) {
-      n = mxi;
-    }
+    int n = showitm.length;
 
-    return (productData1 == null)
+    return (showitm == null)
         ? Container()
         : Center(
             child: Wrap(children: [
               for (int i = 0; i < n; i++)
                 productCard21(
-                  name: (productData1.length > i)
-                      ? productData1[i]["name"]
-                      : "not found",
-                  rating: productData1[i]["rating"],
-                  left: productData1[i]["variants"][0]["quantity"],
-                  price: productData1[i]["variants"][0]["price"],
-                  oldPrice: productData1[i]["variants"][0]["strike_price"],
-                  id: productData1[i]["id"],
-                  image: (productData1.length > i)
-                      ? productData1[i]["thumbnail"]["url"]
+                  name: (showitm.length > i) ? showitm[i]["name"] : "not found",
+                  rating: "${showitm[i]["rating"] ?? 0}",
+                  left: showitm[i]["variants"][0]["quantity"],
+                  price: showitm[i]["variants"][0]["price"],
+                  oldPrice: showitm[i]["variants"][0]["strike_price"],
+                  id: showitm[i]["id"],
+                  image: (showitm.length > i)
+                      ? showitm[i]["thumbnail"]["url"]
                       : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
                   ok: false,
+                  categoryN: showitm[i]["category"]["name"],
                 ),
             ]),
           );

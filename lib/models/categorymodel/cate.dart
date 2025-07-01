@@ -4,9 +4,10 @@ import 'dart:ui';
 String BASE_URL = "https://hindustanapi.mtlapi.socialseller.in/api/";
 
 // token for test
-String userToken = //"";
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQsImlhdCI6MTc1MTAzMTg2MCwiZXhwIjoxNzUxNjM2NjYwfQ.aBjcIxMrKBqSfdw33XiB1exeZDg65cBDXbZiFQzqLt8";
-
+String userToken = "";
+int chaddr = 0;
+// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTQsImlhdCI6MTc1MTAzMTg2MCwiZXhwIjoxNzUxNjM2NjYwfQ.aBjcIxMrKBqSfdw33XiB1exeZDg65cBDXbZiFQzqLt8";
+// "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjQsImlhdCI6MTc1MTI2OTMzMCwiZXhwIjoxNzUxODc0MTMwfQ.8W0xZaBPzvHWxrcQvcnwEDdMMvdURBHpOdJEjd99lu0";
 int cartn = 0;
 
 List<int> cartIds = [];

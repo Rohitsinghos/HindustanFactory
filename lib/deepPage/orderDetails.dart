@@ -31,7 +31,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
   int shippingCharge = 2;
   int variId = 2;
   Map<String, dynamic> address = {};
-
+  String statusord = "CANCELLED";
   Future<void> _getmeuseroderss() async {
     try {
       final res = await http.get(
@@ -46,11 +46,12 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
 
         orderUserdata = json.decode(res.body)["data"];
         orderId = orderUserdata["OrderId"].toString() ?? "1";
+        statusord = orderUserdata["status"] ?? "CANCELLED";
         paymentMode = orderUserdata["order"]["payment_mode"] ?? "";
         productImage = "ksdks";
         productName = orderUserdata["variant"]["product"]["name"] ?? "";
         variant = orderUserdata["variant"]["name"] ?? "";
-        quantity = orderUserdata["variant"]["quantity"] ?? 1;
+        quantity = orderUserdata["quantity"] ?? 1;
         price = int.parse(orderUserdata["variant"]["price"]) ?? 1;
         shippingCharge = 0;
         address = orderUserdata["order"]["address"] ?? {};
@@ -153,7 +154,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              color: Colors.red,
+              color: (statusord != "CANCELLED") ? Colors.green : Colors.red,
               padding: EdgeInsets.all(2),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -162,7 +163,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Your Order has been Cancelled',
+                      'Your Order has been $statusord',
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -354,7 +355,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('Subtotal of 1 item'),
-                        Text('₹$price'),
+                        Text('₹${price * quantity}'),
                       ],
                     ),
                     const SizedBox(height: 6),
@@ -371,7 +372,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                       children: [
                         const Text('Total Amount',
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text('₹$total',
+                        Text('₹${price * quantity + shippingCharge}',
                             style:
                                 const TextStyle(fontWeight: FontWeight.bold)),
                       ],

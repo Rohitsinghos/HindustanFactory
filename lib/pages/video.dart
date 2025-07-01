@@ -129,6 +129,9 @@ class _VideoPageState extends State<VideoPage> {
                     padding: EdgeInsets.only(bottom: 0),
                     onPressed: () {
                       controllers[i].pause();
+                      for (var controller in controllers) {
+                        controller.dispose();
+                      }
                       Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -152,6 +155,9 @@ class _VideoPageState extends State<VideoPage> {
                     padding: EdgeInsets.only(bottom: 0),
                     onPressed: () {
                       controllers[i].pause();
+                      for (var controller in controllers) {
+                        controller.dispose();
+                      }
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -200,6 +206,9 @@ class _VideoPageState extends State<VideoPage> {
                   child: MaterialButton(
                     padding: EdgeInsets.only(bottom: 0),
                     onPressed: () {
+                      for (var controller in controllers) {
+                        controller.dispose();
+                      }
                       controllers[i].pause();
                       Navigator.push(
                           context,
@@ -220,6 +229,9 @@ class _VideoPageState extends State<VideoPage> {
                   child: MaterialButton(
                     padding: EdgeInsets.only(bottom: 0),
                     onPressed: () {
+                      for (var controller in controllers) {
+                        controller.dispose();
+                      }
                       controllers[i].pause();
                       Navigator.push(
                           context,

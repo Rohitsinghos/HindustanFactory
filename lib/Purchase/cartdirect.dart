@@ -47,39 +47,10 @@ double shipingCharge = 0;
 
 int doit = 1;
 
-void restart() {
-  subtot = 0;
-  totalitem = 0;
-  // int index = 0;
-  // for (int i = 0; i < cartn; i++) {
-  //   index = 0;
-  //   if (productData1 != null) {
-  //     for (int j = 0; j < productData1.length; j++) {
-  //       if (cartIds[i] == productData1[j]["id"]) {
-  //         index = j;
-  //         break;
-  //       }
-  //     }
-  //   }
-  //   int a = int.parse(productData1[index]['variants'][0]['price']);
-  //   int b = cartCnts[i];
-  //   totalitem += b;
-
-  //   int tot = a * b;
-  //   subtot += tot;
-  // }
-
-  totcup = 10 * totalitem;
-  totdis = subtot * (10 / 100);
-  totgst = subtot * (20 / 100);
-  shipingCharge = 10 * totalitem;
-  // subb = subtot;
-
-  // totalAmount = ((usercartData == null) ? 0.00 : usercartData['totalPrice']);
-}
-
 class _CartDirPageState extends State<CartDirPage> {
-  bool addcheck = true, paycheck = true;
+  bool showw = false;
+  int cartnn = 0;
+  bool addcheck = false, paycheck = false;
 
   void _ADDRES() {
     setState(() {
@@ -96,10 +67,6 @@ class _CartDirPageState extends State<CartDirPage> {
   int getcart = 1;
   bool didit = true;
   Future<void> _getdatatoAddr(int id, int qu) async {
-    setState(() {
-      addressdata = [];
-    });
-
     try {
       //     final req = await http.post(
       //   Uri.parse("${BASE_URL}cart/add"),
@@ -128,8 +95,6 @@ class _CartDirPageState extends State<CartDirPage> {
           addressdata = jsonDecode(req.body)["data"];
         });
         // usercartData = jsonDecode(req.body)["data"];
-
-        print(addressdata);
 
         print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
 
@@ -292,10 +257,6 @@ class _CartDirPageState extends State<CartDirPage> {
         print(jsonDecode(req.body)["data"]);
         usercartData = jsonDecode(req.body)["data"];
 
-        // usercartData = jsonDecode(req.body)["data"];
-
-        print(usercartData['Variants']);
-        print(usercartData['totalPrice']);
         totalAmount =
             (usercartData == null) ? 0.00 : usercartData['totalPrice'] * 1.00;
         subb =
@@ -318,18 +279,33 @@ class _CartDirPageState extends State<CartDirPage> {
     }
   }
 
+  Future<void> _refreshData() async {
+    await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
+    setState(() {
+      _getdatatoCart(1, 1);
+    });
+  }
+
   int getaddrrr = 1;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _getdatatoCart(1, 1);
+    getdatatoAddr(1, 1);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (getaddrrr == 1) {
-      getaddrrr = 0;
-      getdatatoAddr(1, 1);
-    }
-    if (getcart == 1) {
-      _getdatatoCart(1, 1);
-    }
-    restart();
+    // if (getaddrrr == 1) {
+    //   getaddrrr = 0;
+    //   getdatatoAddr(1, 1);
+    // }
+    // if (getcart == 1) {
+    //   _getdatatoCart(1, 1);
+    // }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -377,87 +353,184 @@ class _CartDirPageState extends State<CartDirPage> {
           )
         ],
       ),
-      body: SingleChildScrollView(
-          child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
             child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 15),
-                  child: Column(
-                    children: [
-                      _getme(),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0, top: 30),
-                        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 15),
+                    child: Column(
+                      children: [
+                        _getme(),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 10.0, top: 30),
+                          child: Row(
+                            children: [
+                              Text(
+                                "Order Info",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 17),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
                           children: [
-                            Text(
-                              "Order Info",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Subtotal",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey),
+                                ),
+                                Text(
+                                  "₹$subb",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Delivery Charge",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey),
+                                ),
+                                Text(
+                                  "₹$totcup",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Total",
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey),
+                                ),
+                                Text(
+                                  "₹ $totalAmount",
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddrPage(
+                                      adth: widget.adth,
+                                    )));
+                      },
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Delivery Address",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17),
+                                ),
+                                Icon(Icons.arrow_forward_ios, size: 14)
+                              ],
+                            ),
+                            Card(
+                              color: Colors.white,
+                              child: Container(
+                                padding: EdgeInsets.all(15),
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                color: Colors.white,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: Image.asset("assets/loca.jpg",
+                                              height: 42),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 15.0),
+                                          child: Container(
+                                            width: 200,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["name"] : ""}, ${(addressdata != null && addressdata.length > 0) ? addressdata[0]["phone"] : "no."}," +
+                                                      ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["addressLine1"] : ""}," +
+                                                      ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["addressLine2"] : ""}," +
+                                                      ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["city"] : ""}, " +
+                                                      "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["pincode"] : ""}, " +
+                                                      "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["state"] : ""}, " +
+                                                      "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["country"] : ""}",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _ADDRES();
+                                      },
+                                      child: CircleAvatar(
+                                          radius: 15,
+                                          backgroundColor: (!addcheck)
+                                              ? const Color.fromARGB(
+                                                  255, 251, 246, 246)
+                                              : Colors.green,
+                                          child: Icon(Icons.check,
+                                              color: (!addcheck)
+                                                  ? const Color.fromARGB(
+                                                      255, 248, 244, 244)
+                                                  : Colors.white)),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Subtotal",
-                                style:
-                                    TextStyle(fontSize: 16, color: Colors.grey),
-                              ),
-                              Text(
-                                "₹$subb",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Delivery Charge",
-                                style:
-                                    TextStyle(fontSize: 16, color: Colors.grey),
-                              ),
-                              Text(
-                                "₹$totcup",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Total",
-                                style:
-                                    TextStyle(fontSize: 16, color: Colors.grey),
-                              ),
-                              Text(
-                                "₹ $totalAmount",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => AddrPage(
+                              builder: (context) => PayMethodPage(
                                     adth: widget.adth,
                                   )));
                     },
@@ -468,44 +541,51 @@ class _CartDirPageState extends State<CartDirPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "Delivery Address",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 17),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 10.0),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Payment Method",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Icon(Icons.arrow_forward_ios, size: 14)
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 14,
+                              ),
                             ],
                           ),
-                          Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
+                          Card(
                             color: Colors.white,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.asset("assets/loca.jpg",
+                            child: Container(
+                              padding: EdgeInsets.all(15),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Image.asset("assets/visa.jpg",
                                           height: 42),
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 15.0),
-                                      child: Container(
-                                        width: 230,
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 15.0),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              "${(addressdata != null && addressdata.length > 0) ? addressdata[0]["name"] : "no name"}, ${(addressdata != null && addressdata.length > 0) ? addressdata[0]["phone"] : "no."}," +
-                                                  ", ${(addressdata != null && addressdata.length > 0) ? addressdata[0]["addressLine1"] : "no."}," +
-                                                  ", ${(addressdata != null && addressdata.length > 0) ? addressdata[0]["addressLine2"] : "no."}," +
-                                                  ", ${(addressdata != null && addressdata.length > 0) ? addressdata[0]["city"] : "no city"}, " +
-                                                  "${(addressdata != null && addressdata.length > 0) ? addressdata[0]["pincode"] : "no pincode"}, " +
-                                                  "${(addressdata != null && addressdata.length > 0) ? addressdata[0]["state"] : "no state"}, " +
-                                                  "${(addressdata != null && addressdata.length > 0) ? addressdata[0]["country"] : "no country"}",
+                                              "No Card Added",
+                                              style: TextStyle(fontSize: 14),
+                                            ),
+                                            Text(
+                                              "**** **** **** 1234",
                                               style: TextStyle(
                                                   fontSize: 14,
                                                   color: Colors.grey),
@@ -513,163 +593,92 @@ class _CartDirPageState extends State<CartDirPage> {
                                           ],
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _ADDRES();
-                                  },
-                                  child: CircleAvatar(
-                                      radius: 15,
-                                      backgroundColor: (!addcheck)
-                                          ? Colors.grey
-                                          : Colors.greenAccent,
-                                      child: Icon(Icons.check,
-                                          color: (!addcheck)
-                                              ? Colors.grey
-                                              : Colors.white)),
-                                )
-                              ],
+                                    ],
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      // _PaymentcHH();
+                                    },
+                                    child: CircleAvatar(
+                                        radius: 15,
+                                        backgroundColor: (!paycheck)
+                                            ? const Color.fromARGB(
+                                                255, 223, 223, 223)
+                                            : Colors.green,
+                                        child: Icon(Icons.check,
+                                            color: (!paycheck)
+                                                ? const Color.fromARGB(
+                                                    255, 228, 227, 227)
+                                                : Colors.white)),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => PayMethodPage(
-                                  adth: widget.adth,
-                                )));
-                  },
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 10.0),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Payment Method",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 17),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 14,
-                            ),
-                          ],
-                        ),
-                        Container(
-                          color: Colors.white,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.asset("assets/visa.jpg",
-                                        height: 42),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 15.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Visa Classic",
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                        Text(
-                                          "**** 8238",
-                                          style: TextStyle(
-                                              fontSize: 14, color: Colors.grey),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  _PaymentcHH();
-                                },
-                                child: CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: (!paycheck)
-                                        ? Colors.grey
-                                        : Colors.greenAccent,
-                                    child: Icon(Icons.check,
-                                        color: (!paycheck)
-                                            ? Colors.grey
-                                            : Colors.white)),
-                              )
-                            ],
-                          ),
-                        ),
-                      ],
+                  SizedBox(
+                    height: 20,
+                  )
+                ],
+              ),
+            ),
+            MaterialButton(
+              color: widget.adth,
+              height: 70,
+              onPressed: () {
+                // for (int i = 0; i < cartIds.length; i++) {
+                //   orderData.add({"id": cartIds[i], "quantity": cartCnts[i]});
+                // }
+
+                // cartn = 0;
+                // cartIds.clear();
+                // cartCnts.clear();
+                if (usercartData.isNotEmpty && usercartData['totalPrice'] > 0) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CheckOutPage(
+                              adth: widget.adth,
+                            )),
+                  );
+                } else {
+                  if (showw == false) {
+                    setState(() {
+                      showw = true;
+                    });
+                  }
+                }
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(0.0),
+                    child: Center(
+                      child: Text(
+                        "Checkout",
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                )
-              ],
+                ],
+              ),
             ),
-          ),
-          MaterialButton(
-            color: widget.adth,
-            height: 70,
-            onPressed: () {
-              for (int i = 0; i < cartIds.length; i++) {
-                orderData.add({"id": cartIds[i], "quantity": cartCnts[i]});
-              }
-
-              // cartn = 0;
-              // cartIds.clear();
-              // cartCnts.clear();
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => CheckOutPage(
-                          adth: widget.adth,
-                        )),
-              );
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Center(
+            (!showw)
+                ? Container()
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "Checkout",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      "please add product to cart first",
+                      style: TextStyle(color: Colors.red, fontSize: 10),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      )),
+          ],
+        )),
+      ),
 
       bottomNavigationBar: bottomnn(),
 
@@ -745,6 +754,7 @@ class _CartDirPageState extends State<CartDirPage> {
                     Text(
                       "${productData1[ProInd]['name']} $name",
                       style: TextStyle(fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0),

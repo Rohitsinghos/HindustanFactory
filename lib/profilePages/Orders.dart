@@ -3,35 +3,48 @@ import 'dart:convert';
 import 'package:Template/deepPage/orderDetails.dart';
 import 'package:Template/models/categorymodel/cate.dart';
 import 'package:Template/pages/home.dart';
+import 'package:Template/profilePages/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class OrdersPage extends StatefulWidget {
   final Color adth;
-  OrdersPage({required this.adth});
+  final int page;
+
+  OrdersPage({required this.adth, required this.page});
 
   @override
   State<OrdersPage> createState() => _OrdersPageState();
 }
 
 class _OrdersPageState extends State<OrdersPage> {
+  bool showPagers = false;
+  bool nxpg = false;
   List orderUserdata = [];
   Future<void> _getmeuseroderss() async {
     try {
-      final res = await http
-          .get(Uri.parse('${BASE_URL}order-variants?status=NEW'), headers: {
-        'Authorization': "Bearer ${userToken}",
-      });
+      final res = await http.get(
+          Uri.parse(
+              '${BASE_URL}order-variants/store-users?&&pagination[page]=$curpg&pagination[pageSize]=20'),
+          headers: {
+            'Authorization': "Bearer ${userToken}",
+          });
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
         // userData = json.decode(res.body)["data"];
 
+        print(json.decode(res.body)["data"]);
+
         orderUserdata = json.decode(res.body)["data"];
 
+        if (orderUserdata.length == 20) {
+          nxpg = true;
+        }
+
         setState(() {});
-        print(userData);
+        // print(userData);
       } else {
         print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
       }
@@ -42,10 +55,12 @@ class _OrdersPageState extends State<OrdersPage> {
 
   Future<void> _getmeuseroderssAs(String sta) async {
     try {
-      final res = await http
-          .get(Uri.parse('${BASE_URL}order-variants?status=$sta'), headers: {
-        'Authorization': "Bearer ${userToken}",
-      });
+      final res = await http.get(
+          Uri.parse(
+              '${BASE_URL}order-variants/store-users?status=$sta&&pagination[page]=$curpg&pagination[pageSize]=20'),
+          headers: {
+            'Authorization': "Bearer ${userToken}",
+          });
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
@@ -93,6 +108,8 @@ class _OrdersPageState extends State<OrdersPage> {
     "RETURN_PENDING",
   ];
 
+  int curpg = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,7 +144,10 @@ class _OrdersPageState extends State<OrdersPage> {
                 radius: 25,
                 child: IconButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return CollectionPage(adth: widget.adth);
+                    }));
                   },
                   icon: Icon(Icons.favorite_border_outlined),
                   iconSize: 30,
@@ -160,6 +180,7 @@ class _OrdersPageState extends State<OrdersPage> {
                                   onTap: () {
                                     _getmeuseroderssAs(hed[index]);
                                     choosen = index;
+                                    curpg = 1;
                                     setState(() {});
                                   },
                                   child: Card(
@@ -191,7 +212,63 @@ class _OrdersPageState extends State<OrdersPage> {
                               _getme(),
                             ],
                           ))
-                    ]))
+                    ])),
+                (curpg <= 1 && orderUserdata.length < 20)
+                    ? Container()
+                    : Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    (curpg >= 2) ? widget.adth : Colors.grey),
+                            onPressed: () {
+                              if (curpg >= 2) {
+                                curpg--;
+                                if (choosen == 0) {
+                                  _getmeuseroderss();
+                                } else {
+                                  _getmeuseroderssAs(hed[choosen]);
+                                }
+                              }
+                            },
+                            // Navigator.push(context,
+                            //     MaterialPageRoute(builder: (context) {
+                            //   return CollectionPage(adth: widget.adth);
+                            child: Text(
+                              "Previous Page",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                        Text("${curpg}"),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: (orderUserdata.length < 20)
+                                    ? Colors.grey
+                                    : widget.adth),
+                            onPressed: () {
+                              if ((orderUserdata.length == 20)) {
+                                curpg++;
+                                if (choosen == 0) {
+                                  _getmeuseroderss();
+                                } else {
+                                  _getmeuseroderssAs(hed[choosen]);
+                                }
+                              }
+                            },
+                            // Navigator.push(context,
+                            //     MaterialPageRoute(builder: (context) {
+                            //   return CollectionPage(adth: widget.adth);
+                            child: Text(
+                              "Next Page",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        )
+                      ])
               ]),
             ),
     );
@@ -210,7 +287,7 @@ class _OrdersPageState extends State<OrdersPage> {
     // int index = 0;
 
     return Card(
-      elevation: 5,
+      elevation: 2,
       child: Container(
         width: MediaQuery.of(context).size.width - 30,
         child: Row(
@@ -256,9 +333,14 @@ class _OrdersPageState extends State<OrdersPage> {
                       ],
                     ),
                   ),
-                  Text(
-                    name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  Container(
+                    width: 200,
+                    child: Text(
+                      name,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                   SizedBox(height: 8),
                   Container(
@@ -276,6 +358,9 @@ class _OrdersPageState extends State<OrdersPage> {
                                   style: TextStyle(
                                       fontSize: 10, color: Colors.grey),
                                 ),
+                                SizedBox(
+                                  width: 5,
+                                ),
                                 Text(variant,
                                     style: TextStyle(
                                         fontSize: 12,
@@ -288,6 +373,9 @@ class _OrdersPageState extends State<OrdersPage> {
                                   "Quantity",
                                   style: TextStyle(
                                       fontSize: 10, color: Colors.grey),
+                                ),
+                                SizedBox(
+                                  width: 5,
                                 ),
                                 Text("$quantity",
                                     style: TextStyle(
@@ -318,7 +406,7 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   _getme() {
-    Wrap a = Wrap(
+    Column a = Column(
       children: [
         for (int i = 0; i < orderUserdata.length; i++)
           (!(orderUserdata[i] != null &&
@@ -335,24 +423,23 @@ class _OrdersPageState extends State<OrdersPage> {
                         MaterialPageRoute(
                             builder: (context) => OrderDetailsCard(
                                   adth: widget.adth,
-                                  orderid: orderUserdata[i]["order"]["id"] ?? 1,
+                                  orderid: orderUserdata[i]["id"] ?? 1,
                                   orderpic: orderUserdata[i]["variant"]
                                           ["product"]["thumbnail"]["url"] ??
                                       "",
                                 )));
                   },
                   child: _getCards(
-                    id: orderUserdata[i]["order"]["id"].toString() ?? "1",
+                    id: orderUserdata[i]["id"].toString() ?? "1",
                     image: orderUserdata[i]["variant"]["product"]["thumbnail"]
                             ["url"] ??
                         "",
                     price: orderUserdata[i]["price"].toString() ?? "110",
                     productprice:
                         orderUserdata[i]["variant"]["price"] ?? "2222",
-                    name: orderUserdata[i]["order"]["slug"] ?? "hello",
-                    quantity:
-                        orderUserdata[i]['variant']["quantity"].toString() ??
-                            "0",
+                    name: orderUserdata[i]["variant"]["product"]["name"] ??
+                        "hello",
+                    quantity: orderUserdata[i]["quantity"].toString() ?? "0",
                     variant: orderUserdata[i]["variant"]["name"] ?? "hfdsd",
                     createdAt: DateFormat('dd MMM yyyy, hh:mm a').format(
                         DateTime.parse(orderUserdata[i]["variant"]["createdAt"])

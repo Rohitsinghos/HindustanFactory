@@ -22,9 +22,12 @@ class Cart1Page extends StatefulWidget {
 }
 
 bool ok = true;
+List<bool> ctg = List.filled(101, false);
 
 class _Cart1PageState extends State<Cart1Page> {
   bool getban = true;
+  bool ctgi = false;
+
   Future<void> _getBannerData() async {
     getban = false;
     if (categoData.isEmpty) {
@@ -40,6 +43,9 @@ class _Cart1PageState extends State<Cart1Page> {
 
           final List categories = jsonBody["data"];
           categoData = categories;
+          ctg = [];
+          int n = categories.length;
+          ctg = List.filled(n, false);
           // for (var product in categories) {
           //   categoData.add(product);
           // }
@@ -58,6 +64,11 @@ class _Cart1PageState extends State<Cart1Page> {
 
     if (!mounted) return;
 
+    setState(() {});
+  }
+
+  Future<void> _refreshData() async {
+    await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
     setState(() {});
   }
 
@@ -124,40 +135,49 @@ class _Cart1PageState extends State<Cart1Page> {
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: TabBarView(children: [
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    saleTile(),
-                    for (int i = 0; i < categoData.length; i++)
-                      buildCategoryTile(categoData[i]["name"],
-                          categoData[i]['thumbnail']["url"], i),
-                    // buildCategoryTile('New', 'assets/jean.jpg'),
-                    // buildCategoryTile('Clothes', 'assets/shirt.jpg'),
-                    // buildCategoryTile('Shoes', 'assets/jean.jpg'),
-                    // buildCategoryTile('Accessories', 'assets/shirt.jpg'),
-                  ],
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      saleTile(),
+                      for (int i = 0; i < categoData.length; i++)
+                        buildCategoryTile(categoData[i]["name"],
+                            categoData[i]['thumbnail']["url"], i),
+                      // buildCategoryTile('New', 'assets/jean.jpg'),
+                      // buildCategoryTile('Clothes', 'assets/shirt.jpg'),
+                      // buildCategoryTile('Shoes', 'assets/jean.jpg'),
+                      // buildCategoryTile('Accessories', 'assets/shirt.jpg'),
+                    ],
+                  ),
                 ),
               ),
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    saleTile(),
-                    for (int i = 0; i < categoData.length; i++)
-                      buildCategoryTile(categoData[i]["name"],
-                          categoData[i]['thumbnail']["url"], i),
-                  ],
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      saleTile(),
+                      for (int i = 0; i < categoData.length; i++)
+                        buildCategoryTile(categoData[i]["name"],
+                            categoData[i]['thumbnail']["url"], i),
+                    ],
+                  ),
                 ),
               ),
-              SingleChildScrollView(
-                child: Column(
-                  children: [
-                    saleTile(),
-                    for (int i = 0; i < categoData.length; i++)
-                      buildCategoryTile(categoData[i]["name"],
-                          categoData[i]['thumbnail']["url"], i),
-                  ],
+              RefreshIndicator(
+                onRefresh: _refreshData,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      saleTile(),
+                      for (int i = 0; i < categoData.length; i++)
+                        buildCategoryTile(categoData[i]["name"],
+                            categoData[i]['thumbnail']["url"], i),
+                    ],
+                  ),
                 ),
-              ),
+              )
             ]),
           ),
         ),
@@ -169,116 +189,130 @@ class _Cart1PageState extends State<Cart1Page> {
   Widget buildCategoryTile(String title, String imageUrl, int index) {
     int heigh = 100;
     return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: GestureDetector(
-        onTap: () {
-          // _getCatData(index);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SerchTopPage(
-                        searchpro: "",
-                        adth: widget.adth,
-                        index: index,
-                      )));
-        },
-        child: Card(
-          elevation: 5,
-          child: Column(
-            children: [
-              Container(
-                height: 100,
-                // padding: EdgeInsets.all(25),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        padding: const EdgeInsets.only(top: 8.0),
+        child: GestureDetector(
+          onTap: () {
+            // _getCatData(index);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SerchTopPage(
+                          searchpro: "",
+                          adth: widget.adth,
+                          index: index,
+                        )));
+          },
+          onTapDown: (_) => setState(() => ctg?[index] = true),
+          onTapUp: (_) => setState(() => ctg?[index] = false),
+          onTapCancel: () => setState(() => ctg?[index] = false),
+          child: AnimatedScale(
+            scale: ctg[index] ? 0.95 : 1.0,
+            duration: Duration(milliseconds: 950),
+            curve: Curves.easeInOut,
+            child: Card(
+              elevation: 1,
+              child: Column(
+                children: [
+                  Container(
+                    height: 100,
+                    // padding: EdgeInsets.all(25),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Text(
-                            '$title',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Text(
+                                '$title',
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(12),
+                                  bottomRight: Radius.circular(12)),
+                              child: CachedNetworkImage(
+                                imageUrl: imageUrl,
+                                placeholder: (context, url) =>
+                                    Center(child: CircularProgressIndicator()),
+                                errorWidget: (context, url, error) =>
+                                    Icon(Icons.broken_image),
+
+                                // width: 120,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+
+                              // Image.network(
+                              //                       '$imageUrl',
+                              //                       height: 100,
+                              //                       fit: BoxFit.cover,
+                              //                     ),
+                            )
+                          ],
                         ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(12),
-                              bottomRight: Radius.circular(12)),
-                          child: CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            placeholder: (context, url) =>
-                                Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.broken_image),
-
-                            // width: 120,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-
-                          // Image.network(
-                          //                       '$imageUrl',
-                          //                       height: 100,
-                          //                       fit: BoxFit.cover,
-                          //                     ),
-                        )
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget saleTile() {
     return GestureDetector(
-      onTap: () {
-        TopData1 = productData1;
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => Cart2Page(adth: widget.adth)));
-      },
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: widget.adth,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Text(
-                'SUMMER SALES',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold),
-              ),
+        onTap: () {
+          TopData1 = productData1;
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Cart2Page(adth: widget.adth)));
+        },
+        onTapDown: (_) => setState(() => ctgi = true),
+        onTapUp: (_) => setState(() => ctgi = false),
+        onTapCancel: () => setState(() => ctgi = false),
+        child: AnimatedScale(
+          scale: ctgi ? 0.95 : 1.0,
+          duration: Duration(milliseconds: 950),
+          curve: Curves.easeInOut,
+          child: Container(
+            height: 100,
+            decoration: BoxDecoration(
+              color: widget.adth,
+              borderRadius: BorderRadius.circular(12),
             ),
-            Center(
-              child: Text(
-                'Up to 50% off',
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Text(
+                    'SUMMER SALES',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    'Up to 50% off',
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Color b11 = const Color.fromARGB(255, 169, 169, 169);
