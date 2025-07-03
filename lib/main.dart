@@ -39,7 +39,9 @@ class _MyAppState extends State<MyApp> {
   // _doood() {
   //   if (store.read('bota**@userloggedtoken') != null) {
   //     userToken = store.read('bota**@userloggedtoken');
-  //     setState(() {});
+  //     if (!mounted) return; // prevents calling setState if widget is disposed
+
+      // setState(() {});
   //   }
   // }
 

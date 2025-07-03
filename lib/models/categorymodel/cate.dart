@@ -41,9 +41,16 @@ Map<String, dynamic> createData = {};
 
 List<dynamic> categoData = [];
 
+bool _isConnected = true;
+bool loading = true;
 // bannner data
 
 List<dynamic> bannerData = [];
+
+List productData4i = [];
+List productData2i = [];
+List productData6i = [];
+List productData13i = [];
 
 // product data alll important
 List<dynamic> productData1 = [];

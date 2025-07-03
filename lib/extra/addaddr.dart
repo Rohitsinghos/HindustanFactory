@@ -49,6 +49,8 @@ class _EditAddrePageState extends State<EditAddrePage> {
     } else {
       checkValue = true;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -89,6 +91,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
           add[8].text = jsonDecode(req.body)["data"]["state"];
           add[9].text = jsonDecode(req.body)["data"]["country"];
           print("got adddddaa");
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
+
           setState(() {});
         } else {
           print(" nahi mila sungkle addd");
@@ -144,6 +149,8 @@ class _EditAddrePageState extends State<EditAddrePage> {
           msg = 'jjsjsjjsjsj';
           print(jsonDecode(req.body)["message"]);
         }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {
           msg;
         });
@@ -181,6 +188,8 @@ class _EditAddrePageState extends State<EditAddrePage> {
         }
       }
       _getsingleAdd();
+      if (!mounted) return; // prevents calling setState if widget is disposed
+
       setState(() {
         msg;
       });
@@ -430,6 +439,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     Checkbox(
                       value: agreeToTerms,
                       onChanged: (value) {
+                        if (!mounted)
+                          return; // prevents calling setState if widget is disposed
+
                         setState(() => agreeToTerms = value!);
                       },
                     ),
@@ -486,12 +498,17 @@ class _EditAddrePageState extends State<EditAddrePage> {
 
                       // } else {
                       // call = Colors.red;
-                      // setState(() {});
+                      // if (!mounted) return; // prevents calling setState if widget is disposed
+
+                      setState(() {});
 
                       if (add[0].text.length >= 3 &&
                           add[1].text.length == 10 &&
                           agreeToTerms &&
                           add[5].text.length == 6) {
+                        if (!mounted)
+                          return; // prevents calling setState if widget is disposed
+
                         setState(() {
                           msg = "getting registered..........";
                         });
@@ -506,6 +523,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                         for (int i = 0; i < 10; i++) add[i].clear();
                         showRules = false;
                       } else {
+                        if (!mounted)
+                          return; // prevents calling setState if widget is disposed
+
                         setState(() {
                           msg =
                               "Please Enter Valid Details as name must be more than 3 characters and phone number must be 10 digits and pincode must be 6 digits && agree to terms&conditions";
@@ -519,7 +539,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                       //   emailc.clear();
                       //   passc.clear();
                       //   showRules = true;
-                      //   setState(() {});
+                      //   if (!mounted) return; // prevents calling setState if widget is disposed
+
+                      setState(() {});
                       // }
                       // }
                       // Navigator.push(

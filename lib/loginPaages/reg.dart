@@ -42,12 +42,16 @@ class _RegisterPageState extends State<RegisterPage> {
     } else {
       checkValue = true;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
   bool showRules = false;
 
   Future<void> getregis() async {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       msg = "getting registered";
     });
@@ -95,6 +99,8 @@ class _RegisterPageState extends State<RegisterPage> {
         } else {
           print("user not registered getting errors.");
         }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
       } catch (e) {
         print(e);
@@ -241,6 +247,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       Checkbox(
                         value: agreeToTerms,
                         onChanged: (value) {
+                          if (!mounted)
+                            return; // prevents calling setState if widget is disposed
+
                           setState(() => agreeToTerms = value!);
                         },
                       ),
@@ -291,13 +300,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
                             // } else {
                             // call = Colors.red;
-                            // setState(() {});
+                            // if (!mounted) return; // prevents calling setState if widget is disposed
+
+                            setState(() {});
                             mobc.clear();
                             agreeToTerms = false;
                             namc.clear();
                             emailc.clear();
                             passc.clear();
                             showRules = false;
+                            if (!mounted)
+                              return; // prevents calling setState if widget is disposed
+
                             setState(() {});
                           } else {
                             mobc.clear();
@@ -306,6 +320,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             emailc.clear();
                             passc.clear();
                             showRules = true;
+                            if (!mounted)
+                              return; // prevents calling setState if widget is disposed
+
                             setState(() {});
                           }
                         }
@@ -441,7 +458,9 @@ class _RegisterPageState extends State<RegisterPage> {
 //     } else {
 //       checkValue = true;
 //     }
-//     setState(() {});
+//     if (!mounted) return; // prevents calling setState if widget is disposed
+
+//  setState(() {});
 //   }
 
 //   @override

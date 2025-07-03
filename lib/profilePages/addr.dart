@@ -20,7 +20,9 @@ String msg = "";
 class _AddrPageState extends State<AddrPage> {
   bool didit = true;
   Future<void> _getdatatoAddr(int id, int qu) async {
-    setState(() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {
       addressdata = [];
     });
 
@@ -48,7 +50,9 @@ class _AddrPageState extends State<AddrPage> {
 
       if (req.statusCode == 200) {
         print(jsonDecode(req.body)["data"]);
-        setState(() {
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {
           addressdata = jsonDecode(req.body)["data"];
         });
         // usercartData = jsonDecode(req.body)["data"];
@@ -57,11 +61,15 @@ class _AddrPageState extends State<AddrPage> {
 
         print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
 
-        // setState(() {});
+        // if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {});
       } else {
         print(
             "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
-        setState(() {});
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {});
       }
     } catch (e) {
       print(e);
@@ -137,7 +145,9 @@ class _AddrPageState extends State<AddrPage> {
                 radius: 25,
                 child: IconButton(
                   onPressed: () {
-                    setState(() {
+                    if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {
                       didit = true;
                     });
                   },
@@ -164,7 +174,9 @@ class _AddrPageState extends State<AddrPage> {
                       userind: -1,
                     )),
           );
-          setState(() {
+          if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {
             didit = true;
           });
         },
@@ -270,7 +282,9 @@ class _AddrPageState extends State<AddrPage> {
                                       userind: id,
                                     )));
 
-                        setState(() {
+                        if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {
                           didit = true;
                         });
                       },
@@ -296,7 +310,9 @@ class _AddrPageState extends State<AddrPage> {
 
                           _deletedatatoAddr(id);
 
-                          setState(() {
+                          if (!mounted) return; // prevents calling setState if widget is disposed
+
+      setState(() {
                             didit = true;
                           });
                         },
@@ -319,7 +335,9 @@ class _AddrPageState extends State<AddrPage> {
                   //       // // restart();
                   //       numbbb = index;
 
-                  //       setState(() {});
+                  //       if (!mounted) return; // prevents calling setState if widget is disposed
+
+      // setState(() {});
                   //     },
                   //     icon: (numbbb == index)
                   //         ? Icon(Icons.verified)

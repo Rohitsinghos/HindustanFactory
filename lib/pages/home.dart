@@ -20,6 +20,9 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class MyHome extends StatefulWidget {
   final Color adth;
@@ -42,7 +45,8 @@ int activeIndex = 0;
 bool ok = true;
 
 class _MyHomeState extends State<MyHome> {
-  final ScrollController cntr = ScrollController();
+  late ScrollController _scrollController;
+
   final txcont = TextEditingController();
 
   @override
@@ -54,10 +58,14 @@ class _MyHomeState extends State<MyHome> {
   final picker = ImagePicker();
 
   Future<void> _openCamera() async {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() => _imgLoading = true);
 
     try {
       final XFile? file = await picker.pickImage(source: ImageSource.camera);
+
+      if (!mounted) return; // prevents calling setState if widget is disposed
 
       if (!mounted) return; // prevents calling setState if widget is disposed
 
@@ -72,6 +80,8 @@ class _MyHomeState extends State<MyHome> {
       });
     } catch (e) {
       if (!mounted) return;
+      if (!mounted) return; // prevents calling setState if widget is disposed
+
       setState(() => _imgLoading = false);
       print("❌ Camera error: $e");
 
@@ -83,18 +93,6 @@ class _MyHomeState extends State<MyHome> {
 
   Future<void> fetchProducts() async {
     try {
-      final responseBanner = await http.get(
-        Uri.parse(
-          "https://hindustanapi.mtlapi.socialseller.in/api/store-banners",
-        ),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer ${"token"}',
-        },
-      );
-      ok = false;
-
       if (productData1.length == 0) {
         try {
           final responseBanner1 = await http.get(
@@ -116,23 +114,40 @@ class _MyHomeState extends State<MyHome> {
         }
       }
 
-      // imageUrls.clear();
-      if (responseBanner.statusCode == 200) {
-        final jsonBody = json.decode(responseBanner.body);
+      ok = false;
 
-        final List banners = jsonBody["data"];
+      if (bannerData.length == 0) {
+        final responseBanner = await http.get(
+          Uri.parse(
+            "https://hindustanapi.mtlapi.socialseller.in/api/store-banners",
+          ),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer ${"token"}',
+          },
+        );
+        // imageUrls.clear();
+        if (responseBanner.statusCode == 200) {
+          final jsonBody = json.decode(responseBanner.body);
 
-        bannerData = banners;
-        // for (var product in banners) {
-        //   bannerData.add(product);
-        // }
+          final List banners = jsonBody["data"];
 
-        // print(bannerData);
+          bannerData = banners;
+          // for (var product in banners) {
+          //   bannerData.add(product);
+          // }
 
-        if (!mounted) return;
-        setState(() {});
-      } else {
-        print("Failed to load banner data");
+          // print(bannerData);
+
+          if (!mounted) return;
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
+
+          setState(() {});
+        } else {
+          print("Failed to load banner data");
+        }
       }
     } catch (e) {
       print(e);
@@ -142,80 +157,87 @@ class _MyHomeState extends State<MyHome> {
   void initState() {
     super.initState();
     fetchProducts();
+    _checkConnection();
     _getrand4();
+    _scrollController = ScrollController();
 
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
-  List productData4i = [];
-  List productData2i = [];
-  List productData6i = [];
-  List productData13i = [];
-
   _getrand4() async {
     try {
-      final rs = await http.get(
-        Uri.parse(
-          BASE_URL + "products/4/random",
-        ),
-      );
+      if (productData4i.length == 0) {
+        final rs = await http.get(
+          Uri.parse(
+            BASE_URL + "products/4/random",
+          ),
+        );
 
-      if (rs.statusCode == 200) {
-        productData4i = json.decode(rs.body)["data"];
-        print("success to get random products");
-      } else {
-        print("failed to get random products");
+        if (rs.statusCode == 200) {
+          productData4i = json.decode(rs.body)["data"];
+          print("success to get random products");
+        } else {
+          print("failed to get random products");
+        }
       }
     } catch (e) {
       print(e);
     }
     try {
-      final rs = await http.get(
-        Uri.parse(
-          BASE_URL + "products/2/random",
-        ),
-      );
+      if (productData2i.length == 0) {
+        final rs = await http.get(
+          Uri.parse(
+            BASE_URL + "products/2/random",
+          ),
+        );
 
-      if (rs.statusCode == 200) {
-        productData2i = json.decode(rs.body)["data"];
-        print("success to get random products");
-      } else {
-        print("failed to get random products");
+        if (rs.statusCode == 200) {
+          productData2i = json.decode(rs.body)["data"];
+          print("success to get random products");
+        } else {
+          print("failed to get random products");
+        }
       }
     } catch (e) {
       print(e);
     }
     try {
-      final rs = await http.get(
-        Uri.parse(
-          BASE_URL + "products/12/random",
-        ),
-      );
+      if (productData13i.length == 0) {
+        final rs = await http.get(
+          Uri.parse(
+            BASE_URL + "products/12/random",
+          ),
+        );
 
-      if (rs.statusCode == 200) {
-        productData13i = json.decode(rs.body)["data"];
-        print("success to get random products");
-      } else {
-        print("failed to get random products");
+        if (rs.statusCode == 200) {
+          productData13i = json.decode(rs.body)["data"];
+          print("success to get random products");
+        } else {
+          print("failed to get random products");
+        }
       }
     } catch (e) {
       print(e);
     }
     try {
-      final rs = await http.get(
-        Uri.parse(
-          BASE_URL + "products/6/random",
-        ),
-      );
+      if (productData6i.length == 0) {
+        final rs = await http.get(
+          Uri.parse(
+            BASE_URL + "products/6/random",
+          ),
+        );
 
-      if (rs.statusCode == 200) {
-        productData6i = json.decode(rs.body)["data"];
-        print("success to get random products");
-      } else {
-        print("failed to get random products");
+        if (rs.statusCode == 200) {
+          productData6i = json.decode(rs.body)["data"];
+          print("success to get random products");
+        } else {
+          print("failed to get random products");
+        }
       }
     } catch (e) {
       print(e);
@@ -223,8 +245,26 @@ class _MyHomeState extends State<MyHome> {
   }
 
   Future<void> _refreshData() async {
-    await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
+    await Future.delayed(Duration(milliseconds: 100));
+    if (!mounted) return;
+
+    // Simulate network call
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
+  }
+
+  Future<void> _checkConnection() async {
+    final result = await Connectivity().checkConnectivity();
+
+    if (result == ConnectivityResult.none) {
+      loading = true;
+    } else {
+      loading = false;
+      fetchProducts();
+      _checkConnection();
+      _getrand4();
+    }
   }
 
   @override
@@ -275,9 +315,17 @@ class _MyHomeState extends State<MyHome> {
           appBar: AppBar(
             title: Padding(
               padding: const EdgeInsets.only(right: 20.0),
-              child: Image.network(
-                'https://mtt-s3.s3.ap-south-1.amazonaws.com/1744179549972Adobe%20Express%20-%20file.WEBP',
+              child: CachedNetworkImage(
+                imageUrl:
+                    'https://mtt-s3.s3.ap-south-1.amazonaws.com/1744179549972Adobe%20Express%20-%20file.WEBP',
+                placeholder: (context, url) =>
+                    Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.broken_image),
+
+                // width: double.infinity,
+                // height: 100,
                 height: 30,
+                // fit: BoxFit.cover,
               ),
             ),
             actions: [
@@ -319,6 +367,7 @@ class _MyHomeState extends State<MyHome> {
           body: RefreshIndicator(
             onRefresh: _refreshData,
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: Container(
                 color: Colors.white,
                 child: Column(children: [
@@ -547,6 +596,26 @@ class _MyHomeState extends State<MyHome> {
                         ),
                       ),
 
+                      (loading)
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.wifi_off,
+                                    size: 80, color: Colors.grey),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  "No Internet Connection",
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                const SizedBox(height: 20),
+                                IconButton(
+                                  icon: Icon(Icons.refresh),
+                                  onPressed: _checkConnection,
+                                ),
+                              ],
+                            )
+                          : Container(),
+
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 15.0, right: 15, bottom: 5),
@@ -568,15 +637,31 @@ class _MyHomeState extends State<MyHome> {
                                 child: Column(
                                   children: [
                                     ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Image.asset(
-                                          "assets/im.jpeg",
-                                          width: 78,
-                                          fit: BoxFit.cover,
-                                        )),
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+
+                                        placeholder: (context, url) => Center(
+                                            child: CircularProgressIndicator()),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.broken_image),
+
+                                        // width: double.infinity,
+                                        // height: 100,
+                                        width: 78,
+                                        fit: BoxFit.cover,
+                                        // fit: BoxFit.cover,
+                                      ),
+                                    ),
                                     Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text("Laptop"),
+                                      child: Text(
+                                        "Hindustan Factory",
+                                        style: TextStyle(
+                                            fontSize: 7,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -621,78 +706,50 @@ class _MyHomeState extends State<MyHome> {
                         color: Colors.white,
                         padding: const EdgeInsets.only(
                             left: 15.0, right: 15, bottom: 5),
-                        child: Container(
-                          height: 270,
-                          child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: nfpp,
-                              itemBuilder: (context, index) {
-                                int xx = index * 2;
-                                int yy = (index * 2) + 1;
-                                return Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SerchTopPage(
-                                                      searchpro: "",
-                                                      adth: widget.adth,
-                                                      index: -1,
-                                                    )));
-                                      },
-                                      child: Container(
-                                        width: 80,
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 4.0),
-                                              child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  child: Image.network(
-                                                    (productData13i.length > xx)
-                                                        ? productData13i[xx]
-                                                            ["thumbnail"]["url"]
-                                                        : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                                                    height: 90,
-                                                    fit: BoxFit.cover,
-                                                  )),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                (productData13i.length > xx)
-                                                    ? productData13i[xx]["name"]
-                                                    : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 9),
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    (productData13i.length <= yy)
-                                        ? Container()
-                                        : GestureDetector(
+                        child: (loading && productData13i == null)
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.wifi_off,
+                                      size: 80, color: Colors.grey),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    "No Internet Connection",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  IconButton(
+                                    icon: Icon(Icons.refresh),
+                                    onPressed: _checkConnection,
+                                  ),
+                                ],
+                              )
+                            : Container(
+                                height: 270,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: nfpp,
+                                    itemBuilder: (context, index) {
+                                      int xx = index * 2;
+                                      int yy = (index * 2) + 1;
+                                      return Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          GestureDetector(
                                             onTap: () {
                                               Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          SerchTopPage(
-                                                            searchpro: "",
+                                                          BuyItem(
                                                             adth: widget.adth,
-                                                            index: -1,
+                                                            buyid: (productData13i
+                                                                        .length >
+                                                                    xx)
+                                                                ? productData13i[
+                                                                    xx]["id"]
+                                                                : -1,
                                                           )));
                                             },
                                             child: Container(
@@ -700,34 +757,49 @@ class _MyHomeState extends State<MyHome> {
                                               child: Column(
                                                 children: [
                                                   Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 4.0),
-                                                    child: ClipRRect(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 4.0),
+                                                      child: ClipRRect(
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(12),
-                                                        child: Image.network(
-                                                          (productData13i
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          imageUrl: (productData13i
                                                                       .length >
-                                                                  yy)
+                                                                  xx)
                                                               ? productData13i[
-                                                                          yy][
+                                                                          xx][
                                                                       "thumbnail"]
                                                                   ["url"]
                                                               : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              Center(
+                                                                  child:
+                                                                      CircularProgressIndicator()),
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Icon(Icons
+                                                                  .broken_image),
+
+                                                          // width: double.infinity,
+                                                          // height: 100,
                                                           height: 90,
                                                           fit: BoxFit.cover,
-                                                        )),
-                                                  ),
+                                                          // fit: BoxFit.cover,
+                                                        ),
+                                                      )),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     child: Text(
                                                       (productData13i.length >
-                                                              yy)
-                                                          ? productData13i[yy]
+                                                              xx)
+                                                          ? productData13i[xx]
                                                               ["name"]
                                                           : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
                                                       style: TextStyle(
@@ -741,11 +813,99 @@ class _MyHomeState extends State<MyHome> {
                                                 ],
                                               ),
                                             ),
-                                          )
-                                  ],
-                                );
-                              }),
-                        ),
+                                          ),
+                                          (productData13i.length <= yy)
+                                              ? Container()
+                                              : GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    BuyItem(
+                                                                      adth: widget
+                                                                          .adth,
+                                                                      buyid: (productData13i.length >
+                                                                              yy)
+                                                                          ? productData13i[yy]
+                                                                              [
+                                                                              "id"]
+                                                                          : -1,
+                                                                    )));
+                                                  },
+                                                  child: Container(
+                                                    width: 80,
+                                                    child: Column(
+                                                      children: [
+                                                        Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                                    right: 4.0),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          12),
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                imageUrl: (productData13i
+                                                                            .length >
+                                                                        yy)
+                                                                    ? productData13i[yy]
+                                                                            [
+                                                                            "thumbnail"]
+                                                                        ["url"]
+                                                                    : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                                                placeholder: (context,
+                                                                        url) =>
+                                                                    Center(
+                                                                        child:
+                                                                            CircularProgressIndicator()),
+                                                                errorWidget: (context,
+                                                                        url,
+                                                                        error) =>
+                                                                    Icon(Icons
+                                                                        .broken_image),
+
+                                                                // width: double.infinity,
+                                                                // height: 100,
+                                                                height: 90,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                // fit: BoxFit.cover,
+                                                              ),
+                                                            )),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                            (productData13i
+                                                                        .length >
+                                                                    yy)
+                                                                ? productData13i[
+                                                                    yy]["name"]
+                                                                : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 9),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                )
+                                        ],
+                                      );
+                                    }),
+                              ),
                       ),
 
                       Padding(
@@ -806,36 +966,57 @@ class _MyHomeState extends State<MyHome> {
                             Padding(
                               padding:
                                   const EdgeInsets.only(bottom: 10, left: 15),
-                              child: Container(
-                                height: 350,
-                                child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    children: [
-                                      for (int i = 0;
-                                          i < productData6i.length;
-                                          i++)
-                                        productCard2(
-                                          name: (productData6i.length > i)
-                                              ? productData6i[i]["name"]
-                                              : "not found",
-                                          rating:
-                                              "${productData6i[i]["rating"] ?? "0"}",
-                                          left: productData6i[i]["variants"][0]
-                                              ["quantity"],
-                                          price: productData6i[i]["variants"][0]
-                                              ["price"],
-                                          oldPrice: productData6i[i]["variants"]
-                                              [0]["strike_price"],
-                                          id: productData6i[i]["id"],
-                                          image: (productData6i.length > i)
-                                              ? productData6i[i]["thumbnail"]
-                                                  ["url"]
-                                              : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
-                                          categoryN: productData6i[i]
-                                              ["category"]["name"],
-                                        ), // ok: false,
-                                    ]),
-                              ),
+                              child: (loading && productData6i == null)
+                                  ? Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(Icons.wifi_off,
+                                            size: 80, color: Colors.grey),
+                                        const SizedBox(height: 16),
+                                        const Text(
+                                          "No Internet Connection",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        IconButton(
+                                          icon: Icon(Icons.refresh),
+                                          onPressed: _checkConnection,
+                                        ),
+                                      ],
+                                    )
+                                  : Container(
+                                      height: 350,
+                                      child: ListView(
+                                          scrollDirection: Axis.horizontal,
+                                          children: [
+                                            for (int i = 0;
+                                                i < productData6i.length;
+                                                i++)
+                                              productCard2(
+                                                name: (productData6i.length > i)
+                                                    ? productData6i[i]["name"]
+                                                    : "not found",
+                                                rating:
+                                                    "${productData6i[i]["rating"] ?? "0"}",
+                                                left: productData6i[i]
+                                                    ["variants"][0]["quantity"],
+                                                price: productData6i[i]
+                                                    ["variants"][0]["price"],
+                                                oldPrice: productData6i[i]
+                                                        ["variants"][0]
+                                                    ["strike_price"],
+                                                id: productData6i[i]["id"],
+                                                image: (productData6i.length >
+                                                        i)
+                                                    ? productData6i[i]
+                                                        ["thumbnail"]["url"]
+                                                    : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+                                                categoryN: productData6i[i]
+                                                    ["category"]["name"],
+                                              ), // ok: false,
+                                          ]),
+                                    ),
                             ),
                           ],
                         ),
@@ -1245,6 +1426,7 @@ class _MyHomeState extends State<MyHome> {
 
                           // width: double.infinity,
                           // height: 100,
+                          height: 220,
                           fit: BoxFit.cover,
                         ),
                         // Image.network(
@@ -1271,6 +1453,9 @@ class _MyHomeState extends State<MyHome> {
                               (favIds.contains(id))
                                   ? {favIds.remove(id)}
                                   : favIds.add(id);
+                              if (!mounted)
+                                return; // prevents calling setState if widget is disposed
+
                               setState(() {});
                             },
                           )),
@@ -1529,69 +1714,90 @@ class _MyHomeState extends State<MyHome> {
       n = 2;
       ind = bannerData.length - 1;
     }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 10),
-        CarouselSlider.builder(
-          // carouselController: v,
-          // carouselController: _carouselController,
-          itemCount: n,
-          itemBuilder: (context, index, realIndex) {
-            int minn = 0;
-            if (leng == -1) {
-              minn = index + index;
-            }
-            String url = (bannerData.length > index)
-                ? bannerData[index + ind - minn]['desktop_thumbnail']['url']
-                : 'https://mtt-s3.s3.ap-south-1.amazonaws.com/1723189954707banner1-phone.webp';
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: CachedNetworkImage(
-                imageUrl: url,
-                placeholder: (context, url) =>
-                    Center(child: CircularProgressIndicator()),
-                errorWidget: (context, url, error) => Icon(Icons.broken_image),
-
-                width: double.infinity,
-                // height: 100,
-                fit: BoxFit.cover,
+    return (loading && bannerData == null)
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.wifi_off, size: 80, color: Colors.grey),
+              const SizedBox(height: 16),
+              const Text(
+                "No Internet Connection",
+                style: TextStyle(fontSize: 20),
               ),
+              const SizedBox(height: 20),
+              IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: _checkConnection,
+              ),
+            ],
+          )
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 10),
+              CarouselSlider.builder(
+                // carouselController: v,
+                // carouselController: _carouselController,
+                itemCount: n,
+                itemBuilder: (context, index, realIndex) {
+                  int minn = 0;
+                  if (leng == -1) {
+                    minn = index + index;
+                  }
+                  String url = (bannerData.length > index)
+                      ? bannerData[index + ind - minn]['desktop_thumbnail']
+                          ['url']
+                      : 'https://mtt-s3.s3.ap-south-1.amazonaws.com/1723189954707banner1-phone.webp';
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: CachedNetworkImage(
+                      imageUrl: url,
+                      placeholder: (context, url) =>
+                          Center(child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) =>
+                          Icon(Icons.broken_image),
 
-              //  Image.network(
-              //   url,
-              //   fit: BoxFit.cover,
-              //   width: double.infinity,
-              // ),
-            );
-          },
-          options: CarouselOptions(
-            height: 200,
-            autoPlay: true,
-            enlargeCenterPage: true,
-            autoPlayInterval: Duration(seconds: 3),
-            autoPlayAnimationDuration: Duration(milliseconds: 800),
-            viewportFraction: 0.9,
-            onPageChanged: (index, reason) =>
-                setState(() => activeIndex = index),
-          ),
-        ),
-        const SizedBox(height: 16),
-        AnimatedSmoothIndicator(
-          activeIndex: activeIndex,
-          count: n,
-          effect: ExpandingDotsEffect(
-            dotHeight: 8,
-            dotWidth: 8,
-            activeDotColor: Colors.orange,
-          ),
-          onDotClicked: (index) {
-            // xxx.animateToPage(index);
-          },
-        ),
-        const SizedBox(height: 16),
-      ],
-    );
+                      width: double.infinity,
+                      // height: 100,
+                      fit: BoxFit.cover,
+                    ),
+
+                    //  Image.network(
+                    //   url,
+                    //   fit: BoxFit.cover,
+                    //   width: double.infinity,
+                    // ),
+                  );
+                },
+                options: CarouselOptions(
+                  height: 200,
+                  autoPlay: true,
+                  enlargeCenterPage: true,
+                  autoPlayInterval: Duration(seconds: 3),
+                  autoPlayAnimationDuration: Duration(milliseconds: 800),
+                  viewportFraction: 0.9,
+                  onPageChanged: (index, reason) =>
+                      // prevents calling setState if widget is disposed
+
+                      setState(() => activeIndex = index),
+                ),
+              ),
+              const SizedBox(height: 16),
+              AnimatedSmoothIndicator(
+                activeIndex: activeIndex,
+                count: n,
+                effect: ExpandingDotsEffect(
+                  dotHeight: 8,
+                  dotWidth: 8,
+                  activeDotColor: Colors.orange,
+                ),
+                onDotClicked: (index) {
+                  // xxx.animateToPage(index);
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+          );
   }
 
   Widget _buildCategoryTabs() {
@@ -1754,6 +1960,7 @@ class _MyHomeState extends State<MyHome> {
 
                           // width: double.infinity,
                           // height: 100,
+                          height: 220,
                           fit: BoxFit.cover,
                         ),
                         // Image.network(
@@ -1780,6 +1987,9 @@ class _MyHomeState extends State<MyHome> {
                               (favIds.contains(id))
                                   ? {favIds.remove(id)}
                                   : favIds.add(id);
+                              if (!mounted)
+                                return; // prevents calling setState if widget is disposed
+
                               setState(() {});
                             },
                           )),
@@ -1900,8 +2110,23 @@ class _MyHomeState extends State<MyHome> {
 
     int n = showitm.length;
 
-    return (showitm == null)
-        ? Container()
+    return (loading && showitm == null)
+        ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.wifi_off, size: 80, color: Colors.grey),
+              const SizedBox(height: 16),
+              const Text(
+                "No Internet Connection",
+                style: TextStyle(fontSize: 20),
+              ),
+              const SizedBox(height: 20),
+              IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: _checkConnection,
+              ),
+            ],
+          )
         : Center(
             child: Wrap(children: [
               for (int i = 0; i < n; i++)

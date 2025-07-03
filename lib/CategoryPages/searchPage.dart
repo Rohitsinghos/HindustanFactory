@@ -61,6 +61,8 @@ class _SearchPageState extends State<SearchPage> {
         // print(tm["Product"]);
         // print(json.decode(res.body)["data"]);
         itemsTop = json.decode(res.body)["data"];
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
       } else {
         print("failure");
@@ -74,6 +76,8 @@ class _SearchPageState extends State<SearchPage> {
   bool doit = true;
   int lowhn = 1;
   _lowhigh() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       lowhn = (lowhn == 1) ? 0 : 1;
     });
@@ -81,6 +85,8 @@ class _SearchPageState extends State<SearchPage> {
 
   int alpha = 1;
   _AlphaUD() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       alpha = (alpha == 1) ? 0 : 1;
     });
@@ -335,6 +341,9 @@ class _SearchPageState extends State<SearchPage> {
                               (favIds.contains(id2))
                                   ? {favIds.remove(id2)}
                                   : favIds.add(id2);
+                              if (!mounted)
+                                return; // prevents calling setState if widget is disposed
+
                               setState(() {});
                             },
                           )),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:Template/Purchase/buyItem.dart';
 import 'package:Template/models/categorymodel/cate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
@@ -57,6 +58,8 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
         address = orderUserdata["order"]["address"] ?? {};
         variId = orderUserdata["variant"]["ProductId"] ?? 1;
 
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         print(userData);
       } else {
@@ -109,6 +112,8 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
     _getmeuseroderss();
 
     if (!mounted) {}
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -242,14 +247,19 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            widget.orderpic ??
+                          child: CachedNetworkImage(
+                            imageUrl: widget.orderpic ??
                                 "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+
+                            placeholder: (context, url) =>
+                                Center(child: CircularProgressIndicator()),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.broken_image),
+
+                            // width: 120,
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
-                                const Icon(Icons.broken_image, size: 80),
                           ),
                         ),
                         const SizedBox(width: 12),

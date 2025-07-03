@@ -67,6 +67,8 @@ class _AccPageState extends State<AccPage> {
       await uploadImage(imageFile);
     }
 
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -99,6 +101,8 @@ class _AccPageState extends State<AccPage> {
     // _uploadPickedImage();
 
     if (!mounted) return;
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -125,6 +129,8 @@ class _AccPageState extends State<AccPage> {
     } else {
       checkValue = true;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -176,6 +182,8 @@ class _AccPageState extends State<AccPage> {
         if (!mounted) {
           return;
         }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
       }
     } catch (e) {
@@ -205,6 +213,9 @@ class _AccPageState extends State<AccPage> {
           if (!mounted) {
             return;
           }
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
+
           setState(() {});
         } else {
           print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
@@ -228,6 +239,8 @@ class _AccPageState extends State<AccPage> {
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -430,6 +443,9 @@ class _AccPageState extends State<AccPage> {
                               Checkbox(
                                 value: agreeToTerms,
                                 onChanged: (value) {
+                                  if (!mounted)
+                                    return; // prevents calling setState if widget is disposed
+
                                   setState(() => agreeToTerms = value!);
                                 },
                               ),

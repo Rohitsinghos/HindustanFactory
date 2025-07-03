@@ -38,6 +38,8 @@ class _SerchTopPageState extends State<SerchTopPage> {
   bool doit = true;
   int lowhn = 1;
   _lowhigh() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       lowhn = (lowhn == 1) ? 0 : 1;
     });
@@ -45,6 +47,8 @@ class _SerchTopPageState extends State<SerchTopPage> {
 
   int alpha = 1;
   _AlphaUD() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       alpha = (alpha == 1) ? 0 : 1;
     });
@@ -98,12 +102,16 @@ class _SerchTopPageState extends State<SerchTopPage> {
         // dynamic tm = (json.decode(res.body)["data"]);
         // print(tm["Product"]);
         process = true;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {
           TopData1 = json.decode(res.body)["data"]["Product"];
           itemsTop = List.from(TopData1);
         });
       } else {
         process = true;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         print("failure");
       }
@@ -134,15 +142,21 @@ class _SerchTopPageState extends State<SerchTopPage> {
   // }
 
   // void _sortList(String option) {
-  //   setState(() {
+  //   if (!mounted) return; // prevents calling setState if widget is disposed
+
+  // setState(() {
   //     _selectedSort = option;
   //     _filteredList = List.from(_originalList);
   //     switch (option) {
   //       case 'Alphabetical↓':
-  //         setState(() => sortTopData(TopData1, byName: true, ascending: true));
+  //         if (!mounted) return; // prevents calling setState if widget is disposed
+
+  // setState(() => sortTopData(TopData1, byName: true, ascending: true));
   //         break;
   //       case 'Alphabetical↑':
-  //         setState(() => sortTopData(TopData1, byName: true, ascending: false));
+  //         if (!mounted) return; // prevents calling setState if widget is disposed
+
+  // setState(() => sortTopData(TopData1, byName: true, ascending: false));
   //         break;
   //       default:
   //         break;
@@ -164,7 +178,9 @@ class _SerchTopPageState extends State<SerchTopPage> {
 //     sortByName = false; ascending = false;
 //   }
 
-//   setState(() => sortTopData(TopData1, byName: sortByName, ascending: ascending));
+//   if (!mounted) return; // prevents calling setState if widget is disposed
+
+  // setState(() => sortTopData(TopData1, byName: sortByName, ascending: ascending));
 // });
 
   Future<void> _getSearchData(String ser) async {
@@ -197,10 +213,14 @@ class _SerchTopPageState extends State<SerchTopPage> {
       // print(json.decode(res.body)["data"]);
       itemsTop = json.decode(res.body)["data"];
       process = true;
+      if (!mounted) return; // prevents calling setState if widget is disposed
+
       setState(() {});
     } else {
       print("failure");
       process = true;
+      if (!mounted) return; // prevents calling setState if widget is disposed
+
       setState(() {});
     }
   }
@@ -221,6 +241,8 @@ class _SerchTopPageState extends State<SerchTopPage> {
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -285,11 +307,15 @@ class _SerchTopPageState extends State<SerchTopPage> {
                         _AlphaUD();
 
                         if (alpha == 1) {
-                          setState(() => sortTopData(itemsTop,
-                              byName: true, ascending: false));
+                          if (mounted) {
+                            setState(() => sortTopData(itemsTop,
+                                byName: true, ascending: false));
+                          }
                         } else {
-                          setState(() => sortTopData(itemsTop,
-                              byName: true, ascending: true));
+                          if (!mounted) {
+                            setState(() => sortTopData(itemsTop,
+                                byName: true, ascending: true));
+                          }
                         }
                       },
                       child: Padding(
@@ -344,11 +370,15 @@ class _SerchTopPageState extends State<SerchTopPage> {
                         _lowhigh();
 
                         if (lowhn != 1) {
-                          setState(() => sortTopData(itemsTop,
-                              byName: false, ascending: false));
+                          if (!mounted) {
+                            setState(() => sortTopData(itemsTop,
+                                byName: false, ascending: false));
+                          }
                         } else {
-                          setState(() => sortTopData(itemsTop,
-                              byName: false, ascending: true));
+                          if (!mounted) {
+                            setState(() => sortTopData(itemsTop,
+                                byName: false, ascending: true));
+                          }
                         }
                       },
                       child: Row(
@@ -457,6 +487,9 @@ class _SerchTopPageState extends State<SerchTopPage> {
                               (favIds.contains(id2))
                                   ? {favIds.remove(id2)}
                                   : favIds.add(id2);
+                              if (!mounted)
+                                return; // prevents calling setState if widget is disposed
+
                               setState(() {});
                             },
                           )),

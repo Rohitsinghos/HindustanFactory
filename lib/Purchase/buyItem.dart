@@ -180,11 +180,15 @@ class _BuyItemState extends State<BuyItem> {
 
   _sizes(int indd) {
     deconi = indd;
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
   _vars(int indd) {
     decVarn = indd;
+
+    if (!mounted) return; // prevents calling setState if widget is disposed
 
     setState(() {});
   }
@@ -210,7 +214,13 @@ class _BuyItemState extends State<BuyItem> {
         buyItemData = json.decode(res.body)["data"]["product"];
         MainPhoto =
             json.decode(res.body)["data"]["product"]['thumbnail']["url"];
-        print(buyItemData);
+        // print(buyItemData);
+
+        if (!mounted) {
+          return;
+        }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
       } else {
         print("failure");
@@ -236,6 +246,8 @@ class _BuyItemState extends State<BuyItem> {
     phoin = index;
 
     MainPhoto = buyItemData['gallery'][index]['url'] ?? null;
+
+    if (!mounted) return; // prevents calling setState if widget is disposed
 
     setState(() {});
   }
@@ -312,6 +324,8 @@ class _BuyItemState extends State<BuyItem> {
       return;
     }
 
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -345,6 +359,8 @@ class _BuyItemState extends State<BuyItem> {
       }
 
       if (!mounted) return;
+
+      if (!mounted) return; // prevents calling setState if widget is disposed
 
       setState(() {});
     } catch (e) {
@@ -475,7 +491,7 @@ class _BuyItemState extends State<BuyItem> {
                             child: IconButton(
                               onPressed: () {
                                 copyText(
-                                    "https://wa.me/+919399274490?text=Hi, I love this product and sharing this amazing product. Check it out: " +
+                                    "I love this product and sharing this amazing product. Check it out: " +
                                         "${(buyItemData != -1 && buyItemData['name'] != null) ? buyItemData['name'] : "The title of the product"} from Hindan Factory. https://hindustanfactory.socialseller.in/product/${widget.buyid}");
                               },
                               icon: Icon(
@@ -745,6 +761,9 @@ class _BuyItemState extends State<BuyItem> {
                                 MaterialButton(
                                   onPressed: () {
                                     showDetails = !showDetails;
+                                    if (!mounted)
+                                      return; // prevents calling setState if widget is disposed
+
                                     setState(() {});
                                   },
                                   child: Row(
@@ -771,6 +790,9 @@ class _BuyItemState extends State<BuyItem> {
                                 MaterialButton(
                                   onPressed: () {
                                     showShopInfo = !showShopInfo;
+                                    if (!mounted)
+                                      return; // prevents calling setState if widget is disposed
+
                                     setState(() {});
                                   },
                                   child: Row(
@@ -798,6 +820,9 @@ class _BuyItemState extends State<BuyItem> {
                                 MaterialButton(
                                   onPressed: () {
                                     showSupport = !showSupport;
+                                    if (!mounted)
+                                      return; // prevents calling setState if widget is disposed
+
                                     setState(() {});
                                   },
                                   child: Row(

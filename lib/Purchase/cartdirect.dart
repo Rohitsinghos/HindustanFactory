@@ -53,12 +53,16 @@ class _CartDirPageState extends State<CartDirPage> {
   bool addcheck = false, paycheck = false;
 
   void _ADDRES() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       addcheck = !addcheck;
     });
   }
 
   void _PaymentcHH() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       paycheck = !paycheck;
     });
@@ -91,17 +95,24 @@ class _CartDirPageState extends State<CartDirPage> {
 
       if (req.statusCode == 200) {
         print(jsonDecode(req.body)["data"]);
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {
           addressdata = jsonDecode(req.body)["data"];
         });
         // usercartData = jsonDecode(req.body)["data"];
 
         print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
+        if (!mounted) return;
+        if (!mounted) return; // prevents calling setState if widget is disposed
 
-        // setState(() {});
+        setState(() {});
       } else {
         print(
             "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
+        if (!mounted) return;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
       }
     } catch (e) {
@@ -263,12 +274,17 @@ class _CartDirPageState extends State<CartDirPage> {
             (usercartData == null) ? 0.00 : usercartData['totalPrice'] * 1.00;
         print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
 
-        setState(() {
-          usercartData = jsonDecode(req.body)["data"];
-        });
+        if (!mounted) return;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+        setState(() {});
       } else {
         print(
             "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
+
+        if (!mounted) return;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {
           usercartData = {};
         });
@@ -281,6 +297,8 @@ class _CartDirPageState extends State<CartDirPage> {
 
   Future<void> _refreshData() async {
     await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       _getdatatoCart(1, 1);
     });
@@ -646,6 +664,9 @@ class _CartDirPageState extends State<CartDirPage> {
                   );
                 } else {
                   if (showw == false) {
+                    if (!mounted)
+                      return; // prevents calling setState if widget is disposed
+
                     setState(() {
                       showw = true;
                     });
@@ -784,6 +805,9 @@ class _CartDirPageState extends State<CartDirPage> {
                                     onPressed: () {
                                       removeOneCart(id, qua - 1);
                                       print("kskskks");
+                                      if (!mounted)
+                                        return; // prevents calling setState if widget is disposed
+
                                       setState(() {});
                                     },
                                     icon: Icon(Icons.arrow_downward_outlined),
@@ -801,9 +825,14 @@ class _CartDirPageState extends State<CartDirPage> {
                                   onPressed: () {
                                     // if (cartCnts.length > index)
                                     //   cartCnts[index]++;
-                                    // setState(() {});
+                                    // if (!mounted) return; // prevents calling setState if widget is disposed
+
+                                    setState(() {});
 
                                     _addtoCart(id, 1);
+
+                                    if (!mounted)
+                                      return; // prevents calling setState if widget is disposed
 
                                     setState(() {
                                       // qua++;
@@ -829,6 +858,9 @@ class _CartDirPageState extends State<CartDirPage> {
                                 // // restart();
 
                                 removeItCart(id);
+
+                                if (!mounted)
+                                  return; // prevents calling setState if widget is disposed
 
                                 setState(() {});
                               },
@@ -1071,7 +1103,9 @@ class _CartDirPageState extends State<CartDirPage> {
 //                                             cartIds.remove(index);
 //                                             cartCnts.removeAt(index);
 //                                           }
-//                                           setState(() {});
+//                                           if (!mounted) return; // prevents calling setState if widget is disposed
+
+      // setState(() {});
 //                                         },
 //                                         child: Icon(Icons.delete),
 //                                       ))
@@ -1103,7 +1137,9 @@ class _CartDirPageState extends State<CartDirPage> {
 //                       color: (prepaid == 1) ? widget.adth : Colors.grey,
 //                       onPressed: () {
 //                         prepaid = 1;
-//                         setState(() {});
+//                         if (!mounted) return; // prevents calling setState if widget is disposed
+
+      // setState(() {});
 //                       },
 //                       child: Row(
 //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1121,7 +1157,9 @@ class _CartDirPageState extends State<CartDirPage> {
 //                       color: (prepaid == 0) ? widget.adth : Colors.grey,
 //                       onPressed: () {
 //                         prepaid = 0;
-//                         setState(() {});
+//                         if (!mounted) return; // prevents calling setState if widget is disposed
+
+      // setState(() {});
 //                       },
 //                       child: Row(
 //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

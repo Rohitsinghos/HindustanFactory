@@ -38,6 +38,8 @@ class _PremiumPageState extends State<PremiumPage> {
         if (!mounted) {
           return;
         }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         print(userData);
       } else {
@@ -57,6 +59,8 @@ class _PremiumPageState extends State<PremiumPage> {
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 

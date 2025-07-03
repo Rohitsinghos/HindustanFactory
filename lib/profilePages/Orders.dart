@@ -43,6 +43,8 @@ class _OrdersPageState extends State<OrdersPage> {
           nxpg = true;
         }
 
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         // print(userData);
       } else {
@@ -68,6 +70,8 @@ class _OrdersPageState extends State<OrdersPage> {
 
         orderUserdata = json.decode(res.body)["data"];
 
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         print(userData);
       } else {
@@ -85,6 +89,8 @@ class _OrdersPageState extends State<OrdersPage> {
     _getmeuseroderss();
 
     if (!mounted) {}
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -181,6 +187,9 @@ class _OrdersPageState extends State<OrdersPage> {
                                     _getmeuseroderssAs(hed[index]);
                                     choosen = index;
                                     curpg = 1;
+                                    if (!mounted)
+                                      return; // prevents calling setState if widget is disposed
+
                                     setState(() {});
                                   },
                                   child: Card(

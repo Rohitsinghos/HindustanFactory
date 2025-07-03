@@ -66,6 +66,8 @@ class _RazerPayState extends State<RazerPay> {
                 "7901628360502ef72c002c842496b6bfca229c4a1fc2ad0b42da709333652823",
           }));
       print(res.body);
+      if (!mounted) return; // prevents calling setState if widget is disposed
+
       setState(() {});
     } catch (e) {
       print(e);

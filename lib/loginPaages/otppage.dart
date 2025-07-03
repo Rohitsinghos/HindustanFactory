@@ -58,6 +58,8 @@ class _OtpPageState extends State<OtpPage> {
       //   stat = 1;
       // }
 
+      if (!mounted) return; // prevents calling setState if widget is disposed
+
       setState(() {});
     } catch (e) {
       print(e);
@@ -65,6 +67,8 @@ class _OtpPageState extends State<OtpPage> {
   }
 
   _verified() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       varified = true;
     });
@@ -88,6 +92,8 @@ class _OtpPageState extends State<OtpPage> {
 
         LoginData = jsonBody["data"];
         userToken = LoginData["jwt"];
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {
           msg = "OTP varified successfully.";
         });
@@ -146,6 +152,8 @@ class _OtpPageState extends State<OtpPage> {
         print("hey naananna");
         print("hey naananna");
         msg = jsonDecode(getvar.body)["error"]["message"];
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         stat = 4;
       }
@@ -162,6 +170,8 @@ class _OtpPageState extends State<OtpPage> {
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 

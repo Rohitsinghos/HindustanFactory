@@ -29,11 +29,7 @@ final myController4 = TextEditingController();
 //  myController4 ="hshhs";
 Color rit = const Color.fromARGB(248, 231, 222, 222);
 double rith = 50;
-_runCheck() {
-  checkValue = false;
-  setState() {}
-  ;
-}
+
 
 // String apiUrl = 'https://yourapi.com/data';
 //    String token = 'your_token_here';
@@ -166,7 +162,9 @@ class _LogInState extends State<LogIn> {
                       );
                       // } else {
                       // call = Colors.red;
-                      // setState(() {});
+                      // if (!mounted) return; // prevents calling setState if widget is disposed
+
+                      setState(() {});
                     } else {
                       controller1.clear();
                     }

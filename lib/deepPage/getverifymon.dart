@@ -60,6 +60,8 @@ class _GetVerMoneyState extends State<GetVerMoney> {
       await uploadImage(imageFile);
     }
 
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -92,6 +94,8 @@ class _GetVerMoneyState extends State<GetVerMoney> {
     // _uploadPickedImage();
 
     if (!mounted) return;
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -118,6 +122,8 @@ class _GetVerMoneyState extends State<GetVerMoney> {
     } else {
       checkValue = true;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -169,7 +175,9 @@ class _GetVerMoneyState extends State<GetVerMoney> {
   //       if (!mounted) {
   //         return;
   //       }
-  //       setState(() {});
+  //       if (!mounted) return; // prevents calling setState if widget is disposed
+
+  // setState(() {});
   //     }
   //   } catch (e) {
   //     print(e);
@@ -198,7 +206,9 @@ class _GetVerMoneyState extends State<GetVerMoney> {
   //         if (!mounted) {
   //           return;
   //         }
-  //         setState(() {});
+  //         if (!mounted) return; // prevents calling setState if widget is disposed
+
+  // setState(() {});
   //       } else {
   //         print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
   //       }
@@ -221,7 +231,9 @@ class _GetVerMoneyState extends State<GetVerMoney> {
   //   if (!mounted) {
   //     return;
   //   }
-  //   setState(() {});
+  //   if (!mounted) return; // prevents calling setState if widget is disposed
+
+  // setState(() {});
   // }
 
   bool showRules = false;
@@ -420,6 +432,9 @@ class _GetVerMoneyState extends State<GetVerMoney> {
                               Checkbox(
                                 value: agreeToTerms,
                                 onChanged: (value) {
+                                  if (!mounted)
+                                    return; // prevents calling setState if widget is disposed
+
                                   setState(() => agreeToTerms = value!);
                                 },
                               ),

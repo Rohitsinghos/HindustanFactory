@@ -35,6 +35,8 @@ class _WalletPageState extends State<WalletPage> {
         if (!mounted) {
           return;
         }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         print(userData);
       } else {
@@ -54,6 +56,8 @@ class _WalletPageState extends State<WalletPage> {
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 

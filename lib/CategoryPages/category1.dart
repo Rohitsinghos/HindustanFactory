@@ -49,6 +49,9 @@ class _Cart1PageState extends State<Cart1Page> {
           // for (var product in categories) {
           //   categoData.add(product);
           // }
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
+
           setState(() {});
           print("hattt lakallkal");
         }
@@ -64,11 +67,15 @@ class _Cart1PageState extends State<Cart1Page> {
 
     if (!mounted) return;
 
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
   Future<void> _refreshData() async {
     await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 

@@ -116,7 +116,9 @@ class _CollectionPageState extends State<CollectionPage> {
   void _getans(int id) {
     // favIds.remove(id);
 
-    // setState(() {});
+    // if (!mounted) return; // prevents calling setState if widget is disposed
+
+    setState(() {});
   }
 
   productCard21({
@@ -189,6 +191,9 @@ class _CollectionPageState extends State<CollectionPage> {
                               (favIds.contains(id))
                                   ? {favIds.remove(id)}
                                   : favIds.add(id);
+                              if (!mounted)
+                                return; // prevents calling setState if widget is disposed
+
                               setState(() {});
                             },
                           )),

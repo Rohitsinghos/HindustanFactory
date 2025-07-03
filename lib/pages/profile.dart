@@ -122,29 +122,36 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _getmeuser() async {
     try {
-      final res =
-          await http.get(Uri.parse('${BASE_URL}store-users/me'), headers: {
-        'Authorization': "Bearer ${userToken}",
-      });
+      if (userData.length == 0) {
+        final res =
+            await http.get(Uri.parse('${BASE_URL}store-users/me'), headers: {
+          'Authorization': "Bearer ${userToken}",
+        });
 
-      if (res.statusCode == 200) {
-        print("success userrrrrrrrrrrrrrrrrrrr");
-        // userData = json.decode(res.body)["data"];
+        if (res.statusCode == 200) {
+          print("success userrrrrrrrrrrrrrrrrrrr");
+          // userData = json.decode(res.body)["data"];
 
-        userData = json.decode(res.body)["data"];
-        ispremi = (userData["isPremium"] == true);
-        print(userData["isPremium"]);
-        adrss = userData["addresses"].length;
-        wallet = userData["wallet_balance"];
-        userid = userData["id"];
+          userData = json.decode(res.body)["data"];
+          ispremi = (userData["isPremium"] == true);
+          print(userData["isPremium"]);
+          adrss = userData["addresses"].length;
+          wallet = userData["wallet_balance"];
+          userid = userData["id"];
 
-        if (!mounted) {
-          return;
+          if (!mounted) {
+            return;
+          }
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
+
+          setState(() {});
+          print(userData);
+        } else {
+          print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
         }
-        setState(() {});
-        print(userData);
       } else {
-        print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        print("kkskksksk");
       }
     } catch (e) {
       print(e);
@@ -199,11 +206,15 @@ class _ProfilePageState extends State<ProfilePage> {
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
   _takeOp(int index) {
     tmopn = index;
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -215,6 +226,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _refreshData() async {
     await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {
       _getmeuser();
     });
@@ -520,6 +533,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   fontSize: 15,
                                                   color: Colors.grey),
                                             ),
+                                            // Text(userToken),
                                             Text(
                                               (userData != null &&
                                                       userData != null &&

@@ -54,6 +54,8 @@ dependencies:
   video_player: ^2.9.5
   razorpay_flutter: ^1.4.0
   flutter_secure_storage: ^9.2.4
+  connectivity_plus: ^6.1.4
+  flutter_cache_manager: ^3.4.1
   # cached_network_image: ^3.4.1
   # cached_network_image: ^3.4.1
   # image_picker: ^1.1.2

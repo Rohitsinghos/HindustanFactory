@@ -174,6 +174,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
         if (!mounted) {
           return;
         }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
         print(userData);
       } else {
@@ -218,11 +220,15 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
         if (!mounted) return;
 
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {});
       } else {
         print(
             "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
         if (!mounted) return;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {
           usercartData = {};
         });
@@ -242,6 +248,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
     if (!mounted) {
       return;
     }
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
     setState(() {});
   }
 
@@ -356,6 +364,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     child: MaterialButton(
                       onPressed: () {
                         cash = false;
+                        if (!mounted)
+                          return; // prevents calling setState if widget is disposed
+
                         setState(() {});
                       },
                       child: Padding(
@@ -382,6 +393,9 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     child: MaterialButton(
                       onPressed: () {
                         if (isprem) cash = true;
+                        if (!mounted)
+                          return; // prevents calling setState if widget is disposed
+
                         setState(() {});
                       },
                       child: Padding(
@@ -499,6 +513,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
     }
     return GestureDetector(
       onTap: () {
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {
           checked = index;
           addid = id;

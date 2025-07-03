@@ -42,6 +42,8 @@ class _VideoPageState extends State<VideoPage> {
     controllers = videoUrls.map((url) {
       final controller = VideoPlayerController.network(url);
       controller.initialize().then((_) {
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
         setState(() {}); // refresh UI
       });
       controller.setLooping(true);

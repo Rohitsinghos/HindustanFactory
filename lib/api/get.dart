@@ -59,6 +59,8 @@ Future<void> getdatatoAddr(int id, int qu) async {
 
       print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
 
+      // if (!mounted) return; // prevents calling setState if widget is disposed
+
       // setState(() {});
     } else {
       print(
