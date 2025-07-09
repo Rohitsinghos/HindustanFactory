@@ -2,10 +2,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Template/Purchase/cartdirect.dart';
-import 'package:Template/deepPage/premium.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/profilePages/addr.dart';
+import 'package:template/Purchase/cartdirect.dart';
+import 'package:template/deepPage/premium.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/profilePages/addr.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +33,7 @@ class BuyItem extends StatefulWidget {
   State<BuyItem> createState() => _BuyItemState();
 }
 
-String msg = "Product adding in process";
+String msg = "Not a Premium User, Please upgrade your plan.";
 
 int total = 0;
 
@@ -55,10 +55,7 @@ class _BuyItemState extends State<BuyItem> {
         await file.writeAsBytes(response.bodyBytes);
 
         // Step 3: Share
-        await Share.shareXFiles(
-          [XFile(file.path)],
-          text: shareText,
-        );
+        await Share.shareXFiles([XFile(file.path)], text: shareText);
       } else {
         throw Exception('Failed to download image');
       }
@@ -77,49 +74,66 @@ class _BuyItemState extends State<BuyItem> {
     await file.writeAsBytes(byteData.buffer.asUint8List());
 
     // 3. Share the image and text
-    await Share.shareXFiles(
-      [XFile(file.path)],
-      text: 'Check out this image!',
-    );
+    await Share.shareXFiles([XFile(file.path)], text: 'Check out this image!');
   }
 
   dialogEnquire(String sta) {
     return showDialog(
-        context: context,
-        builder: (context) => SimpleDialog(
-              children: [
-                SizedBox(
-                  height: 100,
-                  width: 200,
-                  child: Center(
-                      child: Padding(
+      context: context,
+      builder:
+          (context) => SimpleDialog(
+            children: [
+              SizedBox(
+                height: 100,
+                width: 200,
+                child: Center(
+                  child: Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: Text(msg ?? "You need to be a premium user!"),
-                  )),
+                  ),
                 ),
-                (!premiii)
-                    ? Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: widget.adth, width: 2),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: MaterialButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => PremiumPage(
-                                              adth: widget.adth,
-                                            )));
-                              },
-                              child: Text("Upgrade Now")),
-                        ),
-                      )
-                    : Container(),
-              ],
-            ));
+              ),
+              (!isPremiium)
+                  ? Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: widget.adth, width: 2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: MaterialButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => PremiumPage(adth: widget.adth),
+                            ),
+                          );
+                        },
+                        child: Text("Upgrade Now"),
+                      ),
+                    ),
+                  )
+                  : Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: widget.adth, width: 2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: MaterialButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("Back"),
+                      ),
+                    ),
+                  ),
+            ],
+          ),
+    );
   }
 
   final cntr = TextEditingController();
@@ -203,8 +217,9 @@ class _BuyItemState extends State<BuyItem> {
     // int ind = widget.index;
     itemsTop = [];
     try {
-      final res =
-          await http.get(Uri.parse("${BASE_URL}products/${widget.buyid}"));
+      final res = await http.get(
+        Uri.parse("${BASE_URL}products/${widget.buyid}"),
+      );
       // final res2 = await http.get(Uri.parse("https://hindustanapi.mtlapi.socialseller.in/api/subcategories"));
 
       if (res.statusCode == 200) {
@@ -252,7 +267,7 @@ class _BuyItemState extends State<BuyItem> {
     setState(() {});
   }
 
-  bool premiii = false;
+  // bool isPremiium = false;
 
   Future<void> _addtoCart(int id, int qu) async {
     try {
@@ -268,24 +283,25 @@ class _BuyItemState extends State<BuyItem> {
       //   }),
       // );
 
-      final req = await http.post(Uri.parse("${BASE_URL}cart/add"),
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': "Bearer ${userToken}",
-          },
-          body: jsonEncode({"VariantId": id, "quantity": qu}));
+      final req = await http.post(
+        Uri.parse("${BASE_URL}cart/add"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+        },
+        body: jsonEncode({"VariantId": id, "quantity": qu}),
+      );
 
       if (req.statusCode == 200) {
         print(jsonDecode(req.body)["message"]);
         print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
 
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => CartDirPage(
-                      adth: widget.adth,
-                      admin: 1,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => CartDirPage(adth: widget.adth, admin: 1),
+          ),
+        );
       } else {
         print("not added to cart... abbebebebbhhdshdhhdhnananannanan");
       }
@@ -311,13 +327,45 @@ class _BuyItemState extends State<BuyItem> {
   //   }
   // }
 
+  _getme() async {
+    try {
+      if (userData.length == 0 || isPremiium == false) {
+        final res = await http.get(
+          Uri.parse('${BASE_URL}store-users/me'),
+          headers: {'Authorization': "Bearer ${userToken}"},
+        );
+
+        if (res.statusCode == 200) {
+          print("success userrrrrrrrrrrrrrrrrrrr");
+          // userData = json.decode(res.body)["data"];
+
+          userData = json.decode(res.body)["data"];
+          isPremiium = (userData["isPremium"] == true);
+          print(userData["isPremium"]);
+
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
+
+          setState(() {});
+          print(userData);
+        } else {
+          print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        }
+      } else {
+        print("kkskksksk");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   void initState() {
     super.initState();
 
     // if (productIndex == -1) {
     //   getIndexProduct();
     // }
-
+    _getme();
     _getAllItemData();
 
     if (!mounted) {
@@ -330,9 +378,11 @@ class _BuyItemState extends State<BuyItem> {
   }
 
   Future<void> _getbookedproduct() async {
-    if (!premiii) {
+    if (!isPremiium) {
       msg =
           "You are not a Premium user, please upgrade your plan to book this product.";
+      dialogEnquire(msg);
+      return;
     }
     try {
       final req = await http.post(
@@ -346,25 +396,28 @@ class _BuyItemState extends State<BuyItem> {
           "productId": widget.buyid,
           "variantId": widget.buyid,
           "productQuantity": 2,
-          "booking_price": 150
+          "booking_price": 150,
         }),
       );
 
       if (req.statusCode == 201) {
         msg = "Product added to cart successfully.";
+        dialogEnquire(msg);
       } else if (req.statusCode == 200) {
         msg = "Product already added to cart.";
+        dialogEnquire(msg);
       } else {
         msg = "Product not added to cart. Try again.";
+        dialogEnquire(msg);
       }
-
-      if (!mounted) return;
 
       if (!mounted) return; // prevents calling setState if widget is disposed
 
       setState(() {});
     } catch (e) {
       print(e);
+      msg = e.toString();
+      dialogEnquire(msg);
     }
   }
 
@@ -423,177 +476,191 @@ class _BuyItemState extends State<BuyItem> {
 
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
         backgroundColor: Colors.white,
         toolbarHeight: 0,
       ),
       body: Container(
         color: Colors.white,
         child: SingleChildScrollView(
-          child: (MainPhoto == "")
-              ? Center(child: CircularProgressIndicator())
-              : Column(
-                  children: [
-                    Center(
-                      child: Container(
-                        margin: EdgeInsets.all(20),
-                        height: 280,
-                        child: CachedNetworkImage(
-                          imageUrl: (MainPhoto != null)
-                              ? MainPhoto
-                              : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
-                          placeholder: (context, url) =>
-                              Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.broken_image),
+          child:
+              (MainPhoto == "")
+                  ? Center(child: CircularProgressIndicator())
+                  : Column(
+                    children: [
+                      Center(
+                        child: Container(
+                          margin: EdgeInsets.all(20),
+                          height: 280,
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                (MainPhoto != null)
+                                    ? MainPhoto
+                                    : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+                            placeholder: (context, url) => Icon(Icons.image),
+                            errorWidget:
+                                (context, url, error) => Icon(Icons.image),
 
-                          // width: double.infinity,
-                          // height: 100,
-                          // fit: BoxFit.cover,
-                        ),
-
-                        // Image.network((productIndex != -1)
-                        //     ? MainPhoto
-                        //     : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg"),
-                      ),
-                    ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(255, 237, 236, 236),
-                            child: IconButton(
-                              onPressed: () {
-                                shareText1 =
-                                    "Hi, I love this product and sharing this amazing product. Check it out: " +
-                                        "${(buyItemData != -1 && buyItemData['name'] != null) ? buyItemData['name'] : "The title of the product"} from Hindan Factory. https://hindustanfactory.socialseller.in/product/${widget.buyid}";
-                                // _shareImageAndText();
-                                shareNetworkImageWithText();
-                                // url_launcher(
-                                //   "https://wa.me/91${productData[productIndex]['whatsapp']}"
-                                // );
-                              },
-                              icon: Icon(
-                                Icons.share,
-                                size: 25,
-                              ),
-                            ),
+                            // width: double.infinity,
+                            // height: 100,
+                            // fit: BoxFit.cover,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(255, 237, 236, 236),
-                            child: IconButton(
-                              onPressed: () {
-                                copyText(
-                                    "I love this product and sharing this amazing product. Check it out: " +
-                                        "${(buyItemData != -1 && buyItemData['name'] != null) ? buyItemData['name'] : "The title of the product"} from Hindan Factory. https://hindustanfactory.socialseller.in/product/${widget.buyid}");
-                              },
-                              icon: Icon(
-                                Icons.copy_all,
-                                size: 25,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CircleAvatar(
-                            backgroundColor:
-                                const Color.fromARGB(255, 237, 236, 236),
-                            child: IconButton(
-                              onPressed: () {
-                                _getdwlodmainpic();
-                              },
-                              icon: Icon(
-                                Icons.file_download_sharp,
-                                size: 25,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
 
-                    Container(
-                      height: 100,
-                      margin: EdgeInsets.all(10),
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: (buyItemData != -1 &&
-                                buyItemData['gallery'] != null)
-                            ? buyItemData['gallery'].length
-                            : 1,
-                        itemBuilder: (context, index) => Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              _photon(index);
-                            },
-                            child: Container(
-                              decoration: (phoin == index) ? decpho : null,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: CachedNetworkImage(
-                                  imageUrl: (buyItemData != -1 &&
-                                          buyItemData['gallery'] != null)
-                                      ? buyItemData['gallery'][index]['url']
-                                      : MainPhoto,
-                                  placeholder: (context, url) => Center(
-                                      child: CircularProgressIndicator()),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.broken_image),
-
-                                  // width: double.infinity,
-                                  height: 100,
-                                  // fit: BoxFit.cover,
-                                ),
-
-                                //  Image.network(
-                                //   (productIndex != -1 &&
-                                //           productData[productIndex]['gallery'] != null)
-                                //       ? productData[productIndex]['gallery'][index]
-                                //       : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                                //   height: 100,
-                                // ),
-                              ),
-                            ),
-                          ),
+                          // Image.network((productIndex != -1)
+                          //     ? MainPhoto
+                          //     : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg"),
                         ),
                       ),
-                    ),
 
-                    //description
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      margin: EdgeInsets.all(15),
-                      child: Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  (buyItemData != -1 &&
-                                          buyItemData['name'] != null)
-                                      ? buyItemData['name']
-                                      : "The title of the product",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 22),
-                                  // overflow: TextOverflow.ellipsis,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircleAvatar(
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                237,
+                                236,
+                                236,
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  shareText1 =
+                                      "Hi, I love this product and sharing this amazing product. Check it out: " +
+                                      "${(buyItemData != -1 && buyItemData['name'] != null) ? buyItemData['name'] : "The title of the product"} from Hindan Factory. https://hindustanfactory.socialseller.in/product/${widget.buyid}";
+                                  // _shareImageAndText();
+                                  shareNetworkImageWithText();
+                                  // url_launcher(
+                                  //   "https://wa.me/91${productData[productIndex]['whatsapp']}"
+                                  // );
+                                },
+                                icon: Icon(Icons.share, size: 25),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircleAvatar(
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                237,
+                                236,
+                                236,
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  copyText(
+                                    "I love this product and sharing this amazing product. Check it out: " +
+                                        "${(buyItemData != -1 && buyItemData['name'] != null) ? buyItemData['name'] : "The title of the product"} from Hindan Factory. https://hindustanfactory.socialseller.in/product/${widget.buyid}",
+                                  );
+                                },
+                                icon: Icon(Icons.copy_all, size: 25),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircleAvatar(
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                237,
+                                236,
+                                236,
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  _getdwlodmainpic();
+                                },
+                                icon: Icon(Icons.file_download_sharp, size: 25),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      Container(
+                        height: 100,
+                        margin: EdgeInsets.all(10),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount:
+                              (buyItemData != -1 &&
+                                      buyItemData['gallery'] != null)
+                                  ? buyItemData['gallery'].length
+                                  : 1,
+                          itemBuilder:
+                              (context, index) => Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    _photon(index);
+                                  },
+                                  child: Container(
+                                    decoration:
+                                        (phoin == index) ? decpho : null,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            (buyItemData != -1 &&
+                                                    buyItemData['gallery'] !=
+                                                        null)
+                                                ? buyItemData['gallery'][index]['url']
+                                                : MainPhoto,
+                                        placeholder:
+                                            (context, url) => Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                        errorWidget:
+                                            (context, url, error) =>
+                                                Icon(Icons.image),
+
+                                        // width: double.infinity,
+                                        height: 100,
+                                        // fit: BoxFit.cover,
+                                      ),
+
+                                      //  Image.network(
+                                      //   (productIndex != -1 &&
+                                      //           productData[productIndex]['gallery'] != null)
+                                      //       ? productData[productIndex]['gallery'][index]
+                                      //       : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                      //   height: 100,
+                                      // ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
+                        ),
+                      ),
+
+                      //description
+                      SizedBox(height: 20),
+                      Container(
+                        margin: EdgeInsets.all(15),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    (buyItemData != -1 &&
+                                            buyItemData['name'] != null)
+                                        ? buyItemData['name']
+                                        : "The title of the product",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                    ),
+                                    // overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Padding(
@@ -601,7 +668,9 @@ class _BuyItemState extends State<BuyItem> {
                                   child: Text(
                                     "₹ ${(buyItemData != -1 && buyItemData['variants'] != null) ? buyItemData['variants'][decVarn]['price'] : "2000.00"} ",
                                     style: TextStyle(
-                                        color: widget.adth, fontSize: 15),
+                                      color: widget.adth,
+                                      fontSize: 15,
+                                    ),
                                   ),
                                 ),
                                 Padding(
@@ -609,8 +678,9 @@ class _BuyItemState extends State<BuyItem> {
                                   child: Text(
                                     "₹ ${(buyItemData != null && buyItemData['variants'] != null) ? buyItemData['variants'][decVarn]['strike_price'] : "3000"}",
                                     style: TextStyle(
-                                        fontSize: 11,
-                                        decoration: TextDecoration.lineThrough),
+                                      fontSize: 11,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
                                   ),
                                 ),
                                 Padding(
@@ -618,353 +688,406 @@ class _BuyItemState extends State<BuyItem> {
                                   child: Text(
                                     "COD ${(buyItemData != null && buyItemData['cod_enabled'] == false) ? 'Unavailable' : 'Available'}",
                                     style: TextStyle(
-                                        color: (buyItemData != null &&
-                                                buyItemData['cod_enabled'] ==
-                                                    true)
-                                            ? Colors.greenAccent
-                                            : Colors.red,
-                                        fontSize: 14),
+                                      color:
+                                          (buyItemData != null &&
+                                                  buyItemData['cod_enabled'] ==
+                                                      true)
+                                              ? Colors.greenAccent
+                                              : Colors.red,
+                                      fontSize: 14,
+                                    ),
                                   ),
                                 ),
-                              ]),
-                          Row(
-                            children: [
-                              Text(
-                                "Size",
-                                style:
-                                    TextStyle(fontSize: 15, color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                          _getszx(),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10.0),
-                            child: Row(
-                              children: [
-                                Text("Variants",
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.grey)),
                               ],
                             ),
-                          ),
-                          Container(
-                            height: 120,
-                            margin: EdgeInsets.all(0),
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: (buyItemData != null &&
-                                      buyItemData['variants'] != null)
-                                  ? buyItemData['variants'].length
-                                  : 0,
-                              itemBuilder: (context, index) => Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        _vars(index);
-                                      },
-                                      child: Container(
-                                        decoration:
-                                            (decVarn == index) ? decoVar : null,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                          child: CachedNetworkImage(
-                                            imageUrl: (buyItemData != null &&
-                                                    buyItemData['thumbnail'] !=
-                                                        null)
-                                                ? buyItemData['thumbnail']
-                                                    ['url']
-                                                : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                                            placeholder: (context, url) => Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Icon(Icons.broken_image),
-
-                                            // width: double.infinity,
-                                            height: 70,
-                                            // fit: BoxFit.cover,
-                                          ),
-
-                                          //  Image.network(
-                                          //   (productIndex != -1 && productData != null)
-                                          //       ? productData[productIndex]['image']
-                                          //       : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                                          //   height: 70,
-                                          // ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: Text(
-                                        "${(buyItemData['variants'] == null) ? "Colors" : buyItemData['variants'][index]['name']}",
-                                        style: TextStyle(fontSize: 8),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(2.0),
-                                      child: Text(
-                                        "${(buyItemData['variants'] == null) ? 20 : buyItemData['variants'][index]['quantity']} Left",
-                                        style: TextStyle(fontSize: 8),
-                                      ),
-                                    )
-                                  ],
+                            Row(
+                              children: [
+                                Text(
+                                  "Size",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.grey,
+                                  ),
                                 ),
+                              ],
+                            ),
+                            _getszx(),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Variants",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "Shipping available",
-                                style:
-                                    TextStyle(fontSize: 15, color: Colors.grey),
+                            Container(
+                              height: 120,
+                              margin: EdgeInsets.all(0),
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount:
+                                    (buyItemData != null &&
+                                            buyItemData['variants'] != null)
+                                        ? buyItemData['variants'].length
+                                        : 0,
+                                itemBuilder:
+                                    (context, index) => Padding(
+                                      padding: const EdgeInsets.all(3.0),
+                                      child: Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              _vars(index);
+                                            },
+                                            child: Container(
+                                              decoration:
+                                                  (decVarn == index)
+                                                      ? decoVar
+                                                      : null,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(7),
+                                                child: CachedNetworkImage(
+                                                  imageUrl:
+                                                      (buyItemData != null &&
+                                                              buyItemData['thumbnail'] !=
+                                                                  null)
+                                                          ? buyItemData['thumbnail']['url']
+                                                          : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                                  placeholder:
+                                                      (context, url) => Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      ),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Icon(Icons.image),
+
+                                                  // width: double.infinity,
+                                                  height: 70,
+                                                  // fit: BoxFit.cover,
+                                                ),
+
+                                                //  Image.network(
+                                                //   (productIndex != -1 && productData != null)
+                                                //       ? productData[productIndex]['image']
+                                                //       : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                                //   height: 70,
+                                                // ),
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "${(buyItemData['variants'] == null) ? "Colors" : buyItemData['variants'][index]['name']}",
+                                              style: TextStyle(fontSize: 8),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Text(
+                                              "${(buyItemData['variants'] == null) ? 20 : buyItemData['variants'][index]['quantity']} Left",
+                                              style: TextStyle(fontSize: 8),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(15),
-                                child: MaterialButton(
-                                  color: Colors.black,
-                                  onPressed: () {},
-                                  child: Text("India",
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white)),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "Shipping available",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ClipRRect(
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                ClipRRect(
                                   borderRadius: BorderRadius.circular(15),
                                   child: MaterialButton(
+                                    color: Colors.black,
+                                    onPressed: () {},
+                                    child: Text(
+                                      "India",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(15),
+                                    child: MaterialButton(
                                       color: Colors.black,
                                       onPressed: () {},
                                       child: Text(
                                         "Worldwide",
                                         style: TextStyle(
-                                            fontSize: 15, color: Colors.white),
-                                      )),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Column(
-                              children: [
-                                MaterialButton(
-                                  onPressed: () {
-                                    showDetails = !showDetails;
-                                    if (!mounted)
-                                      return; // prevents calling setState if widget is disposed
-
-                                    setState(() {});
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Items details"),
-                                      Icon((showDetails == true)
-                                          ? Icons.arrow_downward
-                                          : Icons.navigate_next),
-                                    ],
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                (showDetails == true)
-                                    ? Container(
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Column(
+                                children: [
+                                  MaterialButton(
+                                    onPressed: () {
+                                      showDetails = !showDetails;
+                                      if (!mounted)
+                                        return; // prevents calling setState if widget is disposed
+
+                                      setState(() {});
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("Items details"),
+                                        Icon(
+                                          (showDetails == true)
+                                              ? Icons.arrow_downward
+                                              : Icons.navigate_next,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  (showDetails == true)
+                                      ? Container(
                                         child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 15.0),
-                                        child: Text((buyItemData == null)
-                                            ? ""
-                                            : buyItemData["description"]),
-                                      ))
-                                    : Container(),
-                                MaterialButton(
-                                  onPressed: () {
-                                    showShopInfo = !showShopInfo;
-                                    if (!mounted)
-                                      return; // prevents calling setState if widget is disposed
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0,
+                                          ),
+                                          child: Text(
+                                            (buyItemData == null)
+                                                ? ""
+                                                : buyItemData["description"],
+                                          ),
+                                        ),
+                                      )
+                                      : Container(),
+                                  MaterialButton(
+                                    onPressed: () {
+                                      showShopInfo = !showShopInfo;
+                                      if (!mounted)
+                                        return; // prevents calling setState if widget is disposed
 
-                                    setState(() {});
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Shipping info"),
-                                      Icon((showShopInfo == true)
-                                          ? Icons.arrow_downward
-                                          : Icons.navigate_next),
-                                    ],
+                                      setState(() {});
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("Shipping info"),
+                                        Icon(
+                                          (showShopInfo == true)
+                                              ? Icons.arrow_downward
+                                              : Icons.navigate_next,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                (showShopInfo == true)
-                                    ? Container(
+                                  (showShopInfo == true)
+                                      ? Container(
                                         child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 15.0),
-                                        child: Text((buyItemData == null)
-                                            ? ""
-                                            : "COD :${(buyItemData["cod_enabled"]) ? "Available" : "Unavailable"} ," +
-                                                "Shipping value type :${buyItemData["shipping_value_type"]}, return days :${buyItemData["return_days"]}, "),
-                                      ))
-                                    : Container(),
-                                MaterialButton(
-                                  onPressed: () {
-                                    showSupport = !showSupport;
-                                    if (!mounted)
-                                      return; // prevents calling setState if widget is disposed
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0,
+                                          ),
+                                          child: Text(
+                                            (buyItemData == null)
+                                                ? ""
+                                                : "COD :${(buyItemData["cod_enabled"]) ? "Available" : "Unavailable"} ," +
+                                                    "Shipping value type :${buyItemData["shipping_value_type"]}, return days :${buyItemData["return_days"]}, ",
+                                          ),
+                                        ),
+                                      )
+                                      : Container(),
+                                  MaterialButton(
+                                    onPressed: () {
+                                      showSupport = !showSupport;
+                                      if (!mounted)
+                                        return; // prevents calling setState if widget is disposed
 
-                                    setState(() {});
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text("Support"),
-                                      Icon((showSupport == true)
-                                          ? Icons.arrow_downward
-                                          : Icons.navigate_next),
-                                    ],
+                                      setState(() {});
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("Support"),
+                                        Icon(
+                                          (showSupport == true)
+                                              ? Icons.arrow_downward
+                                              : Icons.navigate_next,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                (showSupport == true)
-                                    ? Container(
+                                  (showSupport == true)
+                                      ? Container(
                                         child: Text(
-                                            "Go to support section over Profile page."))
-                                    : Container(),
-                              ],
+                                          "Go to support section over Profile page.",
+                                        ),
+                                      )
+                                      : Container(),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 15.0),
-                            child: Row(
-                              children: [
-                                Text("You can also like this",
+                            Padding(
+                              padding: const EdgeInsets.only(top: 15.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "You can also like this",
                                     style: TextStyle(
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.bold)),
-                              ],
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
 
-                          //
-                        ],
+                            //
+                          ],
+                        ),
                       ),
-                    ),
 
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 5, left: 15),
-                      child: SizedBox(
-                        height: 330,
-                        child: ListView.builder(
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 5, left: 15),
+                        child: SizedBox(
+                          height: 330,
+                          child: ListView.builder(
                             scrollDirection: Axis.horizontal,
                             itemCount: (itemsTop != null) ? itemsTop.length : 0,
                             itemBuilder: (context, index) {
                               return productCard2(
                                 name: itemsTop[index]['name'],
-                                rating: (itemsTop[index]['rating'] != null)
-                                    ? (double.parse(itemsTop[index]['rating']))
-                                        .toInt()
-                                    : 0,
-                                left: itemsTop[index]["variants"][0]
-                                    ["quantity"],
+                                rating:
+                                    (itemsTop[index]['rating'] != null)
+                                        ? (double.parse(
+                                          itemsTop[index]['rating'],
+                                        )).toInt()
+                                        : 0,
+                                left:
+                                    itemsTop[index]["variants"][0]["quantity"],
                                 price: itemsTop[index]["variants"][0]["price"],
-                                oldPrice: itemsTop[index]["variants"][0]
-                                    ["strike_price"],
+                                oldPrice:
+                                    itemsTop[index]["variants"][0]["strike_price"],
                                 id: itemsTop[index]["id"],
                                 image: itemsTop[index]['thumbnail']["url"],
                                 category: itemsTop[index]["category"]["name"],
                               );
-                            }),
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Center(
-                            child: Container(
-                              height: 55,
-                              width: 150,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: widget.adth),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: MaterialButton(
-                                  highlightColor: widget.adth,
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    _getbookedproduct();
-                                    dialogEnquire(msg);
-                                  },
-                                  child: Text(
-                                    "Book Now",
-                                    style: TextStyle(color: widget.adth),
-                                  ),
-                                ),
-                              ),
-                            ),
+                            },
                           ),
-                          SizedBox(
-                            height: 55,
-                            width: 150,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: MaterialButton(
-                                color: widget.adth,
-                                onPressed: () {
-                                  // _AddCardDialog();
+                        ),
+                      ),
 
-                                  // (productIndex != -1) ? productData1[productIndex]['variants'][decVarn]['price'] : widget.buyid;
-
-                                  // if (cartn == 0 || !cartIds.contains(widget.buyid)) {
-                                  //   cartn++;
-
-                                  //   cartIds.add(widget.buyid);
-                                  //   cartCnts.add(1);
-                                  // } else {
-                                  //   cartCnts[cartIds.indexOf(widget.buyid)] += 1;
-                                  // }
-
-                                  _addtoCart(
-                                      (buyItemData != null)
-                                          ? buyItemData['variants'][decVarn]
-                                              ['id']
-                                          : widget.buyid,
-                                      1);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 14.0, bottom: 14, left: 5, right: 5),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 5.0),
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Center(
+                              child: Container(
+                                height: 55,
+                                width: 150,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: widget.adth),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: MaterialButton(
+                                    highlightColor: widget.adth,
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      if (isPremiium) {
+                                        _getbookedproduct();
+                                      } else {
+                                        dialogEnquire(msg);
+                                      }
+                                    },
                                     child: Text(
-                                      "Add to Cart",
-                                      style: TextStyle(color: Colors.white),
+                                      "Book Now",
+                                      style: TextStyle(color: widget.adth),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          )
-                        ],
+                            SizedBox(
+                              height: 55,
+                              width: 150,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: MaterialButton(
+                                  color: widget.adth,
+                                  onPressed: () {
+                                    // _AddCardDialog();
+
+                                    // (productIndex != -1) ? productData1[productIndex]['variants'][decVarn]['price'] : widget.buyid;
+
+                                    // if (cartn == 0 || !cartIds.contains(widget.buyid)) {
+                                    //   cartn++;
+
+                                    //   cartIds.add(widget.buyid);
+                                    //   cartCnts.add(1);
+                                    // } else {
+                                    //   cartCnts[cartIds.indexOf(widget.buyid)] += 1;
+                                    // }
+
+                                    _addtoCart(
+                                      (buyItemData != null)
+                                          ? buyItemData['variants'][decVarn]['id']
+                                          : widget.buyid,
+                                      1,
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                      top: 14.0,
+                                      bottom: 14,
+                                      left: 5,
+                                      right: 5,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 5.0),
+                                      child: Text(
+                                        "Add to Cart",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
         ),
       ),
     );
@@ -975,9 +1098,7 @@ class _BuyItemState extends State<BuyItem> {
     Row rsz = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        for (int i = 0; i < lsz.length; i++) _getszcontent(lsz[i], i),
-      ],
+      children: [for (int i = 0; i < lsz.length; i++) _getszcontent(lsz[i], i)],
     );
 
     return rsz;
@@ -1023,9 +1144,11 @@ class _BuyItemState extends State<BuyItem> {
       child: GestureDetector(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => BuyItem(buyid: id, adth: widget.adth)));
+            context,
+            MaterialPageRoute(
+              builder: (context) => BuyItem(buyid: id, adth: widget.adth),
+            ),
+          );
         },
         child: SizedBox(
           width: 151,
@@ -1038,10 +1161,8 @@ class _BuyItemState extends State<BuyItem> {
               children: [
                 CachedNetworkImage(
                   imageUrl: image,
-                  placeholder: (context, url) =>
-                      Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) =>
-                      Icon(Icons.broken_image),
+                  placeholder: (context, url) => Icon(Icons.image),
+                  errorWidget: (context, url, error) => Icon(Icons.image),
 
                   // width: double.infinity,
                   // height: 70,
@@ -1054,16 +1175,15 @@ class _BuyItemState extends State<BuyItem> {
 
                 //   // width: double.infinity,
                 // ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 Row(
                   children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Row(
-                        children:
-                            List.generate((rating == 0) ? 1 : rating, (index) {
+                        children: List.generate((rating == 0) ? 1 : rating, (
+                          index,
+                        ) {
                           return Icon(
                             Icons.star,
                             size: 17,
@@ -1075,7 +1195,7 @@ class _BuyItemState extends State<BuyItem> {
                     Text(
                       "($rating)",
                       style: TextStyle(color: Colors.grey, fontSize: 10),
-                    )
+                    ),
                   ],
                 ),
                 Padding(
@@ -1099,17 +1219,24 @@ class _BuyItemState extends State<BuyItem> {
                   padding: const EdgeInsets.symmetric(horizontal: 12.0),
                   child: Row(
                     children: [
-                      Text("₹$oldPrice",
-                          style: TextStyle(
-                              decoration: TextDecoration.lineThrough,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.grey)),
+                      Text(
+                        "₹$oldPrice",
+                        style: TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          color: Colors.grey,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 5.0),
-                        child: Text("₹$price",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15)),
+                        child: Text(
+                          "₹$price",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
                       ),
                     ],
                   ),

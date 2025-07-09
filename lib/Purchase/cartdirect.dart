@@ -1,17 +1,17 @@
 import 'dart:convert';
 
-import 'package:Template/CategoryPages/category1.dart';
-import 'package:Template/Purchase/buyItem.dart';
-import 'package:Template/api/get.dart';
-import 'package:Template/deepPage/checkout.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/models/model1.dart';
-import 'package:Template/pages/home.dart';
-import 'package:Template/pages/profile.dart';
-import 'package:Template/pages/video.dart';
-import 'package:Template/profilePages/addr.dart';
-import 'package:Template/profilePages/collection.dart';
-import 'package:Template/profilePages/paymethod.dart';
+import 'package:template/CategoryPages/category1.dart';
+import 'package:template/Purchase/buyItem.dart';
+import 'package:template/api/get.dart';
+import 'package:template/deepPage/checkout.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/models/model1.dart';
+import 'package:template/pages/home.dart';
+import 'package:template/pages/profile.dart';
+import 'package:template/pages/video.dart';
+import 'package:template/profilePages/addr.dart';
+import 'package:template/profilePages/collection.dart';
+import 'package:template/profilePages/paymethod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -45,6 +45,15 @@ double totalAmount = 0;
 double totdis = 0;
 double shipingCharge = 0;
 
+// To add badge with number
+// void updateBadge(int count) {
+//   if (count > 0) {
+//     FlutterAppBadger.updateBadgeCount(count);
+//   } else {
+//     FlutterAppBadger.removeBadge();
+//   }
+// }
+
 int doit = 1;
 
 class _CartDirPageState extends State<CartDirPage> {
@@ -72,18 +81,6 @@ class _CartDirPageState extends State<CartDirPage> {
   bool didit = true;
   Future<void> _getdatatoAddr(int id, int qu) async {
     try {
-      //     final req = await http.post(
-      //   Uri.parse("${BASE_URL}cart/add"),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': "Bearer token", // Replace with actual token
-      //   },
-      //   body: jsonEncode({
-      //     "VariantId": id,
-      //     "quantity": qu,
-      //   }),
-      // );
-
       final req = await http.get(
         Uri.parse("${BASE_URL}address"),
         headers: {
@@ -94,57 +91,36 @@ class _CartDirPageState extends State<CartDirPage> {
       );
 
       if (req.statusCode == 200) {
-        print(jsonDecode(req.body)["data"]);
         if (!mounted) return; // prevents calling setState if widget is disposed
 
         setState(() {
           addressdata = jsonDecode(req.body)["data"];
         });
         // usercartData = jsonDecode(req.body)["data"];
-
-        print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
-        if (!mounted) return;
-        if (!mounted) return; // prevents calling setState if widget is disposed
-
-        setState(() {});
       } else {
         print(
-            "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
+          "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan",
+        );
         if (!mounted) return;
-        if (!mounted) return; // prevents calling setState if widget is disposed
-
-        setState(() {});
       }
     } catch (e) {
       print(e);
-      print("error  haiiaiia biroroo jdjdjjdjdjjdjjd");
     }
   }
 
   Future<void> _addtoCart(int id, int qu) async {
     try {
-      //     final req = await http.post(
-      //   Uri.parse("${BASE_URL}cart/add"),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': "Bearer token", // Replace with actual token
-      //   },
-      //   body: jsonEncode({
-      //     "VariantId": id,
-      //     "quantity": qu,
-      //   }),
-      // );
-
-      final req = await http.post(Uri.parse("${BASE_URL}cart/add"),
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': "Bearer ${userToken}",
-          },
-          body: jsonEncode({"VariantId": id, "quantity": qu}));
+      final req = await http.post(
+        Uri.parse("${BASE_URL}cart/add"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+        },
+        body: jsonEncode({"VariantId": id, "quantity": qu}),
+      );
 
       if (req.statusCode == 200) {
         print(jsonDecode(req.body)["message"]);
-        print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
 
         _getdatatoCart(id, 1);
       } else {
@@ -152,7 +128,6 @@ class _CartDirPageState extends State<CartDirPage> {
       }
     } catch (e) {
       print(e);
-      print("jdjdjjdjdjjdjjd");
     }
   }
 
@@ -169,16 +144,13 @@ class _CartDirPageState extends State<CartDirPage> {
 
       if (req.statusCode == 200) {
         print(jsonDecode(req.body)["message"]);
-        print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
 
         _getdatatoCart(id, 1);
       } else {
         print(jsonDecode(req.body)["message"]);
-        print("not removvvvvvingggggggg to cart... ");
       }
     } catch (e) {
       print(e);
-      print("eroroororoo re,,,,,,,moooove     ");
     }
   }
 
@@ -195,66 +167,40 @@ class _CartDirPageState extends State<CartDirPage> {
 
       if (req.statusCode == 200) {
         print(jsonDecode(req.body)["message"]);
-        print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
 
         try {
-          //     final req = await http.post(
-          //   Uri.parse("${BASE_URL}cart/add"),
-          //   headers: {
-          //     'Content-Type': 'application/json',
-          //     'Authorization': "Bearer token", // Replace with actual token
-          //   },
-          //   body: jsonEncode({
-          //     "VariantId": id,
-          //     "quantity": qu,
-          //   }),
-          // );
-
-          final req = await http.post(Uri.parse("${BASE_URL}cart/add"),
-              headers: {
-                'Content-type': 'application/json',
-                'Authorization': "Bearer ${userToken}",
-              },
-              body: jsonEncode({"VariantId": id, "quantity": qua}));
+          final req = await http.post(
+            Uri.parse("${BASE_URL}cart/add"),
+            headers: {
+              'Content-type': 'application/json',
+              'Authorization': "Bearer ${userToken}",
+            },
+            body: jsonEncode({"VariantId": id, "quantity": qua}),
+          );
 
           if (req.statusCode == 200) {
             print(jsonDecode(req.body)["message"]);
-            print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
+
+            if (!mounted) return;
+            _getdatatoCart(id, 1);
           } else {
             print("not added to cart... abbebebebbhhdshdhhdhnananannanan");
           }
         } catch (e) {
           print(e);
-          print("jdjdjjdjdjjdjjd");
         }
-
-        _getdatatoCart(id, 1);
       } else {
         print(jsonDecode(req.body)["message"]);
-        print("not removvvvvvingggggggg to cart... ");
       }
     } catch (e) {
       print(e);
-      print("eroroororoo re,,,,,,,moooove     ");
     }
   }
 
   Future<void> _getdatatoCart(int id, int qu) async {
-    usercartData = {};
+    // usercartData = {};
     getcart = 0;
     try {
-      //     final req = await http.post(
-      //   Uri.parse("${BASE_URL}cart/add"),
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Authorization': "Bearer token", // Replace with actual token
-      //   },
-      //   body: jsonEncode({
-      //     "VariantId": id,
-      //     "quantity": qu,
-      //   }),
-      // );
-
       final req = await http.get(
         Uri.parse("${BASE_URL}cart/me"),
         headers: {
@@ -265,7 +211,6 @@ class _CartDirPageState extends State<CartDirPage> {
       );
 
       if (req.statusCode == 200) {
-        print(jsonDecode(req.body)["data"]);
         usercartData = jsonDecode(req.body)["data"];
 
         totalAmount =
@@ -273,25 +218,17 @@ class _CartDirPageState extends State<CartDirPage> {
         subb =
             (usercartData == null) ? 0.00 : usercartData['totalPrice'] * 1.00;
         print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
-
-        if (!mounted) return;
+        // updateBadge(usercartData['Variants'].length);
         if (!mounted) return; // prevents calling setState if widget is disposed
 
         setState(() {});
       } else {
         print(
-            "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
-
-        if (!mounted) return;
-        if (!mounted) return; // prevents calling setState if widget is disposed
-
-        setState(() {
-          usercartData = {};
-        });
+          "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan",
+        );
       }
     } catch (e) {
       print(e);
-      print("error  haiiaiia biroroo jdjdjjdjdjjdjjd");
     }
   }
 
@@ -299,9 +236,9 @@ class _CartDirPageState extends State<CartDirPage> {
     await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
     if (!mounted) return; // prevents calling setState if widget is disposed
 
-    setState(() {
-      _getdatatoCart(1, 1);
-    });
+    _getdatatoCart(1, 1);
+    _getdatatoAddr(1, 1);
+    setState(() {});
   }
 
   int getaddrrr = 1;
@@ -311,151 +248,274 @@ class _CartDirPageState extends State<CartDirPage> {
     // TODO: implement initState
     super.initState();
 
+    // updateBadge(5);
+
     _getdatatoCart(1, 1);
-    getdatatoAddr(1, 1);
+    _getdatatoAddr(1, 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    // if (getaddrrr == 1) {
-    //   getaddrrr = 0;
-    //   getdatatoAddr(1, 1);
-    // }
-    // if (getcart == 1) {
-    //   _getdatatoCart(1, 1);
-    // }
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
-          child: Text(
-            "Cart",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          child: Text("Cart", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
         // toolbarHeight: 60,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-              // radius: 5,
-              backgroundColor: Colors.white,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_new_outlined,
-                  color: widget.adth,
-                ),
-              )),
+            // radius: 5,
+            backgroundColor: Colors.white,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined, color: widget.adth),
+            ),
+          ),
         ),
         backgroundColor: Colors.white,
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CollectionPage(
-                                  adth: widget.adth,
-                                )));
-                  },
-                  icon: Icon(Icons.favorite_border_outlined),
-                  color: widget.adth,
-                )),
-          )
+              backgroundColor: Colors.white,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CollectionPage(adth: widget.adth),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.favorite_border_outlined),
+                color: widget.adth,
+              ),
+            ),
+          ),
         ],
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: SingleChildScrollView(
-            child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 15),
-                    child: Column(
-                      children: [
-                        _getme(),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10.0, top: 30),
-                          child: Row(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 15),
+                      child: Column(
+                        children: [
+                          _getme(),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: 10.0,
+                              top: 30,
+                            ),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "Order Info",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
                             children: [
-                              Text(
-                                "Order Info",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 17),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Subtotal",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    "₹$subb",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Delivery Charge",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    "₹$totcup",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Total",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Text(
+                                    "₹ $totalAmount",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddrPage(adth: widget.adth),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Delivery Address",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                  Icon(Icons.arrow_forward_ios, size: 14),
+                                ],
+                              ),
+                              Card(
+                                color: Colors.white,
+                                child: Container(
+                                  padding: EdgeInsets.all(15),
+                                  margin: EdgeInsets.symmetric(vertical: 10),
+                                  color: Colors.white,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            child: Image.asset(
+                                              "assets/loca.jpg",
+                                              height: 42,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 15.0,
+                                            ),
+                                            child: Container(
+                                              width: 200,
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["name"] : ""}, ${(addressdata != null && addressdata.length > 0) ? addressdata[0]["phone"] : "no."}," +
+                                                        "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["addressLine1"] : ""}" +
+                                                        ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["addressLine2"] : ""}" +
+                                                        ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["city"] : ""}, " +
+                                                        "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["pincode"] : ""}, " +
+                                                        "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["state"] : ""}, " +
+                                                        "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["country"] : ""}",
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          _ADDRES();
+                                        },
+                                        child: CircleAvatar(
+                                          radius: 15,
+                                          backgroundColor:
+                                              (!addcheck)
+                                                  ? const Color.fromARGB(
+                                                    255,
+                                                    251,
+                                                    246,
+                                                    246,
+                                                  )
+                                                  : Colors.green,
+                                          child: Icon(
+                                            Icons.check,
+                                            color:
+                                                (!addcheck)
+                                                    ? const Color.fromARGB(
+                                                      255,
+                                                      248,
+                                                      244,
+                                                      244,
+                                                    )
+                                                    : Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Subtotal",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.grey),
-                                ),
-                                Text(
-                                  "₹$subb",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Delivery Charge",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.grey),
-                                ),
-                                Text(
-                                  "₹$totcup",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Total",
-                                  style: TextStyle(
-                                      fontSize: 16, color: Colors.grey),
-                                ),
-                                Text(
-                                  "₹ $totalAmount",
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                    child: GestureDetector(
+                    GestureDetector(
                       onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => AddrPage(
-                                      adth: widget.adth,
-                                    )));
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => PayMethodPage(adth: widget.adth),
+                          ),
+                        );
                       },
                       child: Container(
                         color: Colors.white,
@@ -464,76 +524,92 @@ class _CartDirPageState extends State<CartDirPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  "Delivery Address",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 10.0,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        "Payment Method",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                                Icon(Icons.arrow_forward_ios, size: 14)
+                                Icon(Icons.arrow_forward_ios, size: 14),
                               ],
                             ),
                             Card(
                               color: Colors.white,
                               child: Container(
                                 padding: EdgeInsets.all(15),
-                                margin: EdgeInsets.symmetric(vertical: 10),
-                                color: Colors.white,
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Row(
                                       children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          child: Image.asset("assets/loca.jpg",
-                                              height: 42),
+                                        Image.asset(
+                                          "assets/visa.jpg",
+                                          height: 42,
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 15.0),
-                                          child: Container(
-                                            width: 200,
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["name"] : ""}, ${(addressdata != null && addressdata.length > 0) ? addressdata[0]["phone"] : "no."}," +
-                                                      ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["addressLine1"] : ""}," +
-                                                      ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["addressLine2"] : ""}," +
-                                                      ", ${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["city"] : ""}, " +
-                                                      "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["pincode"] : ""}, " +
-                                                      "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["state"] : ""}, " +
-                                                      "${(addressdata != null && addressdata.length > chaddr) ? addressdata[chaddr]["country"] : ""}",
-                                                  style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey),
+                                          padding: const EdgeInsets.only(
+                                            left: 15.0,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "No Card Added",
+                                                style: TextStyle(fontSize: 14),
+                                              ),
+                                              Text(
+                                                "**** **** **** 1234",
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey,
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        _ADDRES();
+                                        // _PaymentcHH();
                                       },
                                       child: CircleAvatar(
-                                          radius: 15,
-                                          backgroundColor: (!addcheck)
-                                              ? const Color.fromARGB(
-                                                  255, 251, 246, 246)
-                                              : Colors.green,
-                                          child: Icon(Icons.check,
-                                              color: (!addcheck)
+                                        radius: 15,
+                                        backgroundColor:
+                                            (!paycheck)
+                                                ? const Color.fromARGB(
+                                                  255,
+                                                  223,
+                                                  223,
+                                                  223,
+                                                )
+                                                : Colors.green,
+                                        child: Icon(
+                                          Icons.check,
+                                          color:
+                                              (!paycheck)
                                                   ? const Color.fromARGB(
-                                                      255, 248, 244, 244)
-                                                  : Colors.white)),
-                                    )
+                                                    255,
+                                                    228,
+                                                    227,
+                                                    227,
+                                                  )
+                                                  : Colors.white,
+                                        ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -542,163 +618,67 @@ class _CartDirPageState extends State<CartDirPage> {
                         ),
                       ),
                     ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PayMethodPage(
-                                    adth: widget.adth,
-                                  )));
-                    },
-                    child: Container(
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 10.0),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      "Payment Method",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                size: 14,
-                              ),
-                            ],
-                          ),
-                          Card(
-                            color: Colors.white,
-                            child: Container(
-                              padding: EdgeInsets.all(15),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Image.asset("assets/visa.jpg",
-                                          height: 42),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 15.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "No Card Added",
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                            Text(
-                                              "**** **** **** 1234",
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      // _PaymentcHH();
-                                    },
-                                    child: CircleAvatar(
-                                        radius: 15,
-                                        backgroundColor: (!paycheck)
-                                            ? const Color.fromARGB(
-                                                255, 223, 223, 223)
-                                            : Colors.green,
-                                        child: Icon(Icons.check,
-                                            color: (!paycheck)
-                                                ? const Color.fromARGB(
-                                                    255, 228, 227, 227)
-                                                : Colors.white)),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  )
-                ],
+                    SizedBox(height: 20),
+                  ],
+                ),
               ),
-            ),
-            MaterialButton(
-              color: widget.adth,
-              height: 70,
-              onPressed: () {
-                // for (int i = 0; i < cartIds.length; i++) {
-                //   orderData.add({"id": cartIds[i], "quantity": cartCnts[i]});
-                // }
+              MaterialButton(
+                color: widget.adth,
+                height: 70,
+                onPressed: () {
+                  // for (int i = 0; i < cartIds.length; i++) {
+                  //   orderData.add({"id": cartIds[i], "quantity": cartCnts[i]});
+                  // }
 
-                // cartn = 0;
-                // cartIds.clear();
-                // cartCnts.clear();
-                if (usercartData.isNotEmpty && usercartData['totalPrice'] > 0) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CheckOutPage(
-                              adth: widget.adth,
-                            )),
-                  );
-                } else {
-                  if (showw == false) {
-                    if (!mounted)
-                      return; // prevents calling setState if widget is disposed
+                  // cartn = 0;
+                  // cartIds.clear();
+                  // cartCnts.clear();
+                  if (usercartData.isNotEmpty &&
+                      usercartData['totalPrice'] > 0) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CheckOutPage(adth: widget.adth),
+                      ),
+                    );
+                  } else {
+                    if (showw == false) {
+                      if (!mounted)
+                        return; // prevents calling setState if widget is disposed
 
-                    setState(() {
-                      showw = true;
-                    });
+                      setState(() {
+                        showw = true;
+                      });
+                    }
                   }
-                }
-              },
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(0.0),
-                    child: Center(
-                      child: Text(
-                        "Checkout",
-                        style: TextStyle(fontSize: 18, color: Colors.white),
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Center(
+                        child: Text(
+                          "Checkout",
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            (!showw)
-                ? Container()
-                : Padding(
+              (!showw)
+                  ? Container()
+                  : Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       "please add product to cart first",
                       style: TextStyle(color: Colors.red, fontSize: 10),
                     ),
                   ),
-          ],
-        )),
+            ],
+          ),
+        ),
       ),
 
       bottomNavigationBar: bottomnn(),
@@ -707,16 +687,12 @@ class _CartDirPageState extends State<CartDirPage> {
     );
   }
 
-  _getCards(
-      {required int index,
-      required int id,
-      required String name,
-      required int rating,
-      required int left,
-      required String price,
-      required int qua,
-      required String image,
-      required bool ok}) {
+  _getCards({
+    required int id,
+    required String price,
+    required int qua,
+    required String name,
+  }) {
     // int index = 0;
     int ProInd = 0;
     if (productData1 != null) {
@@ -730,12 +706,14 @@ class _CartDirPageState extends State<CartDirPage> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return BuyItem(
-            adth: widget.adth,
-            buyid: id,
-          );
-        }));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) {
+              return BuyItem(adth: widget.adth, buyid: id);
+            },
+          ),
+        );
       },
       child: Card(
         color: Colors.white,
@@ -748,16 +726,16 @@ class _CartDirPageState extends State<CartDirPage> {
                 padding: const EdgeInsets.only(right: 12),
                 child: ClipRRect(
                   borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      bottomLeft: Radius.circular(12)),
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
                   child: CachedNetworkImage(
-                    imageUrl: (productData1 != null)
-                        ? productData1[ProInd]['thumbnail']['url']
-                        : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                    placeholder: (context, url) =>
-                        Center(child: CircularProgressIndicator()),
-                    errorWidget: (context, url, error) =>
-                        Icon(Icons.broken_image),
+                    imageUrl:
+                        (productData1 != null)
+                            ? productData1[ProInd]['thumbnail']['url']
+                            : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                    placeholder: (context, url) => Icon(Icons.image),
+                    errorWidget: (context, url, error) => Icon(Icons.image),
 
                     // width: double.infinity,
                     height: 120,
@@ -773,9 +751,27 @@ class _CartDirPageState extends State<CartDirPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      "${productData1[ProInd]['name']} $name",
+                      "${productData1[ProInd]['name']}",
                       style: TextStyle(fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          color: Colors.blue,
+                          child: Text(
+                            "$name",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10,
+                              color: Colors.white,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 5.0),
@@ -786,7 +782,7 @@ class _CartDirPageState extends State<CartDirPage> {
                             style: TextStyle(fontSize: 10, color: Colors.grey),
                           ),
                           Text(
-                            "(+4.00 Tax)",
+                            "(+0.00 Tax)",
                             style: TextStyle(fontSize: 10, color: Colors.grey),
                           ),
                         ],
@@ -800,23 +796,27 @@ class _CartDirPageState extends State<CartDirPage> {
                           Row(
                             children: [
                               CircleAvatar(
-                                  radius: 16,
-                                  child: IconButton(
-                                    onPressed: () {
-                                      removeOneCart(id, qua - 1);
-                                      print("kskskks");
-                                      if (!mounted)
-                                        return; // prevents calling setState if widget is disposed
+                                radius: 16,
+                                child: IconButton(
+                                  onPressed: () {
+                                    removeOneCart(id, qua - 1);
+                                    // print("kskskks");
 
-                                      setState(() {});
-                                    },
-                                    icon: Icon(Icons.arrow_downward_outlined),
-                                    iconSize: 15,
-                                    // size: 20,
-                                  )),
+                                    // if (!mounted)
+                                    //   return; // prevents calling setState if widget is disposed
+
+                                    // qua--;
+                                    // setState(() {});
+                                  },
+                                  icon: Icon(Icons.arrow_downward_outlined),
+                                  iconSize: 15,
+                                  // size: 20,
+                                ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 15.0),
+                                  horizontal: 15.0,
+                                ),
                                 child: Text("$qua"),
                               ),
                               CircleAvatar(
@@ -827,16 +827,16 @@ class _CartDirPageState extends State<CartDirPage> {
                                     //   cartCnts[index]++;
                                     // if (!mounted) return; // prevents calling setState if widget is disposed
 
-                                    setState(() {});
+                                    // setState(() {});
 
                                     _addtoCart(id, 1);
 
-                                    if (!mounted)
-                                      return; // prevents calling setState if widget is disposed
+                                    // if (!mounted)
+                                    //   return; // prevents calling setState if widget is disposed
 
-                                    setState(() {
-                                      // qua++;
-                                    });
+                                    // setState(() {
+                                    //   // qua++;
+                                    // });
                                   },
                                   icon: Icon(Icons.arrow_upward_outlined),
                                   iconSize: 15,
@@ -859,10 +859,10 @@ class _CartDirPageState extends State<CartDirPage> {
 
                                 removeItCart(id);
 
-                                if (!mounted)
-                                  return; // prevents calling setState if widget is disposed
+                                // if (!mounted)
+                                //   return; // prevents calling setState if widget is disposed
 
-                                setState(() {});
+                                // setState(() {});
                               },
                               icon: Icon(Icons.delete),
                               iconSize: 15,
@@ -870,7 +870,7 @@ class _CartDirPageState extends State<CartDirPage> {
                           ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -882,26 +882,25 @@ class _CartDirPageState extends State<CartDirPage> {
   }
 
   _getme() {
-    Wrap a = (usercartData == null ||
-            usercartData["id"] == null ||
-            usercartData["Variants"] == null)
-        ? Wrap(children: [CircularProgressIndicator()])
-        : Wrap(
-            children: [
-              for (int i = 0; i < usercartData['Variants'].length; i++)
-                _getCards(
-                  id: usercartData["Variants"][i]['id'],
-                  index: 0,
-                  image: "",
-                  price: usercartData['Variants'][i]['price'],
-                  qua: usercartData['Variants'][i]['CartVariant']['quantity'],
-                  name: usercartData['Variants'][i]['name'],
-                  rating: 2,
-                  left: 2,
-                  ok: true,
-                ),
-            ],
-          );
+    Wrap a =
+        (usercartData == null ||
+                usercartData["id"] == null ||
+                usercartData["Variants"] == null)
+            ? Wrap(children: [CircularProgressIndicator()])
+            : ((usercartData['Variants'].length == 0)
+                ? Wrap(children: [Center(child: Text("Your cart is empty"))])
+                : Wrap(
+                  children: [
+                    for (int i = 0; i < usercartData['Variants'].length; i++)
+                      _getCards(
+                        id: usercartData["Variants"][i]['id'],
+                        price: usercartData['Variants'][i]['price'],
+                        qua:
+                            usercartData['Variants'][i]['CartVariant']['quantity'],
+                        name: usercartData['Variants'][i]['name'],
+                      ),
+                  ],
+                ));
     return a;
   }
 
@@ -918,110 +917,124 @@ class _CartDirPageState extends State<CartDirPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MyHome(adth: widget.adth, admin: 0)),
-                      (context) => false);
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.home_outlined,
-                    size: 21,
-                    color: b1,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHome(adth: widget.adth, admin: 0),
                   ),
+                  (context) => false,
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.home_outlined, size: 21, color: b1),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Cart1Page(
-                                adth: widget.adth,
-                                admin: widget.admin,
-                              )));
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.dashboard_outlined,
-                    color: b1,
-                    size: 21,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            Cart1Page(adth: widget.adth, admin: widget.admin),
                   ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.dashboard_outlined, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Category'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VideoPage(
-                                admin: 2,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VideoPage(admin: 2, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.ondemand_video, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CartDirPage(
-                                admin: 3,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
-                  Icon(Icons.shopping_cart_outlined,
-                      color: widget.adth, size: 21),
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    color: widget.adth,
+                    size: 21,
+                  ),
                   Text(
-                      style: TextStyle(color: widget.adth, fontSize: 13),
-                      'Cart'),
-                ]),
-              )),
+                    style: TextStyle(color: widget.adth, fontSize: 13),
+                    'Cart',
+                  ),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                                adth: widget.adth,
-                                admin: widget.admin,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            ProfilePage(adth: widget.adth, admin: widget.admin),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.person_outline, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Profile'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
 
@@ -1037,7 +1050,9 @@ class _CartDirPageState extends State<CartDirPage> {
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: AppBar(
+//       appBar:  AppBar(surfaceTintColor: Colors.white,
+        
+        
 //         title: Center(
 //           // padding: const EdgeInsets.only(left: 0.0),
 //           child: Text(

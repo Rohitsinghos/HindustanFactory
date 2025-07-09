@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:Template/deepPage/razerpay.dart';
-import 'package:Template/extra/addaddr.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/profilePages/Orders.dart';
+import 'package:template/deepPage/razerpay.dart';
+import 'package:template/extra/addaddr.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/profilePages/Orders.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -83,7 +83,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
             // ;
             "payment_mode": (cash) ? "COD" : "PREPAID",
             "variants": [
-              {"VariantId": x["VariantId"], "quantity": x["quantity"]}
+              {"VariantId": x["VariantId"], "quantity": x["quantity"]},
             ],
             "consumer": {
               "name": (namc.text != "") ? namc.text : name2,
@@ -105,20 +105,20 @@ class _CheckOutPageState extends State<CheckOutPage> {
           if (cartItems[cartItems.length - 1] == x) {
             if (cash == false) {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RazerPay(
-                            adth: widget.adth,
-                            money: totalAmount11,
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) =>
+                          RazerPay(adth: widget.adth, money: totalAmount11),
+                ),
+              );
             } else {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => OrdersPage(
-                            adth: widget.adth,
-                            page: 0,
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OrdersPage(adth: widget.adth, page: 0),
+                ),
+              );
             }
           }
         } else {
@@ -153,10 +153,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
 
   Future<void> _getmeuser() async {
     try {
-      final res =
-          await http.get(Uri.parse('${BASE_URL}store-users/me'), headers: {
-        'Authorization': "Bearer ${userToken}",
-      });
+      final res = await http.get(
+        Uri.parse('${BASE_URL}store-users/me'),
+        headers: {'Authorization': "Bearer ${userToken}"},
+      );
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
@@ -214,8 +214,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
         usercartData = jsonDecode(req.body)["data"];
 
         for (var x in usercartData["variants"]) {
-          cartvariant
-              .add({"VariantId": x["VariantId"], "quantity": x["quantity"]});
+          cartvariant.add({
+            "VariantId": x["VariantId"],
+            "quantity": x["quantity"],
+          });
         }
 
         if (!mounted) return;
@@ -225,7 +227,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
         setState(() {});
       } else {
         print(
-            "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
+          "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan",
+        );
         if (!mounted) return;
         if (!mounted) return; // prevents calling setState if widget is disposed
 
@@ -257,6 +260,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
           child: Text(
@@ -268,35 +273,34 @@ class _CheckOutPageState extends State<CheckOutPage> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 25,
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
+                icon: Icon(Icons.favorite_border_outlined, color: widget.adth),
                 iconSize: 30,
                 color: widget.adth,
-              )),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.favorite_border_outlined,
-                    color: widget.adth,
-                  ),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              ),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -308,9 +312,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
               Text(
                 "Consumer Info",
                 style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: widget.adth),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: widget.adth,
+                ),
               ),
               Container(
                 width: double.infinity,
@@ -324,9 +329,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 child: TextField(
                   controller: namc,
                   decoration: InputDecoration(
-                      label: Text("Name"),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
+                    label: Text("Name"),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -334,9 +341,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 child: TextField(
                   controller: phonec,
                   decoration: InputDecoration(
-                      label: Text("Phone Number"),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
+                    label: Text("Phone Number"),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -344,14 +353,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 child: TextField(
                   controller: emailc,
                   decoration: InputDecoration(
-                      label: Text("Email"),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
+                    label: Text("Email"),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -373,12 +382,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         padding: const EdgeInsets.all(4.0),
                         child: Column(
                           children: [
-                            Text("Online Payment",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                  color: (cash) ? widget.adth : Colors.white,
-                                )),
+                            Text(
+                              "Online Payment",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: (cash) ? widget.adth : Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -402,12 +413,14 @@ class _CheckOutPageState extends State<CheckOutPage> {
                         padding: const EdgeInsets.all(4.0),
                         child: Column(
                           children: [
-                            Text("Cash on delivery",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                  color: (!cash) ? widget.adth : Colors.white,
-                                )),
+                            Text(
+                              "Cash on delivery",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: (!cash) ? widget.adth : Colors.white,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -415,9 +428,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
+              SizedBox(height: 10),
               // Address
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -425,34 +436,34 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   Text(
                     "Select Address",
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: widget.adth),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: widget.adth,
+                    ),
                   ),
                   CircleAvatar(
-                      backgroundColor: widget.adth,
-                      radius: 15,
-                      child: IconButton(
-                        padding: EdgeInsets.all(0),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => EditAddrePage(
-                                        adth: widget.adth,
-                                        userind: -1,
-                                      )));
-                        },
-                        icon: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                      ))
+                    backgroundColor: widget.adth,
+                    radius: 15,
+                    child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => EditAddrePage(
+                                  adth: widget.adth,
+                                  userind: -1,
+                                ),
+                          ),
+                        );
+                      },
+                      icon: Icon(Icons.add, color: Colors.white),
+                    ),
+                  ),
                 ],
               ),
-              SizedBox(
-                height: 15,
-              ),
+              SizedBox(height: 15),
 
               _getme(),
             ],
@@ -462,9 +473,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
       bottomNavigationBar: BottomAppBar(
         height: 80,
         child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: widget.adth,
-          ),
+          style: ElevatedButton.styleFrom(backgroundColor: widget.adth),
           // color: widget.adth,
           onPressed: () {
             if (addid != -1) {
@@ -481,10 +490,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 ),
               ),
               Spacer(),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.white,
-              )
+              Icon(Icons.arrow_forward_ios, color: Colors.white),
             ],
           ),
         ),
@@ -492,20 +498,21 @@ class _CheckOutPageState extends State<CheckOutPage> {
     );
   }
 
-  _getCards(
-      {required int index,
-      required int id,
-      required int houseNumber,
-      required String name,
-      required String addressLine1,
-      required String pincode,
-      required String city,
-      required String state,
-      required String country,
-      required String addressLine2,
-      required String area,
-      required String phone,
-      required String countryCode}) {
+  _getCards({
+    required int index,
+    required int id,
+    required int houseNumber,
+    required String name,
+    required String addressLine1,
+    required String pincode,
+    required String city,
+    required String state,
+    required String country,
+    required String addressLine2,
+    required String area,
+    required String phone,
+    required String countryCode,
+  }) {
     // int index =0 0;
 
     if (index == chaddr) {
@@ -547,11 +554,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                     ),
                     (checked != index)
                         ? Container()
-                        : Icon(
-                            Icons.check,
-                            color: Colors.green,
-                            size: 25,
-                          ),
+                        : Icon(Icons.check, color: Colors.green, size: 25),
                   ],
                 ),
               ),
@@ -569,9 +572,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -587,20 +588,20 @@ class _CheckOutPageState extends State<CheckOutPage> {
       children: [
         for (int i = 0; i < addressdata.length; i++)
           _getCards(
-              id: addressdata[i]["id"] ?? 9,
-              index: i,
-              houseNumber: 420,
-              name: addressdata[i]["name"] ?? "John Michael",
-              addressLine1:
-                  addressdata[i]["addressLine1"] ?? "Great Eatern Road",
-              pincode: addressdata[i]["pincode"] ?? "12345",
-              city: addressdata[i]["city"] ?? "Raipur",
-              state: addressdata[i]["state"] ?? "Chhattisgarh",
-              country: addressdata[i]["country"] ?? "India",
-              addressLine2: addressdata[i]["addressLine2"] ?? "Civil",
-              area: addressdata[i]["area"] ?? "Civil Line",
-              phone: addressdata[i]["phone"] ?? "9999999999",
-              countryCode: addressdata[i]["countryCode"] ?? "+91"),
+            id: addressdata[i]["id"] ?? 9,
+            index: i,
+            houseNumber: 420,
+            name: addressdata[i]["name"] ?? "John Michael",
+            addressLine1: addressdata[i]["addressLine1"] ?? "Great Eatern Road",
+            pincode: addressdata[i]["pincode"] ?? "12345",
+            city: addressdata[i]["city"] ?? "Raipur",
+            state: addressdata[i]["state"] ?? "Chhattisgarh",
+            country: addressdata[i]["country"] ?? "India",
+            addressLine2: addressdata[i]["addressLine2"] ?? "Civil",
+            area: addressdata[i]["area"] ?? "Civil Line",
+            phone: addressdata[i]["phone"] ?? "9999999999",
+            countryCode: addressdata[i]["countryCode"] ?? "+91",
+          ),
       ],
     );
   }

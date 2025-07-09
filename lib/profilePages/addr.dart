@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Template/extra/addaddr.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/pages/home.dart';
+import 'package:template/extra/addaddr.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/pages/home.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -22,7 +22,7 @@ class _AddrPageState extends State<AddrPage> {
   Future<void> _getdatatoAddr(int id, int qu) async {
     if (!mounted) return; // prevents calling setState if widget is disposed
 
-      setState(() {
+    setState(() {
       addressdata = [];
     });
 
@@ -52,7 +52,7 @@ class _AddrPageState extends State<AddrPage> {
         print(jsonDecode(req.body)["data"]);
         if (!mounted) return; // prevents calling setState if widget is disposed
 
-      setState(() {
+        setState(() {
           addressdata = jsonDecode(req.body)["data"];
         });
         // usercartData = jsonDecode(req.body)["data"];
@@ -63,13 +63,14 @@ class _AddrPageState extends State<AddrPage> {
 
         // if (!mounted) return; // prevents calling setState if widget is disposed
 
-      setState(() {});
+        setState(() {});
       } else {
         print(
-            "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
+          "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan",
+        );
         if (!mounted) return; // prevents calling setState if widget is disposed
 
-      setState(() {});
+        setState(() {});
       }
     } catch (e) {
       print(e);
@@ -79,15 +80,14 @@ class _AddrPageState extends State<AddrPage> {
 
   _deletedatatoAddr(int id) async {
     try {
-      final req = await http.delete(Uri.parse("${BASE_URL}address/$id"),
-          headers: {
-            'Content-type': 'application/json',
-            'Authorization': "Bearer ${userToken}",
-          },
-          body: jsonEncode({
-            "houseNumber": "420",
-            "name": "Rohit JIIIII",
-          }));
+      final req = await http.delete(
+        Uri.parse("${BASE_URL}address/$id"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+        },
+        body: jsonEncode({"houseNumber": "420", "name": "Rohit JIIIII"}),
+      );
 
       if (req.statusCode == 200) {
         msg = jsonDecode(req.body)["message"];
@@ -115,6 +115,8 @@ class _AddrPageState extends State<AddrPage> {
     }
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
           child: Text(
@@ -126,57 +128,55 @@ class _AddrPageState extends State<AddrPage> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 25,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
-                iconSize: 30,
-                color: widget.adth,
-              )),
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    if (!mounted) return; // prevents calling setState if widget is disposed
+              backgroundColor: Colors.white,
+              radius: 25,
+              child: IconButton(
+                onPressed: () {
+                  if (!mounted)
+                    return; // prevents calling setState if widget is disposed
 
-      setState(() {
-                      didit = true;
-                    });
-                  },
-                  icon: Icon(
-                    Icons.refresh,
-                  ),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+                  setState(() {
+                    didit = true;
+                  });
+                },
+                icon: Icon(Icons.refresh),
+                iconSize: 30,
+                color: widget.adth,
+              ),
+            ),
+          ),
         ],
       ),
-      body: SingleChildScrollView(
-          child: Column(children: [
-        _getme(),
-      ])),
+      body: SingleChildScrollView(child: Column(children: [_getme()])),
       bottomNavigationBar: GestureDetector(
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => EditAddrePage(
-                      adth: widget.adth,
-                      userind: -1,
-                    )),
+              builder:
+                  (context) => EditAddrePage(adth: widget.adth, userind: -1),
+            ),
           );
-          if (!mounted) return; // prevents calling setState if widget is disposed
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
 
-      setState(() {
+          setState(() {
             didit = true;
           });
         },
@@ -185,30 +185,35 @@ class _AddrPageState extends State<AddrPage> {
           color: widget.adth,
           height: 70,
           child: Center(
-              child: Text(
-            "Add New Address",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 17, color: Colors.white),
-          )),
+            child: Text(
+              "Add New Address",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
+                color: Colors.white,
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  _getCards(
-      {required int index,
-      required int id,
-      required int houseNumber,
-      required String name,
-      required String addressLine1,
-      required String pincode,
-      required String city,
-      required String state,
-      required String country,
-      required String addressLine2,
-      required String area,
-      required String phone,
-      required String countryCode}) {
+  _getCards({
+    required int index,
+    required int id,
+    required int houseNumber,
+    required String name,
+    required String addressLine1,
+    required String pincode,
+    required String city,
+    required String state,
+    required String country,
+    required String addressLine2,
+    required String area,
+    required String phone,
+    required String countryCode,
+  }) {
     // int index = 0;
     int ProInd = 0;
 
@@ -275,16 +280,20 @@ class _AddrPageState extends State<AddrPage> {
                         // // restart();
                         // didit = true;
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditAddrePage(
-                                      adth: widget.adth,
-                                      userind: id,
-                                    )));
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => EditAddrePage(
+                                  adth: widget.adth,
+                                  userind: id,
+                                ),
+                          ),
+                        );
 
-                        if (!mounted) return; // prevents calling setState if widget is disposed
+                        if (!mounted)
+                          return; // prevents calling setState if widget is disposed
 
-      setState(() {
+                        setState(() {
                           didit = true;
                         });
                       },
@@ -310,9 +319,10 @@ class _AddrPageState extends State<AddrPage> {
 
                           _deletedatatoAddr(id);
 
-                          if (!mounted) return; // prevents calling setState if widget is disposed
+                          if (!mounted)
+                            return; // prevents calling setState if widget is disposed
 
-      setState(() {
+                          setState(() {
                             didit = true;
                           });
                         },
@@ -337,7 +347,7 @@ class _AddrPageState extends State<AddrPage> {
 
                   //       if (!mounted) return; // prevents calling setState if widget is disposed
 
-      // setState(() {});
+                  // setState(() {});
                   //     },
                   //     icon: (numbbb == index)
                   //         ? Icon(Icons.verified)
@@ -359,20 +369,20 @@ class _AddrPageState extends State<AddrPage> {
       children: [
         for (int i = 0; i < addressdata.length; i++)
           _getCards(
-              id: addressdata[i]["id"] ?? 9,
-              index: i,
-              houseNumber: 420,
-              name: addressdata[i]["name"] ?? "John Michael",
-              addressLine1:
-                  addressdata[i]["addressLine1"] ?? "Great Eatern Road",
-              pincode: addressdata[i]["pincode"] ?? "12345",
-              city: addressdata[i]["city"] ?? "Raipur",
-              state: addressdata[i]["state"] ?? "Chhattisgarh",
-              country: addressdata[i]["country"] ?? "India",
-              addressLine2: addressdata[i]["addressLine2"] ?? "Civil",
-              area: addressdata[i]["area"] ?? "Civil Line",
-              phone: addressdata[i]["phone"] ?? "9999999999",
-              countryCode: addressdata[i]["countryCode"] ?? "+91"),
+            id: addressdata[i]["id"] ?? 9,
+            index: i,
+            houseNumber: 420,
+            name: addressdata[i]["name"] ?? "John Michael",
+            addressLine1: addressdata[i]["addressLine1"] ?? "Great Eatern Road",
+            pincode: addressdata[i]["pincode"] ?? "12345",
+            city: addressdata[i]["city"] ?? "Raipur",
+            state: addressdata[i]["state"] ?? "Chhattisgarh",
+            country: addressdata[i]["country"] ?? "India",
+            addressLine2: addressdata[i]["addressLine2"] ?? "Civil",
+            area: addressdata[i]["area"] ?? "Civil Line",
+            phone: addressdata[i]["phone"] ?? "9999999999",
+            countryCode: addressdata[i]["countryCode"] ?? "+91",
+          ),
       ],
     );
     return a;

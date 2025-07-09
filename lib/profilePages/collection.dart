@@ -1,5 +1,5 @@
-import 'package:Template/Purchase/buyItem.dart';
-import 'package:Template/models/categorymodel/cate.dart';
+import 'package:template/Purchase/buyItem.dart';
+import 'package:template/models/categorymodel/cate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +17,8 @@ class _CollectionPageState extends State<CollectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
           child: Text(
@@ -28,35 +30,34 @@ class _CollectionPageState extends State<CollectionPage> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 25,
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
+                icon: Icon(Icons.favorite_border_outlined, color: widget.adth),
                 iconSize: 30,
                 color: widget.adth,
-              )),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.favorite_border_outlined,
-                    color: widget.adth,
-                  ),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              ),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -64,18 +65,19 @@ class _CollectionPageState extends State<CollectionPage> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: (productData1.length == 0)
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Center(
-                          child: Container(
-                            child: Text("No Collection items found"),
+              child:
+                  (productData1.length == 0)
+                      ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Center(
+                            child: Container(
+                              child: Text("No Collection items found"),
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                  : _buildItemsGridDom(-1),
+                        ],
+                      )
+                      : _buildItemsGridDom(-1),
             ),
           ],
         ),
@@ -91,25 +93,30 @@ class _CollectionPageState extends State<CollectionPage> {
     // }
 
     return Center(
-      child: Wrap(children: [
-        for (int i = 0; i < n; i++)
-          (!favIds.contains(productData1[i]["id"]))
-              ? SizedBox()
-              : productCard21(
-                  name: (productData1.length > i)
-                      ? productData1[i]["name"]
-                      : "not found",
-                  rating: productData1[i]["rating"],
+      child: Wrap(
+        children: [
+          for (int i = 0; i < n; i++)
+            (!favIds.contains(productData1[i]["id"]))
+                ? SizedBox()
+                : productCard21(
+                  name:
+                      (productData1.length > i)
+                          ? productData1[i]["name"]
+                          : "not found",
+                  rating: "${productData1[i]["rating"] ?? 0}",
                   left: productData1[i]["variants"][0]["quantity"],
                   price: productData1[i]["variants"][0]["price"],
                   oldPrice: productData1[i]["variants"][0]["strike_price"],
                   id: productData1[i]["id"],
-                  image: (productData1.length > i)
-                      ? productData1[i]["thumbnail"]["url"]
-                      : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+                  image:
+                      (productData1.length > i)
+                          ? productData1[i]["thumbnail"]["url"]
+                          : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
                   ok: false,
+                  category: productData1[i]["category"]["name"],
                 ),
-      ]),
+        ],
+      ),
     );
   }
 
@@ -124,47 +131,47 @@ class _CollectionPageState extends State<CollectionPage> {
   productCard21({
     required int id,
     required String name,
-    required int rating,
+    required String rating,
     required int left,
     required String price,
     required String oldPrice,
     required String image,
     required bool ok,
+    String? category,
   }) {
     return Padding(
       padding: const EdgeInsets.all(0.0),
       child: Card(
         elevation: 1,
         child: Container(
-          width: 155,
-
-          // color: const Color.fromRGBO(234, 229, 229, 1),
+          width: (MediaQuery.of(context).size.width) / 2 - 10,
           child: GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          BuyItem(adth: widget.adth, buyid: id)));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BuyItem(adth: widget.adth, buyid: id),
+                ),
+              );
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: Container(
-                color: const Color.fromARGB(255, 250, 248, 248),
+                color: Colors.white,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Stack(
                       children: [
                         CachedNetworkImage(
                           imageUrl: image,
-                          placeholder: (context, url) =>
-                              Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.broken_image),
+                          placeholder: (context, url) => Icon(Icons.image),
+                          errorWidget:
+                              (context, url, error) => Icon(Icons.image),
 
-                          // width: double.infinity,
+                          width: double.infinity,
                           // height: 100,
+                          height: 200,
                           fit: BoxFit.cover,
                         ),
                         // Image.network(
@@ -179,50 +186,54 @@ class _CollectionPageState extends State<CollectionPage> {
                           right: 1,
                           // ignore: avoid_unnecessary_containers
                           child: Container(
-                              child: IconButton(
-                            icon: Icon(
+                            child: IconButton(
+                              icon: Icon(
                                 (favIds.contains(id))
                                     ? Icons.favorite
                                     : Icons.favorite_border_outlined,
                                 color:
-                                    (favIds.contains(id)) ? Colors.red : null),
-                            onPressed: () {
-                              // _getans(id);
-                              (favIds.contains(id))
-                                  ? {favIds.remove(id)}
-                                  : favIds.add(id);
-                              if (!mounted)
-                                return; // prevents calling setState if widget is disposed
+                                    (favIds.contains(id)) ? Colors.red : null,
+                              ),
+                              onPressed: () {
+                                // _getans(id);
+                                (favIds.contains(id))
+                                    ? {favIds.remove(id)}
+                                    : favIds.add(id);
+                                if (!mounted)
+                                  return; // prevents calling setState if widget is disposed
 
-                              setState(() {});
-                            },
-                          )),
+                                setState(() {});
+                              },
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    // Container(
-                    //   child: Image.network(
-                    //     '$image',
-                    //     // height: 110,
-                    //     fit: BoxFit.cover,
-
-                    //     // width: double.infinity,
-                    //   ),
-                    // ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 6),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         name,
                         style: TextStyle(fontWeight: FontWeight.bold),
-                        textScaler: MediaQuery.textScalerOf(context),
+                        // textScaler: MediaQuery.textScalerOf(context),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
-
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text(
+                        category!,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                        // textScaler: MediaQuery.textScalerOf(context),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -239,57 +250,64 @@ class _CollectionPageState extends State<CollectionPage> {
                                   Text(
                                     "($rating.0)",
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                   Text(
                                     "250k+",
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
-                                  )
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              Text("₹ $price",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12)),
+                              Text(
+                                "₹ $price",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                           Icon(
                             Icons.add_circle_rounded,
                             color: widget.adth,
                             size: 35,
-                          )
+                          ),
                         ],
                       ),
                     ),
                     (ok == true)
                         ? Container()
                         : Container(
-                            margin: EdgeInsets.symmetric(horizontal: 15),
-                            padding: EdgeInsets.only(bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: CupertinoColors.systemYellow,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.deepPurpleAccent,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.red,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.brown,
-                                ),
-                                Text("+$rating")
-                              ],
-                            ),
-                          )
+                          margin: EdgeInsets.symmetric(horizontal: 15),
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: CupertinoColors.systemYellow,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepPurpleAccent,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.red,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.brown,
+                              ),
+                              Text("+0"),
+                            ],
+                          ),
+                        ),
                   ],
                 ),
               ),
@@ -299,4 +317,77 @@ class _CollectionPageState extends State<CollectionPage> {
       ),
     );
   }
+
+  // Widget _buildItemsGridDom(int mxi) {
+  //   List showitm = [];
+
+  //   if (mxi == 2) {
+  //     showitm = productData2i;
+  //   } else if (mxi == 4) {
+  //     showitm = productData4i;
+  //   } else if (mxi == 6) {
+  //     showitm = productData6i;
+  //   } else {
+  //     showitm = productData1;
+  //   }
+
+  //   int n = showitm.length;
+
+  //   return (loading && showitm == null)
+  //       ? Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             const Icon(Icons.wifi_off, size: 80, color: Colors.grey),
+  //             const SizedBox(height: 16),
+  //             const Text(
+  //               "No Internet Connection",
+  //               style: TextStyle(fontSize: 20),
+  //             ),
+  //             const SizedBox(height: 20),
+  //             IconButton(
+  //               icon: Icon(Icons.refresh),
+  //               onPressed: _checkConnection,
+  //             ),
+  //           ],
+  //         )
+  //       : GridView.builder(
+  //           shrinkWrap: true,
+  //           physics: NeverScrollableScrollPhysics(),
+  //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+  //               crossAxisCount: 2, childAspectRatio: 0.56),
+  //           itemCount: n,
+  //           itemBuilder: (context, i) => productCard21(
+  //             name: (showitm.length > i) ? showitm[i]["name"] : "not found",
+  //             rating: "${showitm[i]["rating"] ?? 0}",
+  //             left: showitm[i]["variants"][0]["quantity"],
+  //             price: showitm[i]["variants"][0]["price"],
+  //             oldPrice: showitm[i]["variants"][0]["strike_price"],
+  //             id: showitm[i]["id"],
+  //             image: (showitm.length > i)
+  //                 ? showitm[i]["thumbnail"]["url"]
+  //                 : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+  //             ok: false,
+  //             categoryN: showitm[i]["category"]["name"],
+  //           ),
+  //         );
+
+  //   // Center(
+  //   //     child: Wrap(children: [
+  //   //       for (int i = 0; i < n; i++)
+  //   //         productCard21(
+  //   //           name: (showitm.length > i) ? showitm[i]["name"] : "not found",
+  //   //           rating: "${showitm[i]["rating"] ?? 0}",
+  //   //           left: showitm[i]["variants"][0]["quantity"],
+  //   //           price: showitm[i]["variants"][0]["price"],
+  //   //           oldPrice: showitm[i]["variants"][0]["strike_price"],
+  //   //           id: showitm[i]["id"],
+  //   //           image: (showitm.length > i)
+  //   //               ? showitm[i]["thumbnail"]["url"]
+  //   //               : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+  //   //           ok: false,
+  //   //           categoryN: showitm[i]["category"]["name"],
+  //   //         ),
+  //   //     ]),
+  //   // );
+  // }
 }

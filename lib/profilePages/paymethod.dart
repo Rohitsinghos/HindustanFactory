@@ -1,5 +1,5 @@
-import 'package:Template/Purchase/cartdirect.dart';
-import 'package:Template/profilePages/collection.dart';
+import 'package:template/Purchase/cartdirect.dart';
+import 'package:template/profilePages/collection.dart';
 import 'package:flutter/material.dart';
 
 class PayMethodPage extends StatefulWidget {
@@ -15,6 +15,8 @@ class _PayMethodPageState extends State<PayMethodPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
           child: Text(
@@ -26,40 +28,40 @@ class _PayMethodPageState extends State<PayMethodPage> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 25,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
-                iconSize: 30,
-                color: widget.adth,
-              )),
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CartDirPage(
-                                  adth: widget.adth,
-                                  admin: 1,
-                                )));
-                  },
-                  icon: Icon(
-                    Icons.shopping_bag_outlined,
-                  ),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              backgroundColor: Colors.white,
+              radius: 25,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => CartDirPage(adth: widget.adth, admin: 1),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.shopping_bag_outlined),
+                iconSize: 30,
+                color: widget.adth,
+              ),
+            ),
+          ),
         ],
       ),
       body: Column(

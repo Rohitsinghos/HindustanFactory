@@ -1,4 +1,4 @@
-import 'package:Template/models/categorymodel/cate.dart';
+import 'package:template/models/categorymodel/cate.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 Future<bool> getdata() async {
   userData = {};
   try {
-    final res =
-        await http.get(Uri.parse('${BASE_URL}store-users/me'), headers: {
-      'Authorization': "Bearer ${userToken}",
-    });
+    final res = await http.get(
+      Uri.parse('${BASE_URL}store-users/me'),
+      headers: {'Authorization': "Bearer ${userToken}"},
+    );
 
     if (res.statusCode == 200) {
       print("success userrrrrrrrrrrrrrrrrrrr");
@@ -64,7 +64,8 @@ Future<void> getdatatoAddr(int id, int qu) async {
       // setState(() {});
     } else {
       print(
-          "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan");
+        "not cart nahi millallalal to cart... abbebebebbhhdshdhhdhnananannanan",
+      );
     }
   } catch (e) {
     print(e);

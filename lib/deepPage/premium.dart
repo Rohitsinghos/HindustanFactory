@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:ffi';
 
-import 'package:Template/deepPage/razerpay.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/profilePages/collection.dart';
+import 'package:template/deepPage/razerpay.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/profilePages/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,10 +21,17 @@ class _PremiumPageState extends State<PremiumPage> {
   String naamm = "";
   Future<void> _getmeuserwaaPlans() async {
     try {
-      final res =
-          await http.get(Uri.parse('${BASE_URL}store-users/me'), headers: {
-        'Authorization': "Bearer ${userToken}",
-      });
+      prrr = isPremiium;
+      naamm = userName;
+
+      if (naamm != "") {
+        setState(() {});
+        return;
+      }
+      final res = await http.get(
+        Uri.parse('${BASE_URL}store-users/me'),
+        headers: {'Authorization': "Bearer ${userToken}"},
+      );
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
@@ -32,8 +39,10 @@ class _PremiumPageState extends State<PremiumPage> {
 
         Map auserData = json.decode(res.body)["data"];
         prrr = (auserData["isPremium"] == true);
+        isPremiium = prrr;
         print(auserData["isPremium"]);
         naamm = auserData["name"];
+        userName = naamm;
 
         if (!mounted) {
           return;
@@ -68,6 +77,8 @@ class _PremiumPageState extends State<PremiumPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
           child: Text(
@@ -79,38 +90,39 @@ class _PremiumPageState extends State<PremiumPage> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 25,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
-                iconSize: 30,
-                color: widget.adth,
-              )),
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CollectionPage(adth: widget.adth)));
-                  },
-                  icon: Icon(
-                    Icons.favorite_border_outlined,
-                  ),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              backgroundColor: Colors.white,
+              radius: 25,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CollectionPage(adth: widget.adth),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.favorite_border_outlined),
+                iconSize: 30,
+                color: widget.adth,
+              ),
+            ),
+          ),
         ],
       ),
       body: Center(
@@ -127,9 +139,7 @@ class _PremiumPageState extends State<PremiumPage> {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: Card(
@@ -137,33 +147,32 @@ class _PremiumPageState extends State<PremiumPage> {
                 child: Center(
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
+                      SizedBox(height: 20),
+                      Text(
+                        "Free Users",
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: widget.adth,
+                        ),
                       ),
-                      Text("Free Users",
-                          style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: widget.adth)),
-                      SizedBox(
-                        height: 20,
+                      SizedBox(height: 20),
+                      Text(
+                        "No Cash on delivery orders",
+                        style: TextStyle(fontSize: 17),
                       ),
-                      Text("No Cash on delivery orders",
-                          style: TextStyle(fontSize: 17)),
                       Text("No Prepaid orders", style: TextStyle(fontSize: 17)),
-                      Text("No Premium Pricing",
-                          style: TextStyle(fontSize: 17)),
-                      SizedBox(
-                        height: 20,
+                      Text(
+                        "No Premium Pricing",
+                        style: TextStyle(fontSize: 17),
                       ),
+                      SizedBox(height: 20),
                     ],
                   ),
                 ),
               ),
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -175,20 +184,18 @@ class _PremiumPageState extends State<PremiumPage> {
                   child: MaterialButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RazerPay(
-                                    adth: widget.adth,
-                                    money: 3000,
-                                  )));
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  RazerPay(adth: widget.adth, money: 3000),
+                        ),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        children: [
-                          Text("Super seller"),
-                          Text("₹ 3000"),
-                        ],
+                        children: [Text("Super seller"), Text("₹ 3000")],
                       ),
                     ),
                   ),
@@ -201,26 +208,24 @@ class _PremiumPageState extends State<PremiumPage> {
                   child: MaterialButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RazerPay(
-                                    adth: widget.adth,
-                                    money: 3000,
-                                  )));
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  RazerPay(adth: widget.adth, money: 3000),
+                        ),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
-                        children: [
-                          Text("Pro User"),
-                          Text("₹ 3000"),
-                        ],
+                        children: [Text("Pro User"), Text("₹ 3000")],
                       ),
                     ),
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

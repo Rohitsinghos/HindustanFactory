@@ -1,10 +1,7 @@
 # Razorpay keep rules
 -keep class com.razorpay.** { *; }
--keep interface com.razorpay.** { *; }
-
-# Keep Razorpay annotation references
--keepattributes *Annotation*
 -dontwarn com.razorpay.**
-
-# Fix for missing proguard.annotation.Keep issue
--dontwarn proguard.annotation.**
+-keep class proguard.annotation.Keep
+-keep class proguard.annotation.KeepClassMembers
+-keep @interface proguard.annotation.Keep
+-keep @interface proguard.annotation.KeepClassMembers

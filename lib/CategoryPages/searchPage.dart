@@ -1,19 +1,19 @@
 import 'dart:convert';
 
-import 'package:Template/Purchase/buyItem.dart';
-import 'package:Template/api/get.dart';
-import 'package:Template/models/categorymodel/cate.dart';
+import 'package:template/Purchase/buyItem.dart';
+import 'package:template/api/get.dart';
+import 'package:template/models/categorymodel/cate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-import 'package:Template/CategoryPages/category1.dart';
-import 'package:Template/CategoryPages/topPage.dart';
-import 'package:Template/Purchase/cartdirect.dart';
-import 'package:Template/pages/home.dart';
-import 'package:Template/pages/profile.dart';
-import 'package:Template/pages/video.dart';
+import 'package:template/CategoryPages/category1.dart';
+import 'package:template/CategoryPages/topPage.dart';
+import 'package:template/Purchase/cartdirect.dart';
+import 'package:template/pages/home.dart';
+import 'package:template/pages/profile.dart';
+import 'package:template/pages/video.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -37,8 +37,11 @@ class _SearchPageState extends State<SearchPage> {
     // doit = false;
     // int ind = widget.index;
     try {
-      final res = await http.get(Uri.parse(
-          "${BASE_URL}search/products?pagination[page]=1&pagination[pageSize]=20&qs=$ser"));
+      final res = await http.get(
+        Uri.parse(
+          "${BASE_URL}search/products?pagination[page]=1&pagination[pageSize]=20&qs=$ser",
+        ),
+      );
       // final res2 = await http.get(Uri.parse("https://hindustanapi.mtlapi.socialseller.in/api/subcategories"));
 
       if (res.statusCode == 200) {
@@ -116,150 +119,192 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-              // radius: 5,
-              backgroundColor: Colors.white,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_new_outlined,
-                  color: widget.adth,
-                ),
-              )),
+            // radius: 5,
+            backgroundColor: Colors.white,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined, color: widget.adth),
+            ),
+          ),
         ),
         backgroundColor: Colors.white,
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
+              backgroundColor: Colors.white,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
                         return SerchTopPage(
-                            searchpro: "", adth: widget.adth, index: -1);
-                      }));
-                    },
-                    icon: Icon(
-                      Icons.search,
-                      color: widget.adth,
-                    ))),
+                          searchpro: "",
+                          adth: widget.adth,
+                          index: -1,
+                        );
+                      },
+                    ),
+                  );
+                },
+                icon: Icon(Icons.search, color: widget.adth),
+              ),
+            ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(100),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(
+                  bottom: 3.0,
+                  left: 10,
+                  right: 10,
+                ),
+                child: saleTile(),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      _AlphaUD();
+
+                      if (alpha == 1) {
+                        setState(
+                          () => sortTopData(
+                            itemsTop,
+                            byName: true,
+                            ascending: false,
+                          ),
+                        );
+                      } else {
+                        setState(
+                          () => sortTopData(
+                            itemsTop,
+                            byName: true,
+                            ascending: true,
+                          ),
+                        );
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Row(
+                        children: [
+                          Icon(Icons.filter_list),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Alpha: " +
+                                  "${(alpha != 1) ? "Asending" : "Desending"}",
+                              style: TextStyle(
+                                color: Colors.blueGrey,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Container(
+                  //   padding: EdgeInsets.all(8),
+                  //   margin: EdgeInsets.only(left: 8),
+                  //   child: DropdownButton<String>(
+                  //     style: TextStyle(color: Colors.blueGrey, fontSize: 13),
+                  //     icon: Icon(Icons.filter_list),
+                  //     value: _selectedSort,
+                  //     items: _sortOptions.map((opt) {
+                  //       return DropdownMenuItem(value: opt, child: Text(opt));
+                  //     }).toList(),
+                  //     onChanged: (value) {
+                  //       if (value != null) {
+                  //         _sortList(value);
+                  //       }
+                  //     },
+                  //   ),
+                  // ),
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //     itemCount: _filteredList.length,
+                  //     itemBuilder: (context, i) {
+                  //       final item = _filteredList[i];
+                  //       return ListTile(
+                  //         title: Text(item.name),
+                  //         subtitle: Text(item.value.toString()),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+                  GestureDetector(
+                    onTap: () {
+                      _lowhigh();
+
+                      if (lowhn != 1) {
+                        setState(
+                          () => sortTopData(
+                            itemsTop,
+                            byName: false,
+                            ascending: false,
+                          ),
+                        );
+                      } else {
+                        setState(
+                          () => sortTopData(
+                            itemsTop,
+                            byName: false,
+                            ascending: true,
+                          ),
+                        );
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          (lowhn == 1)
+                              ? Icons.arrow_upward
+                              : Icons.arrow_downward,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            (lowhn == 1)
+                                ? "Price: lowest to high"
+                                : "Price: highest to low",
+                            style: TextStyle(
+                              color: Colors.blueGrey,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(0.0),
             child: Column(
               children: [
-                saleTile(),
                 SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        _AlphaUD();
-
-                        if (alpha == 1) {
-                          setState(() => sortTopData(itemsTop,
-                              byName: true, ascending: false));
-                        } else {
-                          setState(() => sortTopData(itemsTop,
-                              byName: true, ascending: true));
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.filter_list),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Alpha: " +
-                                    "${(alpha != 1) ? "Asending" : "Desending"}",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 13),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Container(
-                    //   padding: EdgeInsets.all(8),
-                    //   margin: EdgeInsets.only(left: 8),
-                    //   child: DropdownButton<String>(
-                    //     style: TextStyle(color: Colors.blueGrey, fontSize: 13),
-                    //     icon: Icon(Icons.filter_list),
-                    //     value: _selectedSort,
-                    //     items: _sortOptions.map((opt) {
-                    //       return DropdownMenuItem(value: opt, child: Text(opt));
-                    //     }).toList(),
-                    //     onChanged: (value) {
-                    //       if (value != null) {
-                    //         _sortList(value);
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
-                    // Expanded(
-                    //   child: ListView.builder(
-                    //     itemCount: _filteredList.length,
-                    //     itemBuilder: (context, i) {
-                    //       final item = _filteredList[i];
-                    //       return ListTile(
-                    //         title: Text(item.name),
-                    //         subtitle: Text(item.value.toString()),
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                    GestureDetector(
-                      onTap: () {
-                        _lowhigh();
-
-                        if (lowhn != 1) {
-                          setState(() => sortTopData(itemsTop,
-                              byName: false, ascending: false));
-                        } else {
-                          setState(() => sortTopData(itemsTop,
-                              byName: false, ascending: true));
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Icon((lowhn == 1)
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              (lowhn == 1)
-                                  ? "Price: lowest to high"
-                                  : "Price: highest to low",
-                              style: TextStyle(
-                                  color: Colors.blueGrey, fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    _buildItemsGridDom(),
-                  ],
-                ),
+                Column(children: [_buildItemsGridDom()]),
               ],
             ),
           ),
@@ -278,6 +323,7 @@ class _SearchPageState extends State<SearchPage> {
     required String oldPrice,
     required String image,
     required bool ok,
+    String? category,
   }) {
     return Padding(
       padding: const EdgeInsets.all(0.0),
@@ -290,10 +336,11 @@ class _SearchPageState extends State<SearchPage> {
           child: GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          BuyItem(adth: widget.adth, buyid: id2)));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BuyItem(adth: widget.adth, buyid: id2),
+                ),
+              );
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
@@ -306,13 +353,11 @@ class _SearchPageState extends State<SearchPage> {
                       children: [
                         CachedNetworkImage(
                           imageUrl: image,
-                          placeholder: (context, url) =>
-                              Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.broken_image),
-
-                          // width: double.infinity,
-                          // height: 100,
+                          placeholder: (context, url) => Icon(Icons.image),
+                          errorWidget:
+                              (context, url, error) => Icon(Icons.image),
+                          width: double.infinity,
+                          height: 200,
                           fit: BoxFit.cover,
                         ),
 
@@ -328,50 +373,56 @@ class _SearchPageState extends State<SearchPage> {
                           right: 1,
                           // ignore: avoid_unnecessary_containers
                           child: Container(
-                              child: IconButton(
-                            icon: Icon(
+                            child: IconButton(
+                              icon: Icon(
                                 (favIds.contains(id2))
                                     ? Icons.favorite
                                     : Icons.favorite_border_outlined,
-                                color: (favIds.contains(id2))
-                                    ? Colors.red
-                                    : Colors.grey),
-                            onPressed: () {
-                              // _getans(id);
-                              (favIds.contains(id2))
-                                  ? {favIds.remove(id2)}
-                                  : favIds.add(id2);
-                              if (!mounted)
-                                return; // prevents calling setState if widget is disposed
+                                color:
+                                    (favIds.contains(id2))
+                                        ? Colors.red
+                                        : Colors.grey,
+                              ),
+                              onPressed: () {
+                                // _getans(id);
+                                (favIds.contains(id2))
+                                    ? {favIds.remove(id2)}
+                                    : favIds.add(id2);
+                                if (!mounted)
+                                  return; // prevents calling setState if widget is disposed
 
-                              setState(() {});
-                            },
-                          )),
+                                setState(() {});
+                              },
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 6),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         name,
                         style: TextStyle(fontWeight: FontWeight.bold),
-                        textScaler: MediaQuery.textScalerOf(context),
+                        // textScaler: MediaQuery.textScalerOf(context),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
-                        "07 LV8",
+                        category!,
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12),
-                        textScaler: MediaQuery.textScalerOf(context),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                        // textScaler: MediaQuery.textScalerOf(context),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -388,57 +439,64 @@ class _SearchPageState extends State<SearchPage> {
                                   Text(
                                     "($rating.0)",
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                   Text(
                                     "250k+",
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
-                                  )
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              Text("₹ $price",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12)),
+                              Text(
+                                "₹ $price",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                           Icon(
                             Icons.add_circle_rounded,
                             color: widget.adth,
                             size: 35,
-                          )
+                          ),
                         ],
                       ),
                     ),
                     (ok == true)
                         ? Container()
                         : Container(
-                            margin: EdgeInsets.symmetric(horizontal: 15),
-                            padding: EdgeInsets.only(bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: CupertinoColors.systemYellow,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.deepPurpleAccent,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.red,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.brown,
-                                ),
-                                Text("+$rating")
-                              ],
-                            ),
-                          )
+                          margin: EdgeInsets.symmetric(horizontal: 15),
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: CupertinoColors.systemYellow,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepPurpleAccent,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.red,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.brown,
+                              ),
+                              Text("+0"),
+                            ],
+                          ),
+                        ),
                   ],
                 ),
               ),
@@ -450,17 +508,29 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildItemsGridDom() {
-    int n = TopData1.length;
+    int n = itemsTop.length;
 
     // if (mxi != -1) {
     //   n = mxi;
     // }
 
     return (n == 0)
-        ? CircularProgressIndicator()
-        : Center(
-            child: Wrap(children: [
-              for (int i = 0; i < itemsTop.length; i++)
+        ? Center(child: CircularProgressIndicator())
+        : Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.53,
+            ),
+            itemCount: n,
+            itemBuilder:
+                (context, i) =>
+                //  Center(
+                //     child: Wrap(children: [
+                // for (int i = 0; i < itemsTop.length; i++)
                 productCard2(
                   name: itemsTop[i]["name"],
                   rating: 0,
@@ -468,12 +538,15 @@ class _SearchPageState extends State<SearchPage> {
                   price: itemsTop[i]["variants"][0]["price"],
                   oldPrice: itemsTop[i]["variants"][0]["strike_price"],
                   id2: itemsTop[i]["id"],
-                  image: itemsTop[i]["thumbnail"]["url"] ??
+                  image:
+                      itemsTop[i]["thumbnail"]["url"] ??
                       "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
                   ok: false,
+                  category: itemsTop[i]["category"]["name"],
                 ),
-            ]),
-          );
+            // ]),
+          ),
+        );
   }
 
   Widget Options(String title) {
@@ -488,13 +561,16 @@ class _SearchPageState extends State<SearchPage> {
             color: Colors.white,
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SerchTopPage(
-                            searchpro: "",
-                            adth: widget.adth,
-                            index: -1,
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => SerchTopPage(
+                        searchpro: "",
+                        adth: widget.adth,
+                        index: -1,
+                      ),
+                ),
+              );
             },
             child: Container(
               padding: EdgeInsets.all(4),
@@ -537,14 +613,11 @@ class _SearchPageState extends State<SearchPage> {
               ),
               ClipRRect(
                 borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(12),
-                    bottomRight: Radius.circular(12)),
-                child: Image.asset(
-                  '$imageUrl',
-                  height: 100,
-                  fit: BoxFit.cover,
+                  topRight: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
                 ),
-              )
+                child: Image.asset('$imageUrl', height: 100, fit: BoxFit.cover),
+              ),
             ],
           ),
         ],
@@ -557,6 +630,7 @@ class _SearchPageState extends State<SearchPage> {
       height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
+        // border: Border.all(color: widget.adth),
       ),
       child: TextField(
         controller: cntrol,
@@ -569,7 +643,7 @@ class _SearchPageState extends State<SearchPage> {
         // enabled: true,
         // enableInteractiveSelection: true,
         decoration: InputDecoration(
-          hintText: 'Search for "Summer"',
+          labelText: 'Search for "Summer"',
           // labelText: "Search",
           fillColor: Colors.grey.shade100,
           border: OutlineInputBorder(
@@ -581,10 +655,7 @@ class _SearchPageState extends State<SearchPage> {
             borderSide: BorderSide(color: widget.adth),
             borderRadius: BorderRadius.circular(12),
           ),
-          prefixIcon: Icon(
-            Icons.search_sharp,
-            size: 28,
-          ),
+          prefixIcon: Icon(Icons.search_sharp, size: 28),
           filled: true,
           // fillColor: const Color.fromARGB(255, 237, 232, 232),
           // hintTextDirection: ,
@@ -614,110 +685,118 @@ class _SearchPageState extends State<SearchPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MyHome(adth: widget.adth, admin: 0)),
-                      (context) => false);
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.home_outlined,
-                    size: 21,
-                    color: b1,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHome(adth: widget.adth, admin: 0),
                   ),
+                  (context) => false,
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.home_outlined, size: 21, color: b1),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Cart1Page(
-                                adth: widget.adth,
-                                admin: 0,
-                              )));
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.dashboard_outlined,
-                    color: widget.adth,
-                    size: 21,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => Cart1Page(adth: widget.adth, admin: 0),
                   ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.dashboard_outlined, color: widget.adth, size: 21),
                   Text(
                     'Category',
                     style: TextStyle(color: widget.adth, fontSize: 13),
                   ),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VideoPage(
-                                admin: 2,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VideoPage(admin: 2, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.ondemand_video, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CartDirPage(
-                                admin: 3,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                                adth: widget.adth,
-                                admin: 0,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => ProfilePage(adth: widget.adth, admin: 0),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.person_outline, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Profile'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
 

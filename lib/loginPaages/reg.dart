@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Template/loginPaages/otppage.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/pages/home.dart';
+import 'package:template/loginPaages/otppage.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
@@ -26,10 +26,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final passc = TextEditingController();
   final mobc = TextEditingController();
 
-// myController.text = "hshshhshs";
-//  myController2 = "hshshhshs";
-//  myController3 = "hshshhshs";
-//  myController4 ="hshhs";
+  // myController.text = "hshshhshs";
+  //  myController2 = "hshshhshs";
+  //  myController3 = "hshshhshs";
+  //  myController4 ="hshhs";
   Color rit = const Color.fromARGB(248, 231, 222, 222);
   int rith = 50;
   bool didsave = false;
@@ -57,16 +57,18 @@ class _RegisterPageState extends State<RegisterPage> {
     });
     if (createData != {}) {
       try {
-        final getreg = await http.post(Uri.parse("${BASE_URL}store-users"),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-            },
-            body: jsonEncode(<String, String>{
-              'name': createData["name"],
-              'email': createData["email"],
-              'phone': "+91${createData["phone"]}",
-              'password': createData["password"],
-            }));
+        final getreg = await http.post(
+          Uri.parse("${BASE_URL}store-users"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'name': createData["name"],
+            'email': createData["email"],
+            'phone': "+91${createData["phone"]}",
+            'password': createData["password"],
+          }),
+        );
 
         print({
           'name': createData["name"],
@@ -83,8 +85,12 @@ class _RegisterPageState extends State<RegisterPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => OtpPage(
-                    adth: widget.adth, phoneNumber: createData['phone'])),
+              builder:
+                  (context) => OtpPage(
+                    adth: widget.adth,
+                    phoneNumber: createData['phone'],
+                  ),
+            ),
           );
         } else if (getreg.statusCode == 400) {
           print(json.decode(getreg.body)['message']);
@@ -92,8 +98,12 @@ class _RegisterPageState extends State<RegisterPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => OtpPage(
-                    adth: widget.adth, phoneNumber: createData['phone'])),
+              builder:
+                  (context) => OtpPage(
+                    adth: widget.adth,
+                    phoneNumber: createData['phone'],
+                  ),
+            ),
           );
           // registered = true;
         } else {
@@ -128,11 +138,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 children: [
                   Row(
                     children: [
-                      Text("Register",
-                          style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black)),
+                      Text(
+                        "Register",
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -146,8 +159,9 @@ class _RegisterPageState extends State<RegisterPage> {
                       filled: true,
                       fillColor: Colors.grey.shade100,
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none),
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: widget.adth),
                         borderRadius: BorderRadius.circular(12),
@@ -204,8 +218,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   Row(
                     children: [
                       Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
@@ -253,9 +269,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           setState(() => agreeToTerms = value!);
                         },
                       ),
-                      Expanded(
-                        child: Text("I agree to Terms & Conditions."),
-                      ),
+                      Expanded(child: Text("I agree to Terms & Conditions.")),
                     ],
                   ),
                   SizedBox(height: 20),
@@ -272,9 +286,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => OtpPage(
+                              builder:
+                                  (context) => OtpPage(
                                     adth: widget.adth,
-                                    phoneNumber: createData['phone'])),
+                                    phoneNumber: createData['phone'],
+                                  ),
+                            ),
                           );
                         } else {
                           if (didsave ||
@@ -292,7 +309,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 "email": emailc.text,
                                 "phone": mobc.text,
                                 "password": passc.text,
-                                "role": "user"
+                                "role": "user",
                               };
                             }
 
@@ -339,13 +356,16 @@ class _RegisterPageState extends State<RegisterPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Center(
-                                  child: Text(
-                                (!registered)
-                                    ? "Register"
-                                    : "Verify Phonenumber",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              )),
+                                child: Text(
+                                  (!registered)
+                                      ? "Register"
+                                      : "Verify Phonenumber",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: Icon(
@@ -383,46 +403,46 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-//   Widget _getIn(String hin, IconData iconi) {
-//     return Container(
-//       child: Padding(
-//         padding: const EdgeInsets.only(top: 25.0),
-//         child: ClipRRect(
-//           borderRadius: BorderRadius.circular(15),
-//           child: Container(
-//             padding: EdgeInsets.symmetric(horizontal: 8),
-//             height: 50,
-//             color: rit,
-//             child: Row(
-//               children: <Widget>[
-//                 Padding(
-//                   padding: const EdgeInsets.all(8.0),
-//                   child: Icon(
-//                     iconi,
-//                     size: 25,
-//                   ),
-//                 ),
-//                 Expanded(
-//                   child: TextField(
-//                     controller: myController2,
-//                     decoration: InputDecoration.collapsed(
-//                       hintText: '$hin',
-//                       hintStyle: TextStyle(fontSize: 14),
-//                     ),
-//                     keyboardType: TextInputType.text,
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+  //   Widget _getIn(String hin, IconData iconi) {
+  //     return Container(
+  //       child: Padding(
+  //         padding: const EdgeInsets.only(top: 25.0),
+  //         child: ClipRRect(
+  //           borderRadius: BorderRadius.circular(15),
+  //           child: Container(
+  //             padding: EdgeInsets.symmetric(horizontal: 8),
+  //             height: 50,
+  //             color: rit,
+  //             child: Row(
+  //               children: <Widget>[
+  //                 Padding(
+  //                   padding: const EdgeInsets.all(8.0),
+  //                   child: Icon(
+  //                     iconi,
+  //                     size: 25,
+  //                   ),
+  //                 ),
+  //                 Expanded(
+  //                   child: TextField(
+  //                     controller: myController2,
+  //                     decoration: InputDecoration.collapsed(
+  //                       hintText: '$hin',
+  //                       hintStyle: TextStyle(fontSize: 14),
+  //                     ),
+  //                     keyboardType: TextInputType.text,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
 }
 
-// import 'package:Template/pages/home.dart';
+// import 'package:template/pages/home.dart';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter/rendering.dart';
@@ -467,7 +487,8 @@ class _RegisterPageState extends State<RegisterPage> {
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       resizeToAvoidBottomInset: false,
-//       appBar: AppBar(
+//       appBar:  AppBar(surfaceTintColor: Colors.white,
+
 //         backgroundColor: widget.adth,
 //         toolbarHeight: 0,
 //       ),

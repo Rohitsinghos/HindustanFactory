@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:Template/models/categorymodel/cate.dart';
+import 'package:template/models/categorymodel/cate.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -68,19 +68,20 @@ class _GetVerMoneyState extends State<GetVerMoney> {
   Future<void> _showPickOptionsDialog() async {
     final isCamera = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Select image source'),
-        actions: [
-          TextButton(
-            child: const Text('Camera'),
-            onPressed: () => Navigator.pop(context, true),
+      builder:
+          (_) => AlertDialog(
+            title: const Text('Select image source'),
+            actions: [
+              TextButton(
+                child: const Text('Camera'),
+                onPressed: () => Navigator.pop(context, true),
+              ),
+              TextButton(
+                child: const Text('Gallery'),
+                onPressed: () => Navigator.pop(context, false),
+              ),
+            ],
           ),
-          TextButton(
-            child: const Text('Gallery'),
-            onPressed: () => Navigator.pop(context, false),
-          ),
-        ],
-      ),
     );
     if (isCamera == null) return;
     _pickImage(isCamera ? ImageSource.camera : ImageSource.gallery);
@@ -106,10 +107,10 @@ class _GetVerMoneyState extends State<GetVerMoney> {
   final passc = TextEditingController();
   final mobc = TextEditingController();
 
-// myController.text = "hshshhshs";
-//  myController2 = "hshshhshs";
-//  myController3 = "hshshhshs";
-//  myController4 ="hshhs";
+  // myController.text = "hshshhshs";
+  //  myController2 = "hshshhshs";
+  //  myController3 = "hshshhshs";
+  //  myController4 ="hshhs";
   Color rit = const Color.fromARGB(248, 231, 222, 222);
   int rith = 50;
   bool didsave = false;
@@ -129,22 +130,26 @@ class _GetVerMoneyState extends State<GetVerMoney> {
 
   _photoLong() {
     return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              title: Text("Profile Picture"),
-              actions: [
-                Container(
-                  child: CircleAvatar(
-                    radius: 130,
-                    backgroundImage: NetworkImage((userData != null &&
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text("Profile Picture"),
+            actions: [
+              Container(
+                child: CircleAvatar(
+                  radius: 130,
+                  backgroundImage: NetworkImage(
+                    (userData != null &&
                             userData["avatar"] != null &&
                             userData["avatar"]["url"] != null)
                         ? userData["avatar"]["url"]
-                        : 'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg'),
+                        : 'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg',
                   ),
                 ),
-              ],
-            ));
+              ),
+            ],
+          ),
+    );
   }
 
   // _updateuser() async {
@@ -242,6 +247,8 @@ class _GetVerMoneyState extends State<GetVerMoney> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         toolbarHeight: 60,
         title: Center(
           child: Text(
@@ -252,32 +259,34 @@ class _GetVerMoneyState extends State<GetVerMoney> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 25,
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
+                icon: Icon(Icons.shopping_cart_outlined),
                 iconSize: 30,
                 color: widget.adth,
-              )),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.shopping_cart_outlined),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              ),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -286,192 +295,200 @@ class _GetVerMoneyState extends State<GetVerMoney> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(
-                    child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child:
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                          GestureDetector(
-                            onTap: () {
-                              // _showPickOptionsDialog();
-                              _uploadPickedImage();
-                            },
-                            onLongPress: () {
-                              _photoLong();
-                            },
-                            child: Image(
-                              height: 100,
-                              image: (_pickedImage != null)
+              padding: const EdgeInsets.all(16.0),
+              child: Center(
+                child: Container(
+                  padding: EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          // _showPickOptionsDialog();
+                          _uploadPickedImage();
+                        },
+                        onLongPress: () {
+                          _photoLong();
+                        },
+                        child: Image(
+                          height: 100,
+                          image:
+                              (_pickedImage != null)
                                   ? FileImage(_pickedImage!)
                                   // ignore: unnecessary_null_comparison
                                   : NetworkImage(
-                                      'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg'),
+                                    'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg',
+                                  ),
+                        ),
+                      ),
+                      Text(
+                        "Add your payment screenshot",
+                        style: TextStyle(color: widget.adth),
+                      ),
+
+                      SizedBox(height: 20),
+
+                      // Full Name
+                      TextField(
+                        controller: namc,
+                        decoration: InputDecoration(
+                          labelText: "Full Name",
+                          prefixIcon: Icon(Icons.person_outline),
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: widget.adth),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          labelStyle: TextStyle(color: widget.adth),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+
+                      // Email
+                      TextField(
+                        controller: emailc,
+                        decoration: InputDecoration(
+                          labelText: "Paid Amount",
+                          prefixIcon: Icon(Icons.money),
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: widget.adth),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          labelStyle: TextStyle(color: widget.adth),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+
+                      // Password
+                      // TextField(
+                      //   controller: passc,
+                      //   obscureText: true,
+                      //   decoration: InputDecoration(
+                      //     labelText: "Password",
+                      //     prefixIcon: Icon(Icons.lock_outline),
+                      //     filled: true,
+                      //     fillColor: Colors.grey.shade100,
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(12),
+                      //       borderSide: BorderSide.none,
+                      //     ),
+                      //     focusedBorder: OutlineInputBorder(
+                      //       borderSide: BorderSide(color: widget.adth),
+                      //       borderRadius: BorderRadius.circular(12),
+                      //     ),
+                      //     labelStyle: TextStyle(color: widget.adth),
+                      //   ),
+                      // ),
+                      // SizedBox(height: 16),
+
+                      // Phone Number
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 16,
                             ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text("+91"),
                           ),
-                          Text(
-                            "Add your payment screenshot",
-                            style: TextStyle(color: widget.adth),
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Full Name
-                          TextField(
-                            controller: namc,
-                            decoration: InputDecoration(
-                              labelText: "Full Name",
-                              prefixIcon: Icon(Icons.person_outline),
-                              filled: true,
-                              fillColor: Colors.grey.shade100,
-                              border: OutlineInputBorder(
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              keyboardType: TextInputType.phone,
+                              controller: mobc,
+                              enabled: false,
+                              decoration: InputDecoration(
+                                labelText: "Phone Number",
+                                filled: true,
+                                fillColor: Colors.grey.shade100,
+                                border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide.none),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: widget.adth),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelStyle: TextStyle(color: widget.adth),
-                            ),
-                          ),
-                          SizedBox(height: 16),
-
-                          // Email
-                          TextField(
-                            controller: emailc,
-                            decoration: InputDecoration(
-                              labelText: "Paid Amount",
-                              prefixIcon: Icon(Icons.money),
-                              filled: true,
-                              fillColor: Colors.grey.shade100,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide.none,
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: widget.adth),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelStyle: TextStyle(color: widget.adth),
-                            ),
-                          ),
-                          SizedBox(height: 16),
-
-                          // Password
-                          // TextField(
-                          //   controller: passc,
-                          //   obscureText: true,
-                          //   decoration: InputDecoration(
-                          //     labelText: "Password",
-                          //     prefixIcon: Icon(Icons.lock_outline),
-                          //     filled: true,
-                          //     fillColor: Colors.grey.shade100,
-                          //     border: OutlineInputBorder(
-                          //       borderRadius: BorderRadius.circular(12),
-                          //       borderSide: BorderSide.none,
-                          //     ),
-                          //     focusedBorder: OutlineInputBorder(
-                          //       borderSide: BorderSide(color: widget.adth),
-                          //       borderRadius: BorderRadius.circular(12),
-                          //     ),
-                          //     labelStyle: TextStyle(color: widget.adth),
-                          //   ),
-                          // ),
-                          // SizedBox(height: 16),
-
-                          // Phone Number
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 16),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
+                                  borderSide: BorderSide.none,
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: widget.adth),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Text("+91"),
-                              ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: TextField(
-                                  keyboardType: TextInputType.phone,
-                                  controller: mobc,
-                                  enabled: false,
-                                  decoration: InputDecoration(
-                                    labelText: "Phone Number",
-                                    filled: true,
-                                    fillColor: Colors.grey.shade100,
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                      borderSide: BorderSide.none,
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: widget.adth),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    errorBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(color: Colors.red),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    labelStyle: TextStyle(color: widget.adth),
-                                  ),
+                                errorBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16),
-
-                          // Terms and conditions
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: agreeToTerms,
-                                onChanged: (value) {
-                                  if (!mounted)
-                                    return; // prevents calling setState if widget is disposed
-
-                                  setState(() => agreeToTerms = value!);
-                                },
-                              ),
-                              Expanded(
-                                child: Text("I agree to Terms & Conditions."),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: MaterialButton(
-                              height: 50,
-                              minWidth: 200,
-                              color: widget.adth,
-                              onPressed: () {
-                                if (agreeToTerms == true) {
-                                  // _updateuser();
-                                }
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Send Request",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 17),
-                                  ),
-                                  Icon(
-                                    Icons.save,
-                                    color: Colors.white,
-                                  ),
-                                ],
+                                labelStyle: TextStyle(color: widget.adth),
                               ),
                             ),
                           ),
-                        ])))),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+
+                      // Terms and conditions
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: agreeToTerms,
+                            onChanged: (value) {
+                              if (!mounted)
+                                return; // prevents calling setState if widget is disposed
+
+                              setState(() => agreeToTerms = value!);
+                            },
+                          ),
+                          Expanded(
+                            child: Text("I agree to Terms & Conditions."),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: MaterialButton(
+                          height: 50,
+                          minWidth: 200,
+                          color: widget.adth,
+                          onPressed: () {
+                            if (agreeToTerms == true) {
+                              // _updateuser();
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Send Request",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17,
+                                ),
+                              ),
+                              Icon(Icons.save, color: Colors.white),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
             // Center(child: Text("No Bank Accounts")),
           ],

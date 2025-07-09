@@ -25,7 +25,8 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       appBar: AppBar(
+//       appBar:  AppBar(surfaceTintColor: Colors.white,
+
 //         title: const Text('Orders'),
 //         bottom: TabBar(
 //           isScrollable: true,

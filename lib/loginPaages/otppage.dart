@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Template/main.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/pages/home.dart';
+import 'package:template/main.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -41,9 +41,7 @@ class _OtpPageState extends State<OtpPage> {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(<String, String>{
-          'phone': widget.phoneNumber,
-        }),
+        body: jsonEncode(<String, String>{'phone': widget.phoneNumber}),
       );
 
       print(getotp.body);
@@ -141,10 +139,12 @@ class _OtpPageState extends State<OtpPage> {
 
         _verified();
         Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => MyHome(adth: widget.adth, admin: 0)),
-            (route) => false);
+          context,
+          MaterialPageRoute(
+            builder: (context) => MyHome(adth: widget.adth, admin: 0),
+          ),
+          (route) => false,
+        );
 
         print("are lallalalal");
         stat = 3;
@@ -196,8 +196,10 @@ class _OtpPageState extends State<OtpPage> {
                   children: [
                     Text(
                       'Verify OTP',
-                      style:
-                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -223,14 +225,18 @@ class _OtpPageState extends State<OtpPage> {
                     Text(
                       "+91 $phoneNumber",
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                          fontSize: 17),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                        fontSize: 17,
+                      ),
                     ),
                     SizedBox(width: 0),
                     IconButton(
-                      icon: Icon(Icons.edit,
-                          size: 20, color: Colors.grey.shade600),
+                      icon: Icon(
+                        Icons.edit,
+                        size: 20,
+                        color: Colors.grey.shade600,
+                      ),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -271,22 +277,30 @@ class _OtpPageState extends State<OtpPage> {
                       }
                     } else {
                       Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  MyHome(adth: widget.adth, admin: 0)),
-                          (route) => false);
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => MyHome(adth: widget.adth, admin: 0),
+                        ),
+                        (route) => false,
+                      );
                     }
                   },
-                  icon: Icon((varified) ? Icons.verified : Icons.verified,
-                      color: Colors.white),
-                  label: Text((varified) ? "Get Started" : 'Verify',
-                      style: TextStyle(color: Colors.white)),
+                  icon: Icon(
+                    (varified) ? Icons.verified : Icons.verified,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    (varified) ? "Get Started" : 'Verify',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(_getstat(stat),
-                      style: TextStyle(color: Colors.red, fontSize: 9)),
+                  child: Text(
+                    _getstat(stat),
+                    style: TextStyle(color: Colors.red, fontSize: 9),
+                  ),
                 ),
               ],
             ),

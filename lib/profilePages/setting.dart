@@ -1,4 +1,4 @@
-import 'package:Template/profilePages/collection.dart';
+import 'package:template/profilePages/collection.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -14,6 +14,8 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
           child: Text(
@@ -25,38 +27,39 @@ class _SettingsPageState extends State<SettingsPage> {
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 25,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
-                iconSize: 30,
-                color: widget.adth,
-              )),
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                CollectionPage(adth: widget.adth)));
-                  },
-                  icon: Icon(
-                    Icons.favorite_border_outlined,
-                  ),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              backgroundColor: Colors.white,
+              radius: 25,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CollectionPage(adth: widget.adth),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.favorite_border_outlined),
+                iconSize: 30,
+                color: widget.adth,
+              ),
+            ),
+          ),
         ],
       ),
       body: Column(

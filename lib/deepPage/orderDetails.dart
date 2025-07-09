@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:Template/Purchase/buyItem.dart';
-import 'package:Template/models/categorymodel/cate.dart';
+import 'package:template/Purchase/buyItem.dart';
+import 'package:template/models/categorymodel/cate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -36,10 +36,9 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
   Future<void> _getmeuseroderss() async {
     try {
       final res = await http.get(
-          Uri.parse('${BASE_URL}order-variants/${widget.orderid}'),
-          headers: {
-            'Authorization': "Bearer ${userToken}",
-          });
+        Uri.parse('${BASE_URL}order-variants/${widget.orderid}'),
+        headers: {'Authorization': "Bearer ${userToken}"},
+      );
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
@@ -122,36 +121,40 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
     final int total = price + shippingCharge;
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         // toolbarHeight: 60,
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: CircleAvatar(
               backgroundColor: Colors.white,
               radius: 25,
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
+                icon: Icon(Icons.favorite_border_outlined),
                 iconSize: 30,
                 color: widget.adth,
-              )),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.favorite_border_outlined),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              ),
+            ),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -182,8 +185,8 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                 ],
               ),
             ),
-            // Header + status
 
+            // Header + status
             Container(
               margin: EdgeInsets.only(bottom: 10),
               child: Row(
@@ -199,7 +202,9 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                           child: Text(
                             'Order ID: #$orderId',
                             style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.bold),
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -209,7 +214,9 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                           child: Text(
                             'Payment Mode: $paymentMode',
                             style: TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.bold),
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -238,9 +245,13 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Order Details',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    Text(
+                      'Order Details',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,13 +259,13 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: CachedNetworkImage(
-                            imageUrl: widget.orderpic ??
+                            imageUrl:
+                                widget.orderpic ??
                                 "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
 
-                            placeholder: (context, url) =>
-                                Center(child: CircularProgressIndicator()),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.broken_image),
+                            placeholder: (context, url) => Icon(Icons.image),
+                            errorWidget:
+                                (context, url, error) => Icon(Icons.image),
 
                             // width: 120,
                             width: 80,
@@ -270,7 +281,9 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                               Text(
                                 productName,
                                 style: TextStyle(
-                                    fontSize: 13, fontWeight: FontWeight.bold),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -281,21 +294,27 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                                 children: [
                                   Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 6, vertical: 2),
+                                      horizontal: 6,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Colors.orange.shade100,
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: Text('Variant: $variant',
-                                        style: const TextStyle(
-                                            color: Colors.orange,
-                                            fontSize: 10)),
+                                    child: Text(
+                                      'Variant: $variant',
+                                      style: const TextStyle(
+                                        color: Colors.orange,
+                                        fontSize: 10,
+                                      ),
+                                    ),
                                   ),
                                   Text(
                                     'Quantity: $quantity',
                                     style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
@@ -304,7 +323,9 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                               Text(
                                 'Price ₹$price',
                                 style: TextStyle(
-                                    fontSize: 13, fontWeight: FontWeight.bold),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ],
@@ -326,7 +347,9 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                                 Icon(Icons.reviews),
                               ],
                             ),
-                            onPressed: () {/* Delete logic */},
+                            onPressed: () {
+                              /* Delete logic */
+                            },
                           ),
                         ),
                         Card(
@@ -340,11 +363,13 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                                 Icon(Icons.reviews),
                               ],
                             ),
-                            onPressed: () {/* Delete logic */},
+                            onPressed: () {
+                              /* Delete logic */
+                            },
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -357,9 +382,13 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Order Details',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    Text(
+                      'Order Details',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -380,11 +409,14 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total Amount',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text('₹${price * quantity + shippingCharge}',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+                        const Text(
+                          'Total Amount',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '₹${price * quantity + shippingCharge}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                   ],
@@ -421,14 +453,17 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              padding: const EdgeInsets.symmetric(vertical: 14)),
+            backgroundColor: Colors.green,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+          ),
           onPressed: () {
             /* reorder action */
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => BuyItem(adth: widget.adth, buyid: variId)));
+              context,
+              MaterialPageRoute(
+                builder: (_) => BuyItem(adth: widget.adth, buyid: variId),
+              ),
+            );
           },
           child: const Text(
             'Reorder Product',

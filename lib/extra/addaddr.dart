@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/profilePages/addr.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/profilePages/addr.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,7 +35,7 @@ class _EditAddrePageState extends State<EditAddrePage> {
     TextEditingController(),
     TextEditingController(),
     TextEditingController(),
-    TextEditingController()
+    TextEditingController(),
   ];
   bool didsave = false;
   String msg = "";
@@ -120,25 +120,27 @@ class _EditAddrePageState extends State<EditAddrePage> {
       // );
 
       if (widget.userind == -1) {
-        final req = await http.post(Uri.parse("${BASE_URL}address"),
-            headers: {
-              'Content-type': 'application/json',
-              'Authorization': "Bearer ${userToken}",
-            },
-            body: jsonEncode({
-              "houseNumber": (add[2].text != "") ? add[2].text : "420",
-              "name": (add[0].text != "") ? add[0].text : "Rohit JIiii",
-              "addressLine1":
-                  (add[3].text != "") ? add[3].text : "Great gggg Road",
-              "pincode": (add[5].text != "") ? add[5].text : "122315",
-              "city": (add[7].text != "") ? add[7].text : "Rur",
-              "state": (add[8].text != "") ? add[8].text : "Chtisgarh",
-              "country": (add[9].text != "") ? add[9].text : "Indikooa",
-              "addressLine2": (add[4].text != "") ? add[4].text : "Citttvil",
-              "area": (add[6].text != "") ? add[6].text : "Civil Lifffffne",
-              "phone": (add[1].text != "") ? add[1].text : "9399274490",
-              "countryCode": (add[10].text != "") ? add[10].text : "+91"
-            }));
+        final req = await http.post(
+          Uri.parse("${BASE_URL}address"),
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': "Bearer ${userToken}",
+          },
+          body: jsonEncode({
+            "houseNumber": (add[2].text != "") ? add[2].text : "420",
+            "name": (add[0].text != "") ? add[0].text : "Rohit JIiii",
+            "addressLine1":
+                (add[3].text != "") ? add[3].text : "Great gggg Road",
+            "pincode": (add[5].text != "") ? add[5].text : "122315",
+            "city": (add[7].text != "") ? add[7].text : "Rur",
+            "state": (add[8].text != "") ? add[8].text : "Chtisgarh",
+            "country": (add[9].text != "") ? add[9].text : "Indikooa",
+            "addressLine2": (add[4].text != "") ? add[4].text : "Citttvil",
+            "area": (add[6].text != "") ? add[6].text : "Civil Lifffffne",
+            "phone": (add[1].text != "") ? add[1].text : "9399274490",
+            "countryCode": (add[10].text != "") ? add[10].text : "+91",
+          }),
+        );
 
         if (req.statusCode == 200) {
           msg = jsonDecode(req.body)["message"];
@@ -155,27 +157,27 @@ class _EditAddrePageState extends State<EditAddrePage> {
           msg;
         });
       } else {
-        final req =
-            await http.put(Uri.parse("${BASE_URL}address/${widget.userind}"),
-                headers: {
-                  'Content-type': 'application/json',
-                  'Authorization': "Bearer ${userToken}",
-                },
-                body: jsonEncode({
-                  "houseNumber": (add[2].text != "") ? add[2].text : "420",
-                  "name": (add[0].text != "") ? add[0].text : "Rohit JIiii",
-                  "addressLine1":
-                      (add[3].text != "") ? add[3].text : "Great gggg Road",
-                  "pincode": (add[5].text != "") ? add[5].text : "122315",
-                  "city": (add[7].text != "") ? add[7].text : "Rur",
-                  "state": (add[8].text != "") ? add[8].text : "Chtisgarh",
-                  "country": (add[9].text != "") ? add[9].text : "Indikooa",
-                  "addressLine2":
-                      (add[4].text != "") ? add[4].text : "Citttvil",
-                  "area": (add[6].text != "") ? add[6].text : "Civil Lifffffne",
-                  "phone": (add[1].text != "") ? add[1].text : "9399274490",
-                  "countryCode": (add[10].text != "") ? add[10].text : "+91"
-                }));
+        final req = await http.put(
+          Uri.parse("${BASE_URL}address/${widget.userind}"),
+          headers: {
+            'Content-type': 'application/json',
+            'Authorization': "Bearer ${userToken}",
+          },
+          body: jsonEncode({
+            "houseNumber": (add[2].text != "") ? add[2].text : "420",
+            "name": (add[0].text != "") ? add[0].text : "Rohit JIiii",
+            "addressLine1":
+                (add[3].text != "") ? add[3].text : "Great gggg Road",
+            "pincode": (add[5].text != "") ? add[5].text : "122315",
+            "city": (add[7].text != "") ? add[7].text : "Rur",
+            "state": (add[8].text != "") ? add[8].text : "Chtisgarh",
+            "country": (add[9].text != "") ? add[9].text : "Indikooa",
+            "addressLine2": (add[4].text != "") ? add[4].text : "Citttvil",
+            "area": (add[6].text != "") ? add[6].text : "Civil Lifffffne",
+            "phone": (add[1].text != "") ? add[1].text : "9399274490",
+            "countryCode": (add[10].text != "") ? add[10].text : "+91",
+          }),
+        );
 
         if (req.statusCode == 200) {
           msg = jsonDecode(req.body)["message"];
@@ -199,10 +201,10 @@ class _EditAddrePageState extends State<EditAddrePage> {
     }
   }
 
-// myController.text = "hshshhshs";
-//  myController2 = "hshshhshs";
-//  myController3 = "hshshhshs";
-//  myController4 ="hshhs";
+  // myController.text = "hshshhshs";
+  //  myController2 = "hshshhshs";
+  //  myController3 = "hshshhshs";
+  //  myController4 ="hshhs";
   Color rit = const Color.fromARGB(248, 231, 222, 222);
   int rith = 50;
 
@@ -226,11 +228,14 @@ class _EditAddrePageState extends State<EditAddrePage> {
               children: [
                 Row(
                   children: [
-                    Text("Edit/Add Address",
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black)),
+                    Text(
+                      "Edit/Add Address",
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -244,8 +249,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -258,8 +264,10 @@ class _EditAddrePageState extends State<EditAddrePage> {
                 Row(
                   children: [
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(12),
@@ -301,8 +309,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -318,8 +327,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -335,8 +345,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -352,8 +363,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -369,8 +381,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -386,8 +399,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -403,8 +417,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -420,8 +435,9 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     filled: true,
                     fillColor: Colors.grey.shade100,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none),
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: widget.adth),
                       borderRadius: BorderRadius.circular(12),
@@ -445,9 +461,7 @@ class _EditAddrePageState extends State<EditAddrePage> {
                         setState(() => agreeToTerms = value!);
                       },
                     ),
-                    Expanded(
-                      child: Text("I agree to Terms & Conditions."),
-                    ),
+                    Expanded(child: Text("I agree to Terms & Conditions.")),
                   ],
                 ),
                 SizedBox(height: 20),
@@ -462,11 +476,12 @@ class _EditAddrePageState extends State<EditAddrePage> {
                     onPressed: () {
                       if (done) {
                         Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    AddrPage(adth: widget.adth)),
-                            (context) => false);
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddrPage(adth: widget.adth),
+                          ),
+                          (context) => false,
+                        );
                       }
                       // if (registered) {
                       //   // Navigator.push(
@@ -557,15 +572,18 @@ class _EditAddrePageState extends State<EditAddrePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Center(
-                                child: Text(
-                              (done)
-                                  ? "Save Address"
-                                  : ((widget.userind == -1)
-                                      ? "Add Address"
-                                      : "Edit Address"),
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            )),
+                              child: Text(
+                                (done)
+                                    ? "Save Address"
+                                    : ((widget.userind == -1)
+                                        ? "Add Address"
+                                        : "Edit Address"),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Icon(

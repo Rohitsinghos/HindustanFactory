@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:Template/CategoryPages/category1.dart';
-import 'package:Template/CategoryPages/searchPage.dart';
-import 'package:Template/Purchase/buyItem.dart';
-import 'package:Template/Purchase/cartdirect.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/pages/home.dart';
-import 'package:Template/pages/profile.dart';
-import 'package:Template/pages/video.dart';
+import 'package:template/CategoryPages/category1.dart';
+import 'package:template/CategoryPages/searchPage.dart';
+import 'package:template/Purchase/buyItem.dart';
+import 'package:template/Purchase/cartdirect.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/pages/home.dart';
+import 'package:template/pages/profile.dart';
+import 'package:template/pages/video.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +18,11 @@ class SerchTopPage extends StatefulWidget {
   final int index;
   final String searchpro;
 
-  SerchTopPage(
-      {required this.adth, required this.index, required this.searchpro});
+  SerchTopPage({
+    required this.adth,
+    required this.index,
+    required this.searchpro,
+  });
 
   @override
   State<SerchTopPage> createState() => _SerchTopPageState();
@@ -34,6 +37,8 @@ bool ok = true;
 // }
 
 class _SerchTopPageState extends State<SerchTopPage> {
+  bool sortByName = true;
+  bool ascending = true;
   bool process = false;
   bool doit = true;
   int lowhn = 1;
@@ -54,7 +59,7 @@ class _SerchTopPageState extends State<SerchTopPage> {
     });
   }
 
-  List<dynamic> itemsTop = List.from(TopData1);
+  List itemsTop = List.from(productData1);
 
   void sortTopData(
     List<dynamic> list, {
@@ -77,24 +82,14 @@ class _SerchTopPageState extends State<SerchTopPage> {
   }
 
   Future<void> _getCatData() async {
-    TopData1 = [];
+    // TopData1 = [];
     doit = false;
     int ind = widget.index;
 
-    if (ind >= 0 && ind <= 2) {
-      if (ind == 1) {
-        ind = 0;
-      } else if (ind == 0) {
-        ind = 1;
-      }
-    } else {
-      TopData1 = productData1;
-      return;
-    }
-
     try {
-      final res = await http
-          .get(Uri.parse("${BASE_URL}categories/${ind + 1}/products"));
+      final res = await http.get(
+        Uri.parse("${BASE_URL}categories/${widget.index}/products"),
+      );
       // final res2 = await http.get(Uri.parse("https://hindustanapi.mtlapi.socialseller.in/api/subcategories"));
 
       if (res.statusCode == 200) {
@@ -136,98 +131,45 @@ class _SerchTopPageState extends State<SerchTopPage> {
   // ];
 
   @override
-  // void initState() {
-  //   super.initState();
-  //   _filteredList = List.from(_originalList);
-  // }
-
-  // void _sortList(String option) {
-  //   if (!mounted) return; // prevents calling setState if widget is disposed
-
-  // setState(() {
-  //     _selectedSort = option;
-  //     _filteredList = List.from(_originalList);
-  //     switch (option) {
-  //       case 'Alphabetical↓':
-  //         if (!mounted) return; // prevents calling setState if widget is disposed
-
-  // setState(() => sortTopData(TopData1, byName: true, ascending: true));
-  //         break;
-  //       case 'Alphabetical↑':
-  //         if (!mounted) return; // prevents calling setState if widget is disposed
-
-  // setState(() => sortTopData(TopData1, byName: true, ascending: false));
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   });
-  // }
-
-  bool sortByName = true;
-  bool ascending = true;
-
-// onDropdownChanged((newOption) {
-//   if (newOption == 'Name A→Z') {
-//     sortByName = true; ascending = true;
-//   } else if (newOption == 'Name Z→A') {
-//     sortByName = true; ascending = false;
-//   } else if (newOption == 'Price Low→High') {
-//     sortByName = false; ascending = true;
-//   } else if (newOption == 'Price High→Low') {
-//     sortByName = false; ascending = false;
-//   }
-
-//   if (!mounted) return; // prevents calling setState if widget is disposed
-
-  // setState(() => sortTopData(TopData1, byName: sortByName, ascending: ascending));
-// });
-
   Future<void> _getSearchData(String ser) async {
     // TopData1 = [];
     // doit = false;
     // int ind = widget.index;
+    if (itemsTop.length == 0) {
+      try {
+        final res = await http.get(
+          Uri.parse(
+            "${BASE_URL}search/products?pagination[page]=1&pagination[pageSize]=20&qs=$ser",
+          ),
+        );
+        // final res2 = await http.get(Uri.parse("https://hindustanapi.mtlapi.socialseller.in/api/subcategories"));
 
-    final res = await http.get(Uri.parse(
-        "${BASE_URL}search/products?pagination[page]=1&pagination[pageSize]=20&qs=$ser"));
-    // final res2 = await http.get(Uri.parse("https://hindustanapi.mtlapi.socialseller.in/api/subcategories"));
+        if (res.statusCode == 200) {
+          print("success sssssssssssssseeeeee");
+          itemsTop = json.decode(res.body)["data"];
+          process = true;
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
 
-    if (res.statusCode == 200) {
-      print("success sssssssssssssseeeeee");
-      // if (json.decode(res.body) != null &&
-      //     json.decode(res.body)["data"] != null &&
-      //     json.decode(res.body)["data"][0]["variants"] != null) {
-      //   // Items = json.decode(res.body)["data"];
-      // }
-      // dynamic tm = (json.decode(res.body)["data"]);
-      // print(json.decode(res.body)["data"][0]["name"]);
-      // print(json.decode(res.body)["data"][0]["variants"]);
+          setState(() {});
+        } else {
+          print("failure");
+          process = true;
+          if (!mounted)
+            return; // prevents calling setState if widget is disposed
 
-      // print('${json.decode(res.body)["data"][0]["name"]} ' +
-      //     '${json.decode(res.body)["data"][0]["variants"][0]["quantity"]} ' +
-      //     '${json.decode(res.body)["data"][0]["variants"][0]["price"]} ' +
-      //     '${json.decode(res.body)["data"][0]["variants"][0]["strike_price"]} ' +
-      //     '${json.decode(res.body)["data"][0]["id"]} ' +
-      //     '${json.decode(res.body)["data"][0]["thumbnail"]["url"]}');
-      // print(tm["Product"]);
-      // print(json.decode(res.body)["data"]);
-      itemsTop = json.decode(res.body)["data"];
-      process = true;
-      if (!mounted) return; // prevents calling setState if widget is disposed
-
-      setState(() {});
-    } else {
-      print("failure");
-      process = true;
-      if (!mounted) return; // prevents calling setState if widget is disposed
-
-      setState(() {});
+          setState(() {});
+        }
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
   void initState() {
     super.initState();
-    if (doit && widget.index >= 0 && widget.index <= 2) {
+
+    if (doit && widget.index != -1) {
       doit = false;
       itemsTop = [];
       _getCatData();
@@ -240,8 +182,7 @@ class _SerchTopPageState extends State<SerchTopPage> {
 
     if (!mounted) {
       return;
-    }
-    if (!mounted) return; // prevents calling setState if widget is disposed
+    } // prevents calling setState if widget is disposed
 
     setState(() {});
   }
@@ -251,158 +192,187 @@ class _SerchTopPageState extends State<SerchTopPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-              // radius: 5,
-              backgroundColor: Colors.white,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_new_outlined,
-                  color: widget.adth,
-                ),
-              )),
+            // radius: 5,
+            backgroundColor: Colors.white,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined, color: widget.adth),
+            ),
+          ),
         ),
         backgroundColor: Colors.white,
         title: Center(
-            child: Text(
-          'Top',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        )),
+          child: Text(
+            (widget.searchpro == "") ? 'Top' : widget.searchpro,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 17,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SearchPage(
-                                    adth: widget.adth,
-                                  )));
-                    },
-                    icon: Icon(
-                      Icons.search,
-                      color: widget.adth,
-                    ))),
+              backgroundColor: Colors.white,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchPage(adth: widget.adth),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.search, color: widget.adth),
+              ),
+            ),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(35),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  _AlphaUD();
+
+                  if (alpha == 1) {
+                    if (mounted) {
+                      setState(
+                        () => sortTopData(
+                          itemsTop,
+                          byName: true,
+                          ascending: false,
+                        ),
+                      );
+                    }
+                  } else {
+                    if (mounted) {
+                      setState(
+                        () => sortTopData(
+                          itemsTop,
+                          byName: true,
+                          ascending: true,
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Row(
+                    children: [
+                      Icon(Icons.filter_list),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Alpha: " +
+                              "${(alpha != 1) ? "Asending" : "Desending"}",
+                          style: TextStyle(
+                            color: Colors.blueGrey,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Container(
+              //   padding: EdgeInsets.all(8),
+              //   margin: EdgeInsets.only(left: 8),
+              //   child: DropdownButton<String>(
+              //     style: TextStyle(color: Colors.blueGrey, fontSize: 13),
+              //     icon: Icon(Icons.filter_list),
+              //     value: _selectedSort,
+              //     items: _sortOptions.map((opt) {
+              //       return DropdownMenuItem(value: opt, child: Text(opt));
+              //     }).toList(),
+              //     onChanged: (value) {
+              //       if (value != null) {
+              //         _sortList(value);
+              //       }
+              //     },
+              //   ),
+              // ),
+              // Expanded(
+              //   child: ListView.builder(
+              //     itemCount: _filteredList.length,
+              //     itemBuilder: (context, i) {
+              //       final item = _filteredList[i];
+              //       return ListTile(
+              //         title: Text(item.name),
+              //         subtitle: Text(item.value.toString()),
+              //       );
+              //     },
+              //   ),
+              // ),
+              GestureDetector(
+                onTap: () {
+                  _lowhigh();
+
+                  if (lowhn != 1) {
+                    if (mounted) {
+                      setState(
+                        () => sortTopData(
+                          itemsTop,
+                          byName: false,
+                          ascending: false,
+                        ),
+                      );
+                    }
+                  } else {
+                    if (mounted) {
+                      setState(
+                        () => sortTopData(
+                          itemsTop,
+                          byName: false,
+                          ascending: true,
+                        ),
+                      );
+                    }
+                  }
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      (lowhn == 1) ? Icons.arrow_upward : Icons.arrow_downward,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        (lowhn == 1)
+                            ? "Price: lowest to high"
+                            : "Price: highest to low",
+                        style: TextStyle(color: Colors.blueGrey, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.all(0.0),
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        _AlphaUD();
-
-                        if (alpha == 1) {
-                          if (mounted) {
-                            setState(() => sortTopData(itemsTop,
-                                byName: true, ascending: false));
-                          }
-                        } else {
-                          if (!mounted) {
-                            setState(() => sortTopData(itemsTop,
-                                byName: true, ascending: true));
-                          }
-                        }
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.filter_list),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                "Alpha: " +
-                                    "${(alpha != 1) ? "Asending" : "Desending"}",
-                                style: TextStyle(
-                                    color: Colors.blueGrey, fontSize: 13),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Container(
-                    //   padding: EdgeInsets.all(8),
-                    //   margin: EdgeInsets.only(left: 8),
-                    //   child: DropdownButton<String>(
-                    //     style: TextStyle(color: Colors.blueGrey, fontSize: 13),
-                    //     icon: Icon(Icons.filter_list),
-                    //     value: _selectedSort,
-                    //     items: _sortOptions.map((opt) {
-                    //       return DropdownMenuItem(value: opt, child: Text(opt));
-                    //     }).toList(),
-                    //     onChanged: (value) {
-                    //       if (value != null) {
-                    //         _sortList(value);
-                    //       }
-                    //     },
-                    //   ),
-                    // ),
-                    // Expanded(
-                    //   child: ListView.builder(
-                    //     itemCount: _filteredList.length,
-                    //     itemBuilder: (context, i) {
-                    //       final item = _filteredList[i];
-                    //       return ListTile(
-                    //         title: Text(item.name),
-                    //         subtitle: Text(item.value.toString()),
-                    //       );
-                    //     },
-                    //   ),
-                    // ),
-                    GestureDetector(
-                      onTap: () {
-                        _lowhigh();
-
-                        if (lowhn != 1) {
-                          if (!mounted) {
-                            setState(() => sortTopData(itemsTop,
-                                byName: false, ascending: false));
-                          }
-                        } else {
-                          if (!mounted) {
-                            setState(() => sortTopData(itemsTop,
-                                byName: false, ascending: true));
-                          }
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Icon((lowhn == 1)
-                              ? Icons.arrow_upward
-                              : Icons.arrow_downward),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              (lowhn == 1)
-                                  ? "Price: lowest to high"
-                                  : "Price: highest to low",
-                              style: TextStyle(
-                                  color: Colors.blueGrey, fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
+                  padding: EdgeInsets.symmetric(horizontal: 0),
                   // width: BoxConstraints().maxWidth,
                   child: _buildItemsGridDom(),
                 ),
@@ -424,6 +394,7 @@ class _SerchTopPageState extends State<SerchTopPage> {
     required String oldPrice,
     required String image,
     required bool ok,
+    String? category,
   }) {
     return Padding(
       padding: const EdgeInsets.all(0.0),
@@ -436,10 +407,11 @@ class _SerchTopPageState extends State<SerchTopPage> {
           child: GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          BuyItem(adth: widget.adth, buyid: id2)));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BuyItem(adth: widget.adth, buyid: id2),
+                ),
+              );
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15),
@@ -452,13 +424,11 @@ class _SerchTopPageState extends State<SerchTopPage> {
                       children: [
                         CachedNetworkImage(
                           imageUrl: image,
-                          placeholder: (context, url) =>
-                              Center(child: CircularProgressIndicator()),
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.broken_image),
-
-                          // width: double.infinity,
-                          // height: 100,
+                          placeholder: (context, url) => Icon(Icons.image),
+                          errorWidget:
+                              (context, url, error) => Icon(Icons.image),
+                          width: double.infinity,
+                          height: 200,
                           fit: BoxFit.cover,
                         ),
 
@@ -474,50 +444,56 @@ class _SerchTopPageState extends State<SerchTopPage> {
                           right: 1,
                           // ignore: avoid_unnecessary_containers
                           child: Container(
-                              child: IconButton(
-                            icon: Icon(
+                            child: IconButton(
+                              icon: Icon(
                                 (favIds.contains(id2))
                                     ? Icons.favorite
                                     : Icons.favorite_border_outlined,
-                                color: (favIds.contains(id2))
-                                    ? Colors.red
-                                    : Colors.grey),
-                            onPressed: () {
-                              // _getans(id);
-                              (favIds.contains(id2))
-                                  ? {favIds.remove(id2)}
-                                  : favIds.add(id2);
-                              if (!mounted)
-                                return; // prevents calling setState if widget is disposed
+                                color:
+                                    (favIds.contains(id2))
+                                        ? Colors.red
+                                        : Colors.grey,
+                              ),
+                              onPressed: () {
+                                // _getans(id);
+                                (favIds.contains(id2))
+                                    ? {favIds.remove(id2)}
+                                    : favIds.add(id2);
+                                if (!mounted)
+                                  return; // prevents calling setState if widget is disposed
 
-                              setState(() {});
-                            },
-                          )),
+                                setState(() {});
+                              },
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 6),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
                         name,
                         style: TextStyle(fontWeight: FontWeight.bold),
-                        textScaler: MediaQuery.textScalerOf(context),
+                        // textScaler: MediaQuery.textScalerOf(context),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Text(
-                        "07 LV8",
+                        category!,
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12),
-                        textScaler: MediaQuery.textScalerOf(context),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                        // textScaler: MediaQuery.textScalerOf(context),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -534,57 +510,64 @@ class _SerchTopPageState extends State<SerchTopPage> {
                                   Text(
                                     "($rating.0)",
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                   Text(
                                     "250k+",
                                     style: TextStyle(
-                                        fontSize: 12, color: Colors.grey),
-                                  )
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              Text("₹ $price",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12)),
+                              Text(
+                                "₹ $price",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ],
                           ),
                           Icon(
                             Icons.add_circle_rounded,
                             color: widget.adth,
                             size: 35,
-                          )
+                          ),
                         ],
                       ),
                     ),
                     (ok == true)
                         ? Container()
                         : Container(
-                            margin: EdgeInsets.symmetric(horizontal: 15),
-                            padding: EdgeInsets.only(bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: CupertinoColors.systemYellow,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.deepPurpleAccent,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.red,
-                                ),
-                                CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.brown,
-                                ),
-                                Text("+$rating")
-                              ],
-                            ),
-                          )
+                          margin: EdgeInsets.symmetric(horizontal: 15),
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: CupertinoColors.systemYellow,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.deepPurpleAccent,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.red,
+                              ),
+                              CircleAvatar(
+                                radius: 10,
+                                backgroundColor: Colors.brown,
+                              ),
+                              Text("+0"),
+                            ],
+                          ),
+                        ),
                   ],
                 ),
               ),
@@ -605,39 +588,50 @@ class _SerchTopPageState extends State<SerchTopPage> {
     return (n == 0)
         ? ((process == true)
             ? Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(20.0),
-                      margin: EdgeInsets.only(top: 100),
-                      child: Center(
-                        child: Text(
-                            textAlign: TextAlign.center,
-                            "no data found from " +
-                                "${(widget.searchpro == "") ? "Category :${widget.index}" : "keyword :${widget.searchpro}"}."),
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20.0),
+                    margin: EdgeInsets.only(top: 100),
+                    child: Center(
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        "no data found from " +
+                            "${(widget.searchpro == "") ? "Category :${widget.index}" : "keyword :${widget.searchpro}"}.",
                       ),
                     ),
                   ),
-                ],
-              )
-            : CircularProgressIndicator())
-        : Center(
-            child: Wrap(children: [
-              for (int i = 0; i < n; i++)
-                productCard2(
+                ),
+              ],
+            )
+            : Center(child: CircularProgressIndicator()))
+        : Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.53,
+            ),
+            itemCount: n,
+            itemBuilder:
+                (context, i) => productCard2(
                   name: itemsTop[i]["name"],
                   rating: 0,
                   left: itemsTop[i]["variants"][0]["quantity"],
                   price: itemsTop[i]["variants"][0]["price"],
                   oldPrice: itemsTop[i]["variants"][0]["strike_price"],
                   id2: itemsTop[i]["id"],
-                  image: itemsTop[i]["thumbnail"]["url"] ??
+                  image:
+                      itemsTop[i]["thumbnail"]["url"] ??
                       "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
                   ok: false,
+                  category: itemsTop[i]["category"]["name"] ?? "",
                 ),
-            ]),
-          );
+          ),
+        );
   }
 
   Color b11 = const Color.fromARGB(255, 169, 169, 169);
@@ -661,110 +655,118 @@ class _SerchTopPageState extends State<SerchTopPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MyHome(adth: widget.adth, admin: 0)),
-                      (context) => false);
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.home_outlined,
-                    size: 21,
-                    color: b1,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHome(adth: widget.adth, admin: 0),
                   ),
+                  (context) => false,
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.home_outlined, size: 21, color: b1),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Cart1Page(
-                                adth: widget.adth,
-                                admin: 0,
-                              )));
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.dashboard_outlined,
-                    color: widget.adth,
-                    size: 21,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => Cart1Page(adth: widget.adth, admin: 0),
                   ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.dashboard_outlined, color: widget.adth, size: 21),
                   Text(
                     'Category',
                     style: TextStyle(color: widget.adth, fontSize: 13),
                   ),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VideoPage(
-                                admin: 2,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VideoPage(admin: 2, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.ondemand_video, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CartDirPage(
-                                admin: 3,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                                adth: widget.adth,
-                                admin: 0,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => ProfilePage(adth: widget.adth, admin: 0),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.person_outline, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Profile'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
 

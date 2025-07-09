@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:Template/loginPaages/otppage.dart';
-import 'package:Template/main.dart';
-import 'package:Template/pages/home.dart';
+import 'package:template/loginPaages/otppage.dart';
+import 'package:template/main.dart';
+import 'package:template/pages/home.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -30,7 +30,6 @@ final myController4 = TextEditingController();
 Color rit = const Color.fromARGB(248, 231, 222, 222);
 double rith = 50;
 
-
 // String apiUrl = 'https://yourapi.com/data';
 //    String token = 'your_token_here';
 class _LogInState extends State<LogIn> {
@@ -52,7 +51,7 @@ class _LogInState extends State<LogIn> {
   // } else {
   //   print('Error ${response.statusCode}: ${response.body}');
   // }
-//
+  //
   // }
 
   TextEditingController controller1 = TextEditingController();
@@ -105,18 +104,17 @@ class _LogInState extends State<LogIn> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     "Phone Number",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   ),
                 ),
                 SizedBox(height: 8),
                 Row(
                   children: [
                     Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(12),
@@ -156,9 +154,12 @@ class _LogInState extends State<LogIn> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => OtpPage(
+                          builder:
+                              (context) => OtpPage(
                                 adth: widget.adth,
-                                phoneNumber: controller1.text)),
+                                phoneNumber: controller1.text,
+                              ),
+                        ),
                       );
                       // } else {
                       // call = Colors.red;
@@ -174,19 +175,16 @@ class _LogInState extends State<LogIn> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          MaterialButton(
-                            onPressed: () {},
-                            child: Center(
-                                child: Text(
+                          Center(
+                            child: Text(
                               "Login",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            )),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                              ),
+                            ),
                           ),
-                          Icon(
-                            color: Colors.white,
-                            Icons.lock_open,
-                          ),
+                          Icon(color: Colors.white, Icons.lock_open),
                         ],
                       ),
                     ),

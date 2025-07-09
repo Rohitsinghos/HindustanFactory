@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:Template/deepPage/orderDetails.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/pages/home.dart';
-import 'package:Template/profilePages/collection.dart';
+import 'package:template/deepPage/orderDetails.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/pages/home.dart';
+import 'package:template/profilePages/collection.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -25,17 +25,17 @@ class _OrdersPageState extends State<OrdersPage> {
   Future<void> _getmeuseroderss() async {
     try {
       final res = await http.get(
-          Uri.parse(
-              '${BASE_URL}order-variants/store-users?&&pagination[page]=$curpg&pagination[pageSize]=20'),
-          headers: {
-            'Authorization': "Bearer ${userToken}",
-          });
+        Uri.parse(
+          '${BASE_URL}order-variants/store-users?&&pagination[page]=$curpg&pagination[pageSize]=20',
+        ),
+        headers: {'Authorization': "Bearer ${userToken}"},
+      );
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
         // userData = json.decode(res.body)["data"];
-
-        print(json.decode(res.body)["data"]);
+        processing = false;
+        // print(json.decode(res.body)["data"]);
 
         orderUserdata = json.decode(res.body)["data"];
 
@@ -58,11 +58,11 @@ class _OrdersPageState extends State<OrdersPage> {
   Future<void> _getmeuseroderssAs(String sta) async {
     try {
       final res = await http.get(
-          Uri.parse(
-              '${BASE_URL}order-variants/store-users?status=$sta&&pagination[page]=$curpg&pagination[pageSize]=20'),
-          headers: {
-            'Authorization': "Bearer ${userToken}",
-          });
+        Uri.parse(
+          '${BASE_URL}order-variants/store-users?status=$sta&&pagination[page]=$curpg&pagination[pageSize]=20',
+        ),
+        headers: {'Authorization': "Bearer ${userToken}"},
+      );
 
       if (res.statusCode == 200) {
         print("success userrrrrrrrrrrrrrrrrrrr");
@@ -71,9 +71,9 @@ class _OrdersPageState extends State<OrdersPage> {
         orderUserdata = json.decode(res.body)["data"];
 
         if (!mounted) return; // prevents calling setState if widget is disposed
-
+        processing = false;
         setState(() {});
-        print(userData);
+        // print(userData);
       } else {
         print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
       }
@@ -116,170 +116,198 @@ class _OrdersPageState extends State<OrdersPage> {
 
   int curpg = 1;
 
+  bool processing = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
-          child: Text(
-            "Orders",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          child: Text("Orders", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
         // toolbarHeight: 60,
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 25,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(Icons.arrow_back_ios_new_outlined),
-                iconSize: 30,
-                color: widget.adth,
-              )),
+            backgroundColor: Colors.white,
+            radius: 25,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined),
+              iconSize: 30,
+              color: widget.adth,
+            ),
+          ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                radius: 25,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return CollectionPage(adth: widget.adth);
-                    }));
-                  },
-                  icon: Icon(Icons.favorite_border_outlined),
-                  iconSize: 30,
-                  color: widget.adth,
-                )),
-          )
+              backgroundColor: Colors.white,
+              radius: 25,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return CollectionPage(adth: widget.adth);
+                      },
+                    ),
+                  );
+                },
+                icon: Icon(Icons.favorite_border_outlined),
+                iconSize: 30,
+                color: widget.adth,
+              ),
+            ),
+          ),
         ],
       ),
-      body: (false)
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(child: Text("No orders yet")),
-              ],
-            )
-          : SingleChildScrollView(
-              child: Column(children: [
-                Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(children: [
-                      Container(
-                        height: 40,
-                        child: ListView.builder(
-                            itemCount: hed.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Center(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    _getmeuseroderssAs(hed[index]);
-                                    choosen = index;
-                                    curpg = 1;
-                                    if (!mounted)
-                                      return; // prevents calling setState if widget is disposed
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Container(
+                    height: 40,
+                    child: ListView.builder(
+                      itemCount: hed.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              processing = true;
+                              orderUserdata = [];
 
-                                    setState(() {});
-                                  },
-                                  child: Card(
-                                      color: (choosen == index)
-                                          ? widget.adth
-                                          : Colors.white,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 18.0, vertical: 5),
-                                        child: Text(
-                                          hed[index],
-                                          style: TextStyle(
-                                              color: (choosen != index)
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )),
+                              _getmeuseroderssAs(hed[index]);
+
+                              choosen = index;
+                              curpg = 1;
+                              if (!mounted)
+                                return; // prevents calling setState if widget is disposed
+
+                              setState(() {});
+                            },
+                            child: Card(
+                              color:
+                                  (choosen == index)
+                                      ? widget.adth
+                                      : Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 18.0,
+                                  vertical: 5,
                                 ),
-                              );
-                            }),
-                      ),
-                      Container(
-                          margin: EdgeInsets.symmetric(vertical: 15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _getme(),
-                            ],
+                                child: Text(
+                                  hed[index],
+                                  style: TextStyle(
+                                    color:
+                                        (choosen != index)
+                                            ? Colors.black
+                                            : Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  (orderUserdata.length == 0)
+                      ? ((processing)
+                          ? Center(child: CircularProgressIndicator())
+                          : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [Center(child: Text("No orders yet"))],
                           ))
-                    ])),
-                (curpg <= 1 && orderUserdata.length < 20)
-                    ? Container()
-                    : Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    (curpg >= 2) ? widget.adth : Colors.grey),
-                            onPressed: () {
-                              if (curpg >= 2) {
-                                curpg--;
-                                if (choosen == 0) {
-                                  _getmeuseroderss();
-                                } else {
-                                  _getmeuseroderssAs(hed[choosen]);
-                                }
-                              }
-                            },
-                            // Navigator.push(context,
-                            //     MaterialPageRoute(builder: (context) {
-                            //   return CollectionPage(adth: widget.adth);
-                            child: Text(
-                              "Previous Page",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
+                      : Container(
+                        margin: EdgeInsets.symmetric(vertical: 15),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [_getme()],
                         ),
-                        Text("${curpg}"),
-                        Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: (orderUserdata.length < 20)
-                                    ? Colors.grey
-                                    : widget.adth),
-                            onPressed: () {
-                              if ((orderUserdata.length == 20)) {
-                                curpg++;
-                                if (choosen == 0) {
-                                  _getmeuseroderss();
-                                } else {
-                                  _getmeuseroderssAs(hed[choosen]);
-                                }
-                              }
-                            },
-                            // Navigator.push(context,
-                            //     MaterialPageRoute(builder: (context) {
-                            //   return CollectionPage(adth: widget.adth);
-                            child: Text(
-                              "Next Page",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        )
-                      ])
-              ]),
+                      ),
+                ],
+              ),
             ),
+            (curpg <= 1 && orderUserdata.length < 20)
+                ? Container()
+                : Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              (curpg >= 2) ? widget.adth : Colors.grey,
+                        ),
+                        onPressed: () {
+                          if (curpg >= 2) {
+                            curpg--;
+                            if (choosen == 0) {
+                              _getmeuseroderss();
+                            } else {
+                              _getmeuseroderssAs(hed[choosen]);
+                            }
+                          }
+                        },
+                        // Navigator.push(context,
+                        //     MaterialPageRoute(builder: (context) {
+                        //   return CollectionPage(adth: widget.adth);
+                        child: Text(
+                          "Previous Page",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    Text("${curpg}"),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              (orderUserdata.length < 20)
+                                  ? Colors.grey
+                                  : widget.adth,
+                        ),
+                        onPressed: () {
+                          if ((orderUserdata.length == 20)) {
+                            curpg++;
+                            if (choosen == 0) {
+                              _getmeuseroderss();
+                            } else {
+                              _getmeuseroderssAs(hed[choosen]);
+                            }
+                          }
+                        },
+                        // Navigator.push(context,
+                        //     MaterialPageRoute(builder: (context) {
+                        //   return CollectionPage(adth: widget.adth);
+                        child: Text(
+                          "Next Page",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -332,12 +360,16 @@ class _OrdersPageState extends State<OrdersPage> {
                         Text(
                           "#$id",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, color: widget.adth),
+                            fontWeight: FontWeight.bold,
+                            color: widget.adth,
+                          ),
                         ),
                         Text(
                           createdAt!,
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 11),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
@@ -346,8 +378,10 @@ class _OrdersPageState extends State<OrdersPage> {
                     width: 200,
                     child: Text(
                       name,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -365,15 +399,18 @@ class _OrdersPageState extends State<OrdersPage> {
                                 Text(
                                   "Varient",
                                   style: TextStyle(
-                                      fontSize: 10, color: Colors.grey),
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                                SizedBox(
-                                  width: 5,
+                                SizedBox(width: 5),
+                                Text(
+                                  variant,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                Text(variant,
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold)),
                               ],
                             ),
                             Row(
@@ -381,15 +418,18 @@ class _OrdersPageState extends State<OrdersPage> {
                                 Text(
                                   "Quantity",
                                   style: TextStyle(
-                                      fontSize: 10, color: Colors.grey),
+                                    fontSize: 10,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                                SizedBox(
-                                  width: 5,
+                                SizedBox(width: 5),
+                                Text(
+                                  "$quantity",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                Text("$quantity",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold)),
                               ],
                             ),
                           ],
@@ -399,7 +439,9 @@ class _OrdersPageState extends State<OrdersPage> {
                           child: Text(
                             "₹ $price",
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 14),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ],
@@ -426,35 +468,39 @@ class _OrdersPageState extends State<OrdersPage> {
                       null))
               ? Container()
               : GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => OrderDetailsCard(
-                                  adth: widget.adth,
-                                  orderid: orderUserdata[i]["id"] ?? 1,
-                                  orderpic: orderUserdata[i]["variant"]
-                                          ["product"]["thumbnail"]["url"] ??
-                                      "",
-                                )));
-                  },
-                  child: _getCards(
-                    id: orderUserdata[i]["id"].toString() ?? "1",
-                    image: orderUserdata[i]["variant"]["product"]["thumbnail"]
-                            ["url"] ??
-                        "",
-                    price: orderUserdata[i]["price"].toString() ?? "110",
-                    productprice:
-                        orderUserdata[i]["variant"]["price"] ?? "2222",
-                    name: orderUserdata[i]["variant"]["product"]["name"] ??
-                        "hello",
-                    quantity: orderUserdata[i]["quantity"].toString() ?? "0",
-                    variant: orderUserdata[i]["variant"]["name"] ?? "hfdsd",
-                    createdAt: DateFormat('dd MMM yyyy, hh:mm a').format(
-                        DateTime.parse(orderUserdata[i]["variant"]["createdAt"])
-                            .toLocal()),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => OrderDetailsCard(
+                            adth: widget.adth,
+                            orderid: orderUserdata[i]["id"] ?? 1,
+                            orderpic:
+                                orderUserdata[i]["variant"]["product"]["thumbnail"]["url"] ??
+                                "",
+                          ),
+                    ),
+                  );
+                },
+                child: _getCards(
+                  id: orderUserdata[i]["id"].toString() ?? "1",
+                  image:
+                      orderUserdata[i]["variant"]["product"]["thumbnail"]["url"] ??
+                      "",
+                  price: orderUserdata[i]["price"].toString() ?? "110",
+                  productprice: orderUserdata[i]["variant"]["price"] ?? "2222",
+                  name:
+                      orderUserdata[i]["variant"]["product"]["name"] ?? "hello",
+                  quantity: orderUserdata[i]["quantity"].toString() ?? "0",
+                  variant: orderUserdata[i]["variant"]["name"] ?? "hfdsd",
+                  createdAt: DateFormat('dd MMM yyyy, hh:mm a').format(
+                    DateTime.parse(
+                      orderUserdata[i]["variant"]["createdAt"],
+                    ).toLocal(),
                   ),
                 ),
+              ),
       ],
     );
     return a;

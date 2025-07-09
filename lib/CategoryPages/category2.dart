@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import 'package:Template/CategoryPages/category1.dart';
-import 'package:Template/CategoryPages/searchPage.dart';
-import 'package:Template/CategoryPages/topPage.dart';
-import 'package:Template/Purchase/cartdirect.dart';
-import 'package:Template/models/categorymodel/cate.dart';
-import 'package:Template/pages/home.dart';
-import 'package:Template/pages/profile.dart';
-import 'package:Template/pages/video.dart';
+import 'package:template/CategoryPages/category1.dart';
+import 'package:template/CategoryPages/searchPage.dart';
+import 'package:template/CategoryPages/topPage.dart';
+import 'package:template/Purchase/cartdirect.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/pages/home.dart';
+import 'package:template/pages/profile.dart';
+import 'package:template/pages/video.dart';
 import 'package:flutter/material.dart';
 
 class Cart2Page extends StatefulWidget {
@@ -24,44 +24,45 @@ class _Cart2PageState extends State<Cart2Page> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: CircleAvatar(
-              // radius: 5,
-              backgroundColor: Colors.white,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_new_outlined,
-                  color: widget.adth,
-                ),
-              )),
+            // radius: 5,
+            backgroundColor: Colors.white,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined, color: widget.adth),
+            ),
+          ),
         ),
         backgroundColor: Colors.white,
         title: Center(
-            child: Text(
-          'Categories',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        )),
+          child: Text(
+            'Categories',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SearchPage(adth: widget.adth)));
-                    },
-                    icon: Icon(
-                      Icons.search,
-                      color: widget.adth,
-                    ))),
+              backgroundColor: Colors.white,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchPage(adth: widget.adth),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.search, color: widget.adth),
+              ),
+            ),
           ),
         ],
       ),
@@ -77,8 +78,10 @@ class _Cart2PageState extends State<Cart2Page> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Choose Category",
-                        style: TextStyle(color: Colors.grey, fontSize: 14)),
+                    Text(
+                      "Choose Category",
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
                   ],
                 ),
                 Column(
@@ -112,22 +115,22 @@ class _Cart2PageState extends State<Cart2Page> {
         height: 50,
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SerchTopPage(
-                        searchpro: title,
-                        adth: widget.adth,
-                        index: -1,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) => SerchTopPage(
+                    searchpro: title,
+                    adth: widget.adth,
+                    index: -1,
+                  ),
+            ),
+          );
         },
         child: Container(
           padding: EdgeInsets.all(4),
           child: Row(
             children: [
-              Text(
-                title,
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
+              Text(title, style: TextStyle(color: Colors.black, fontSize: 16)),
             ],
           ),
         ),
@@ -146,13 +149,13 @@ class _Cart2PageState extends State<Cart2Page> {
         height: 60,
         onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SerchTopPage(
-                        searchpro: "",
-                        adth: widget.adth,
-                        index: -1,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder:
+                  (context) =>
+                      SerchTopPage(searchpro: "", adth: widget.adth, index: -1),
+            ),
+          );
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -162,9 +165,10 @@ class _Cart2PageState extends State<Cart2Page> {
               child: Text(
                 'VIEW ALL ITEMS',
                 style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold),
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -194,110 +198,118 @@ class _Cart2PageState extends State<Cart2Page> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MyHome(adth: widget.adth, admin: 0)),
-                      (context) => false);
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.home_outlined,
-                    size: 21,
-                    color: b1,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHome(adth: widget.adth, admin: 0),
                   ),
+                  (context) => false,
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.home_outlined, size: 21, color: b1),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Cart1Page(
-                                adth: widget.adth,
-                                admin: 0,
-                              )));
-                },
-                child: Column(children: [
-                  Icon(
-                    Icons.dashboard_outlined,
-                    color: widget.adth,
-                    size: 21,
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => Cart1Page(adth: widget.adth, admin: 0),
                   ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.dashboard_outlined, color: widget.adth, size: 21),
                   Text(
                     'Category',
                     style: TextStyle(color: widget.adth, fontSize: 13),
                   ),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => VideoPage(
-                                admin: 2,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VideoPage(admin: 2, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.ondemand_video, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CartDirPage(
-                                admin: 3,
-                                adth: widget.adth,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
           Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ProfilePage(
-                                adth: widget.adth,
-                                admin: 0,
-                              )));
-                },
-                child: Column(children: [
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => ProfilePage(adth: widget.adth, admin: 0),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
                   Icon(Icons.person_outline, color: b1, size: 21),
                   Text(style: TextStyle(color: b1, fontSize: 13), 'Profile'),
-                ]),
-              )),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
 
