@@ -1,10 +1,5 @@
-import 'dart:convert';
-
 import 'package:template/loginPaages/otppage.dart';
-import 'package:template/main.dart';
-import 'package:template/pages/home.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class LogIn extends StatefulWidget {
   final Color adth;

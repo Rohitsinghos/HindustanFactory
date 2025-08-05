@@ -1,0 +1,765 @@
+import 'dart:convert';
+
+import 'package:intl/intl.dart';
+import 'package:template/pages/category1.dart';
+import 'package:template/pages/searchPage.dart';
+import 'package:template/pages/buyItem.dart';
+import 'package:template/pages/cartdirect.dart';
+import 'package:template/models/categorymodel/cate.dart';
+import 'package:template/pages/home.dart';
+import 'package:template/pages/profile.dart';
+import 'package:template/usls/video.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class BookedPage extends StatefulWidget {
+  final Color adth;
+
+  BookedPage({required this.adth});
+
+  @override
+  State<BookedPage> createState() => _BookedPageState();
+}
+
+bool ok = true;
+
+// class MyItem {
+//   final String name;
+//   final double value;
+//   MyItem(this.name, this.value);
+// }
+
+class _BookedPageState extends State<BookedPage> {
+  bool sortByName = true;
+  bool ascending = true;
+  bool process = false;
+  bool doit = true;
+  int lowhn = 1;
+  _lowhigh() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
+    setState(() {
+      lowhn = (lowhn == 1) ? 0 : 1;
+    });
+  }
+
+  int alpha = 1;
+  _AlphaUD() {
+    if (!mounted) return; // prevents calling setState if widget is disposed
+
+    setState(() {
+      alpha = (alpha == 1) ? 0 : 1;
+    });
+  }
+
+  List itemsTop = List.from(productData1);
+
+  void sortTopData(
+    List<dynamic> list, {
+    required bool byName, // true = sort by name, else sort by price
+    required bool ascending, // true = low→high or A→Z; false = reverse
+  }) {
+    list.sort((a, b) {
+      int result;
+      if (byName) {
+        final nameA = a['name'] as String;
+        final nameB = b['name'] as String;
+        result = nameA.compareTo(nameB); // alphabetical
+      } else {
+        final priceA = (int.parse(a["variants"][0]["price"]) as num).toDouble();
+        final priceB = (int.parse(b['variants'][0]['price']) as num).toDouble();
+        result = priceA.compareTo(priceB); // numeric
+      }
+      return ascending ? result : -result;
+    });
+  }
+
+  Future<void> _getCatData() async {
+    // TopData1 = [];
+    doit = false;
+    int ind = 1;
+
+    try {
+      final res = await http.get(
+        Uri.parse("${BASE_URL}productBooking/getBookings/${userid}"),
+      );
+      // final res2 = await http.get(Uri.parse("https://hindustanapi.mtlapi.socialseller.in/api/subcategories"));
+
+      if (res.statusCode == 200) {
+        print("success");
+        // dynamic tm = (json.decode(res.body)["data"]);
+        // print(tm["Product"]);
+        process = true;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+        setState(() {
+          itemsTop = json.decode(res.body)["bookings"];
+          // itemsTop = List.from(TopData1);
+        });
+      } else {
+        process = true;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+        setState(() {});
+        print("failure");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _cancelBooking(int bid) async {
+    // TopData1 = [];
+    // doit = false;
+    // int ind = 1;
+
+    try {
+      final res = await http.post(
+        Uri.parse("${BASE_URL}productBooking/cancel/${bid}"),
+      );
+      // final res2 = await http.get(Uri.parse("https://hindustanapi.mtlapi.socialseller.in/api/subcategories"));
+
+      if (res.statusCode == 200) {
+        print("success");
+        print(jsonDecode(res.body));
+        // dynamic tm = (json.decode(res.body)["data"]);
+        // print(tm["Product"]);
+        process = true;
+        if (!mounted) return;
+        _getCatData(); // prevents calling setState if widget is disposed
+
+        // setState(() {
+        //   // TopData1 = json.decode(res.body)["bookings"];
+        //   // itemsTop = List.from(TopData1);
+        // });
+        // SnackBar(content: Text("success"));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Booking cancel Successful!")));
+      } else {
+        print(jsonDecode(res.body));
+        process = true;
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+        setState(() {});
+        print("failure");
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Booking cancel Failed!")));
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Network error!")));
+    }
+  }
+
+  void initState() {
+    super.initState();
+
+    doit = false;
+    itemsTop = [];
+    _getCatData();
+
+    if (!mounted) {
+      return;
+    }
+    setState(() {});
+  }
+
+  String load = "Loading";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        surfaceTintColor: Colors.white,
+
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            // radius: 5,
+            backgroundColor: Colors.white,
+            child: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(Icons.arrow_back_ios_new_outlined, color: widget.adth),
+            ),
+          ),
+        ),
+        backgroundColor: Colors.white,
+        title: Center(
+          child: Text(
+            "Booked Products",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 17,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.white,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SearchPage(adth: widget.adth),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.search, color: widget.adth),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(0.0),
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [_getme()],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: bottomnn(),
+    );
+  }
+
+  Color b11 = const Color.fromARGB(255, 169, 169, 169);
+  Color b2 = const Color.fromARGB(255, 169, 169, 169);
+  Color b3 = const Color.fromARGB(255, 169, 169, 169);
+  Color b4 = const Color.fromARGB(255, 169, 169, 169);
+  Color b5 = const Color.fromARGB(255, 169, 169, 169);
+
+  Color b111 = Colors.grey;
+
+  Widget bottomnn() {
+    return BottomAppBar(
+      surfaceTintColor: Colors.white,
+      color: Colors.white,
+      height: 68,
+      // currentIndex: 0,
+      // selectedItemColor: widget.adth,
+      // unselectedItemColor: Colors.grey,
+      // showSelectedLabels: true,
+      // showUnselectedLabels: true,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHome(adth: widget.adth, admin: 0),
+                  ),
+                  (context) => false,
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.home_outlined, size: 21, color: b1),
+                  Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => Cart1Page(adth: widget.adth, admin: 0),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.dashboard_outlined, color: widget.adth, size: 21),
+                  Text(
+                    'Category',
+                    style: TextStyle(color: widget.adth, fontSize: 13),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VideoPage(admin: 2, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.ondemand_video, color: b1, size: 21),
+                  Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
+                  Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: 60,
+            child: MaterialButton(
+              padding: EdgeInsets.only(bottom: 0),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => ProfilePage(adth: widget.adth, admin: 0),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.person_outline, color: b1, size: 21),
+                  Text(style: TextStyle(color: b1, fontSize: 13), 'Profile'),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      //
+      // ],
+    );
+  }
+
+  Widget _getCards({
+    required int index,
+    required String id,
+    required String name,
+    required String quantity,
+    required String price,
+    required String productprice,
+    required String image,
+    required String variant,
+    String? createdAt,
+    String? status,
+  }) {
+    // int index = 0;
+
+    return Center(
+      child: Card(
+        color: Colors.white,
+        elevation: 2,
+        child: Container(
+          width: MediaQuery.of(context).size.width - 30,
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      ),
+                      child: Image.network(
+                        (image != "")
+                            ? image
+                            : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                        height: 110,
+                        width: 80,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(3),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 220,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "#$id",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: widget.adth,
+                                ),
+                              ),
+                              Text(
+                                createdAt!,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: 200,
+                          child: Text(
+                            name,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Container(
+                          width: 220,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Varient",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        variant,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Quantity",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        "$quantity",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+
+                              Column(
+                                children: [
+                                  (itemsTop[index]['bookingCancellation'])
+                                      ? Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 0.0,
+                                        ),
+                                        child: Text(
+                                          "Cancelled",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      )
+                                      : IconButton(
+                                        padding: EdgeInsets.all(0),
+                                        onPressed: () {
+                                          _cancelBooking(int.parse(id));
+                                        },
+                                        icon: Card(
+                                          margin: EdgeInsets.all(0),
+                                          // onPressed: () {
+                                          //   // showDialog(
+                                          //   //   context: context,
+                                          //   //   builder: (context) => WithdrowPage(),
+                                          //   // );
+                                          // },
+                                          // style: ElevatedButton.styleFrom(
+                                          //   backgroundColor: Colors.white70,
+                                          //   shape: RoundedRectangleBorder(
+                                          //     borderRadius: BorderRadius.circular(10),
+                                          //   ),
+                                          // ),
+                                          child: Icon(
+                                            Icons.cancel_rounded,
+                                            color: Colors.red,
+                                          ),
+                                          //  Text(
+                                          //   "Cancel Booking",
+                                          //   style: TextStyle(
+                                          //     fontWeight: FontWeight.bold,
+                                          //     fontSize: 10,
+                                          //     color: widget.adth,
+                                          //   ),
+                                          // ),
+                                        ),
+                                      ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 0.0),
+                                    child: Text(
+                                      "₹ $price",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 10,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          "Amount PerDay",
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "${(itemsTop[index]['amountPerDay'])}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Total Amount",
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "${(itemsTop[index]['totalAmount'])}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Row(
+                      children: [
+                        Text(
+                          "Product Quantity",
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "${(itemsTop[index]['productQuantity'])}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Booking Cancellation",
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "${(itemsTop[index]['bookingCancellation']) ? "Yes" : 'No'}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Row(
+                      children: [
+                        Text(
+                          "Booking Date",
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "${createdAt ?? ""}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Expiry Date",
+                          style: TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                        SizedBox(width: 5),
+                        Text(
+                          "${status ?? ""}",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _getme() {
+    Column a = Column(
+      children: [
+        for (int i = 0; i < itemsTop.length; i++)
+          (!(itemsTop[i] != null &&
+                  itemsTop[i]["variant"] != null &&
+                  itemsTop[i]["product"] != null &&
+                  itemsTop[i]["product"]["thumbnail"] != null &&
+                  itemsTop[i]["product"]["thumbnail"]["url"] != null))
+              ? Container()
+              : GestureDetector(
+                onTap: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder:
+                  //         (context) => OrderDetailsCard(
+                  //           adth: widget.adth,
+                  //           orderid: itemsTop[i]["id"] ?? 1,
+                  //           orderpic:
+                  //               itemsTop[i]["variant"]["product"]["thumbnail"]["url"] ??
+                  //               "",
+                  //         ),
+                  //   ),
+                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => BuyItem(
+                            adth: widget.adth,
+                            buyid: itemsTop[i]["productId"],
+                          ),
+                    ),
+                  );
+                },
+                child: _getCards(
+                  id: itemsTop[i]["id"].toString(),
+                  index: i,
+                  image:
+                      itemsTop[i]["product"]["thumbnail"]["url"] ??
+                      "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+
+                  price: itemsTop[i]["variant"]["price"].toString(),
+
+                  productprice: itemsTop[i]["variant"]["price"] ?? "2222",
+                  name: itemsTop[i]?["product"]?["name"] ?? "Failed name",
+                  quantity: itemsTop[i]["productQuantity"].toString(),
+                  variant: itemsTop[i]["variant"]["name"] ?? "hfdsd",
+                  createdAt: DateFormat('dd MMM yyyy, hh:mm a').format(
+                    DateTime.parse(itemsTop[i]["bookingDate"]).toLocal(),
+                  ),
+                  status: DateFormat(
+                    'dd MMM yyyy, hh:mm a',
+                  ).format(DateTime.parse(itemsTop[i]["expireDate"]).toLocal()),
+                ),
+              ),
+      ],
+    );
+    return a;
+  }
+}

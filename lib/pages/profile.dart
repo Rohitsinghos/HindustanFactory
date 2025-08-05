@@ -1,26 +1,26 @@
 import 'dart:convert';
 
-import 'package:template/CategoryPages/category1.dart';
-import 'package:template/Purchase/cartdirect.dart';
-import 'package:template/deepPage/Orderpage.dart';
+import 'package:template/pages/category1.dart';
+import 'package:template/pages/cartdirect.dart';
 import 'package:template/deepPage/orderDetails.dart';
-import 'package:template/deepPage/premium.dart';
-import 'package:template/deepPage/razerpay.dart';
-import 'package:template/deepPage/wallet.dart';
+import 'package:template/profilePages/book.dart';
+import 'package:template/usls/premium.dart';
+import 'package:template/usls/razerpay.dart';
+import 'package:template/usls/wallet.dart';
 import 'package:template/models/categorymodel/cate.dart';
 
 import 'package:template/models/categorymodel/restmodel.dart';
 import 'package:template/models/model1.dart';
 import 'package:template/pages/home.dart';
-import 'package:template/pages/video.dart';
-import 'package:template/profilePages/Orders.dart';
+import 'package:template/usls/video.dart';
+import 'package:template/deepPage/Orders.dart';
 import 'package:template/profilePages/addr.dart';
-import 'package:template/profilePages/collection.dart';
-import 'package:template/profilePages/course.dart';
-import 'package:template/profilePages/help.dart';
-import 'package:template/profilePages/services.dart';
-import 'package:template/profilePages/setting.dart';
-import 'package:template/profilePages/support.dart';
+import 'package:template/usls/collection.dart';
+import 'package:template/usls/course.dart';
+import 'package:template/usls/help.dart';
+import 'package:template/usls/services.dart';
+import 'package:template/usls/setting.dart';
+import 'package:template/usls/support.dart';
 import 'package:flutter/material.dart';
 import 'package:template/main.dart';
 import 'package:template/profilePages/account.dart';
@@ -50,7 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void logoutUser() async {
     WidgetsFlutterBinding.ensureInitialized();
     final storage = FlutterSecureStorage();
-    await storage.deleteAll();
+    await storage.delete(key: 'bota**@useryuwqdhsaahsjkhnxloggedtoken');
     resetModelData();
     print("✅ Secure storage cleared. User logged out.");
   }
@@ -58,8 +58,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final txcont = TextEditingController();
   bool isPressed = false;
   bool isPressed1 = false;
-
-  bool ispremi = false;
 
   _logOut() {
     return showDialog(
@@ -113,8 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: CircleAvatar(
                   radius: 130,
                   backgroundImage: NetworkImage(
-                    (userData != null &&
-                            userData["avatar"] != null &&
+                    (userData["avatar"] != null &&
                             userData["avatar"]["url"] != null)
                         ? userData["avatar"]["url"]
                         : 'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg',
@@ -130,41 +127,48 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _getmeuser() async {
     try {
-      if (userData.length == 0 || adrss == -1 || wallet == -1 || userid == -1) {
-        final res = await http.get(
-          Uri.parse('${BASE_URL}store-users/me'),
-          headers: {'Authorization': "Bearer ${userToken}"},
-        );
+      final res = await http.get(
+        Uri.parse('${BASE_URL}store-users/me'),
+        headers: {'Authorization': "Bearer ${userToken}"},
+      );
 
-        if (res.statusCode == 200) {
-          print("success userrrrrrrrrrrrrrrrrrrr");
-          // userData = json.decode(res.body)["data"];
+      if (res.statusCode == 200) {
+        print("success userrrrrrrrrrrrrrrrrrrr");
+        // userData = json.decode(res.body)["data"];
 
-          userData = json.decode(res.body)["data"];
-          isPremiium = (userData["isPremium"] == true);
-          userName = userData["name"];
-          ispremi = isPremiium;
-          print(userData["isPremium"]);
-          adrss = userData["addresses"].length;
-          wallet = userData["wallet_balance"];
-          userid = userData["id"];
+        userData = json.decode(res.body)["data"];
+        isPremiium = (userData["isPremium"] == true);
+        userName = userData["name"];
+        ispremi = isPremiium;
+        print(userData["isPremium"]);
+        adrss = userData["addresses"].length;
+        wallet = userData["wallet_balance"];
+        userid = userData["id"];
 
-          if (!mounted) {
-            return;
-          }
-          if (!mounted)
-            return; // prevents calling setState if widget is disposed
-
-          setState(() {});
-          print(userData);
-        } else {
-          print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        if (!mounted) {
+          return;
         }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+        setState(() {});
+        print(userData);
       } else {
-        print("kkskksksk");
+        print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        if (!mounted) return;
+        load = "Server Error!";
+        setState(() {});
       }
+      // } else {
+      //   print("kkskksksk");
+      //   if (!mounted) return;
+      //   load = "Server Error!";
+      //   setState(() {});
+      // }
     } catch (e) {
       print(e);
+      if (!mounted) return;
+      load = "Network Error!";
+      setState(() {});
     }
   }
 
@@ -209,6 +213,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  String load = "Loading";
+
   List<String> tmop = ["All", "Today", "Yesterday", "Weekly", "Monthly"];
   int tmopn = 4;
 
@@ -217,7 +223,9 @@ class _ProfilePageState extends State<ProfilePage> {
     // TODO: implement initState
     super.initState();
 
-    _getmeuser();
+    if (userid == -1) {
+      _getmeuser();
+    }
     if (!mounted) {
       return;
     }
@@ -236,9 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int orderss = 0;
   int colls = favIds.length;
   int adrss =
-      (userData != null && userData["addresses"] != null)
-          ? userData["addresses"].length
-          : 0;
+      (userData["addresses"] != null) ? userData["addresses"].length : 0;
 
   Future<void> _refreshData() async {
     await Future.delayed(Duration(milliseconds: 100)); // Simulate network call
@@ -252,968 +258,1082 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     tmop = ["All", "Today", "Yesterday", "Weekly", "Monthly"];
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        surfaceTintColor: Colors.white,
+    return (userData.isEmpty)
+        ? Scaffold(
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
 
-        backgroundColor: Colors.white,
-        // toolbarHeight: 60,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            // radius: 5,
-            backgroundColor: Colors.white,
-            child: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.arrow_back_ios_new_outlined, color: widget.adth),
-            ),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              // radius: 25,
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => CartDirPage(adth: widget.adth, admin: 0),
+                children: [
+                  Text(
+                    (load == "Loading") ? "" : load,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: (load == "Loading") ? Colors.green : Colors.red,
                     ),
-                  );
-                },
-                icon: Icon(Icons.shopping_cart_outlined),
-                // iconSize: 30,
-                color: widget.adth,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (!mounted) return;
+                      load = "Loading";
+                      setState(() {});
+                      _getmeuser();
+                      // _getmeuser();
+                      // _getProfileData();
+                    },
+                    icon:
+                        (load == "Loading")
+                            ? RefreshProgressIndicator()
+                            : Icon(Icons.refresh, color: Colors.blue),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: _refreshData,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              //  AppBar(
+        )
+        : Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            surfaceTintColor: Colors.white,
 
-              //   leading: Container(),
-              //   title: Column(
-              //     children: [
-              //       Padding(
-              //         padding: const EdgeInsets.only(top: 20.0),
-              //         child: Row(
-              //           children: [
-              //             MaterialButton(
-              //               onPressed: () {
-              //                 _photoClick();
-              //               },
-              //               onLongPress: () {
-              //                 _photoLong();
-              //               },
-              //               child: CircleAvatar(
-              //                 radius: 55,
-              //                 backgroundImage: NetworkImage(
-              //                     'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg'),
-              //               ),
-              //             ),
-              //             Padding(
-              //               padding: const EdgeInsets.all(20.0),
-              //               child: Column(
-              //                   mainAxisAlignment: MainAxisAlignment.center,
-              //                   crossAxisAlignment: CrossAxisAlignment.start,
-              //                   children: [
-              //                     Text(
-              //                       "Guest",
-              //                       style: TextStyle(
-              //                         color: Colors.white,
-              //                         fontSize: 18,
-              //                         fontWeight: FontWeight.bold,
-              //                       ),
-              //                     ),
-              //                     Padding(
-              //                       padding: const EdgeInsets.only(top: 30.0),
-              //                       child: Text(
-              //                         "377373773",
-              //                         style: TextStyle(
-              //                             color: Colors.white, fontSize: 13),
-              //                       ),
-              //                     ),
-              //                   ]),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //       Padding(
-              //         padding: const EdgeInsets.all(16.0),
-              //         child: Row(children: [
-              //           Padding(
-              //             padding: const EdgeInsets.only(right: 12.0),
-              //             child: Container(
-              //               height: 67,
-              //               width: 90,
-              //               child: ClipRRect(
-              //                 borderRadius: BorderRadius.circular(10),
-              //                 child: Container(
-              //                   height: 67,
-              //                   width: 90,
-              //                   color: const Color.fromARGB(44, 122, 120, 122),
-              //                   child: MaterialButton(
-              //                     height: 80,
-              //                     minWidth: 90,
-              //                     onPressed: () {
-              //                       Navigator.push(
-              //                           context,
-              //                           MaterialPageRoute(
-              //                               builder: (context) =>
-              //                                   TransPage(adth: widget.adth)));
-              //                     },
-              //                     child: Padding(
-              //                       padding: const EdgeInsets.all(0.0),
-              //                       child: Column(
-              //                         mainAxisAlignment: MainAxisAlignment.center,
-              //                         crossAxisAlignment: CrossAxisAlignment.start,
-              //                         children: [
-              //                           Text(
-              //                             '₹ 0.0',
-              //                             style: TextStyle(
-              //                                 fontSize: 18,
-              //                                 color: Colors.green,
-              //                                 fontWeight: FontWeight.bold),
-              //                           ),
-              //                           Padding(
-              //                             padding: const EdgeInsets.all(1.0),
-              //                             child: Text(
-              //                               'Wallet',
-              //                               style: TextStyle(
-              //                                   fontSize: 13, color: Colors.white),
-              //                             ),
-              //                           )
-              //                         ],
-              //                       ),
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //           Padding(
-              //             padding: const EdgeInsets.all(0.0),
-              //             child: Container(
-              //               height: 67,
-              //               width: 90,
-              //               child: ClipRRect(
-              //                 borderRadius: BorderRadius.circular(10),
-              //                 child: Container(
-              //                   color: const Color.fromARGB(44, 122, 120, 122),
-              //                   child: MaterialButton(
-              //                     onPressed: () {
-              //                       Navigator.push(
-              //                           context,
-              //                           MaterialPageRoute(
-              //                               builder: (context) =>
-              //                                   OrdersPage(adth: widget.adth)));
-              //                     },
-              //                     child: Padding(
-              //                       padding: const EdgeInsets.all(0.0),
-              //                       child: Column(
-              //                         mainAxisAlignment: MainAxisAlignment.center,
-              //                         crossAxisAlignment: CrossAxisAlignment.start,
-              //                         children: [
-              //                           Text(
-              //                             '20',
-              //                             style: TextStyle(
-              //                               fontSize: 18,
-              //                               color: Colors.green,
-              //                               fontWeight: FontWeight.bold,
-              //                             ),
-              //                           ),
-              //                           Padding(
-              //                             padding: const EdgeInsets.only(top: 1.0),
-              //                             child: Text(
-              //                               'Orders',
-              //                               style: TextStyle(
-              //                                   fontSize: 13, color: Colors.white),
-              //                             ),
-              //                           )
-              //                         ],
-              //                       ),
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ]),
-              //       ),
-              //     ],
-              //   ),
-              //   backgroundColor: widget.adth,
-              //   toolbarHeight: 260,
-              // ),
-              SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    // mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (userid != -1) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => AccPage(
-                                      adth: widget.adth,
-                                      userid: userid,
-                                    ),
-                              ),
-                            );
-                          }
-                        },
-                        child: GestureDetector(
-                          onTap: () {
-                            if (userid != -1) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => AccPage(
-                                        adth: widget.adth,
-                                        userid: userid,
-                                      ),
-                                ),
-                              );
-                            }
-                          },
-                          onTapDown: (_) => setState(() => isPressed = true),
-                          onTapUp: (_) => setState(() => isPressed = false),
-                          onTapCancel: () => setState(() => isPressed = false),
-                          child: AnimatedScale(
-                            scale: isPressed ? 0.95 : 1.0,
-                            duration: Duration(milliseconds: 950),
-                            curve: Curves.easeInOut,
-                            child: Container(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0,
-                                      vertical: 15,
-                                    ),
-                                    child: GestureDetector(
-                                      onLongPress: _photoLong,
-                                      child: CircleAvatar(
-                                        radius: 40,
-                                        backgroundImage: NetworkImage(
-                                          (userData != null &&
-                                                  userData["avatar"] != null &&
-                                                  userData["avatar"]["url"] !=
-                                                      null)
-                                              ? userData["avatar"]["url"]
-                                              : 'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg',
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 0.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          (userData != null &&
-                                                  userData != null &&
-                                                  userData["name"] != null)
-                                              ? userData["name"]
-                                              : "",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Text(
-                                          (userData != null &&
-                                                  userData != null &&
-                                                  userData["email"] != null)
-                                              ? userData["email"]
-                                              : "null",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        // Text(userToken),
-                                        Text(
-                                          (userData != null &&
-                                                  userData != null &&
-                                                  userData["phone"] != null)
-                                              ? "${userData["country_code"]} ${userData["phone"]}"
-                                              : "",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+            backgroundColor: Colors.transparent,
+            // toolbarHeight: 60,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                // radius: 5,
+                backgroundColor: Colors.white,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_outlined,
+                    color: widget.adth,
+                  ),
+                ),
+              ),
+            ),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  // radius: 25,
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  CartDirPage(adth: widget.adth, admin: 0),
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        "Display preference",
-                        style: TextStyle(fontSize: 15, color: Colors.grey),
-                      ),
-                      SizedBox(height: 8),
-                      Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all<Size>(
-                                  const Size(160, 40),
-                                ),
-                                shape: WidgetStateOutlinedBorder.resolveWith(
-                                  (states) => RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                      (ispremi == false)
-                                          ? widget.adth
-                                          : Colors.white70,
-                                    ),
-                              ),
-                              // height: 40,
-                              // minWidth: 160,
-                              // color: (ispremi == false)
-                              //     ? widget.adth
-                              //     : Colors.white70,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            PremiumPage(adth: widget.adth),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                "Basic Plan",
-                                style: TextStyle(
-                                  color:
-                                      (ispremi != false)
-                                          ? widget.adth
-                                          : Colors.white,
-                                ),
-                              ),
-                            ),
-                            ElevatedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all<Size>(
-                                  const Size(160, 40),
-                                ),
-                                shape: WidgetStateOutlinedBorder.resolveWith(
-                                  (states) => RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                      (ispremi == true)
-                                          ? widget.adth
-                                          : Colors.white70,
-                                    ),
-                              ),
-                              // height: 40,
-                              // minWidth: 160,
-                              // color: (ispremi == false)
-                              //     ? widget.adth
-                              //     : Colors.white70,
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            PremiumPage(adth: widget.adth),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                "Premium Plan",
-                                style: TextStyle(
-                                  color:
-                                      (ispremi == true)
-                                          ? Colors.white
-                                          : widget.adth,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTapDown: (_) => setState(() => isPressed1 = true),
-                        onTapUp: (_) => setState(() => isPressed1 = false),
-                        onTapCancel: () => setState(() => isPressed1 = false),
-                        child: AnimatedScale(
-                          scale: isPressed1 ? 0.95 : 1.0,
-                          duration: Duration(milliseconds: 950),
-                          curve: Curves.easeInOut,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            // elevation: 2,
-                            child: Card(
-                              color: Colors.white,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(6.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            for (
-                                              int i = 0;
-                                              i < tmop.length;
-                                              i++
-                                            )
-                                              GestureDetector(
-                                                onTap: () {
-                                                  _takeOp(i);
-                                                },
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  child: Container(
-                                                    color:
-                                                        (tmopn == i)
-                                                            ? widget.adth
-                                                            : Colors.white,
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          vertical: 5,
-                                                          horizontal: 2,
-                                                        ),
-                                                    child: Center(
-                                                      child: Text(
-                                                        tmop[i],
-                                                        style: TextStyle(
-                                                          fontSize: 15,
-                                                          color:
-                                                              (tmopn == i)
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "$wallet",
-                                            style: TextStyle(
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          "Total Sales",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        Text(
-                                          "+0.0% ^",
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: const Color.fromARGB(
-                                              255,
-                                              235,
-                                              237,
-                                              236,
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          margin: EdgeInsets.all(20),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Text("Total oders : $orderss"),
-                                              Text("Unpaid orders : $orderss"),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              ElevatedButton(
-                                                style: ButtonStyle(
-                                                  fixedSize:
-                                                      MaterialStateProperty.all<
-                                                        Size
-                                                      >(const Size(130, 40)),
-                                                  shape: WidgetStateOutlinedBorder.resolveWith(
-                                                    (
-                                                      states,
-                                                    ) => RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            15,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<
-                                                        Color
-                                                      >(Colors.white70),
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder:
-                                                          (context) =>
-                                                              WalletPage(
-                                                                adth:
-                                                                    widget.adth,
-                                                              ),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Text(
-                                                  "Add Fund",
-                                                  style: TextStyle(
-                                                    color: widget.adth,
-                                                  ),
-                                                ),
-                                              ),
-                                              ElevatedButton(
-                                                style: ButtonStyle(
-                                                  fixedSize:
-                                                      MaterialStateProperty.all<
-                                                        Size
-                                                      >(const Size(150, 40)),
-                                                  shape: WidgetStateOutlinedBorder.resolveWith(
-                                                    (
-                                                      states,
-                                                    ) => RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            15,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  backgroundColor:
-                                                      MaterialStateProperty.all<
-                                                        Color
-                                                      >(widget.adth),
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder:
-                                                          (context) =>
-                                                              WalletPage(
-                                                                adth:
-                                                                    widget.adth,
-                                                              ),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Text(
-                                                  "Withdraw Fund",
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Card(
-                        color: Colors.white,
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Column(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) => OrdersPage(
-                                            adth: widget.adth,
-                                            page: 0,
-                                          ),
-                                    ),
-                                  );
-                                },
-                                child: getRow2(
-                                  "Orders",
-                                  Icon(Icons.collections_bookmark_outlined),
-                                ),
-                              ),
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              CollectionPage(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow(
-                                  "Collection",
-                                  "Already placed $colls orders",
-                                  Icon(Icons.favorite_border_outlined),
-                                ),
-                              ),
-
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              ServicesPage(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow2(
-                                  "Service",
-                                  Icon(Icons.document_scanner),
-                                ),
-                              ),
-
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              CoursePAge(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow2(
-                                  "Courses",
-                                  Icon(Icons.read_more_sharp),
-                                ),
-                              ),
-
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              SettingsPage(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow2(
-                                  "Settings",
-                                  Icon(Icons.settings),
-                                ),
-                              ),
-
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              AddrPage(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow(
-                                  "Location Preference",
-                                  "saved total $adrss addresses",
-                                  Icon(Icons.location_city_outlined),
-                                ),
-                              ),
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              WalletPage(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow2("Wallet", Icon(Icons.wallet)),
-                              ),
-
-                              // getRow(),
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  _logOut();
-                                },
-                                child: getRow2("Logout", Icon(Icons.logout)),
-                              ),
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              HelpCenter(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow2(
-                                  "Help Center",
-                                  Icon(Icons.help_center),
-                                ),
-                              ),
-                              Divider(height: 1),
-
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder:
-                                          (context) =>
-                                              SupportPage(adth: widget.adth),
-                                    ),
-                                  );
-                                },
-                                child: getRow2("Support", Icon(Icons.email)),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                      );
+                    },
+                    icon: Icon(Icons.shopping_cart_outlined),
+                    // iconSize: 30,
+                    color: widget.adth,
                   ),
                 ),
               ),
             ],
           ),
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        color: bottomback,
-        height: 68,
-        // currentIndex: 0,
-        // selectedItemColor: widget.adth,
-        // unselectedItemColor: Colors.grey,
-        // showSelectedLabels: true,
-        // showUnselectedLabels: true,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MyHome(adth: widget.adth, admin: 0),
-                    ),
-                    (context) => false,
-                  );
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.home_outlined, size: 21, color: b1),
-                    Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              Cart1Page(adth: widget.adth, admin: widget.admin),
-                    ),
-                  );
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.dashboard_outlined, color: b1, size: 21),
-                    Text('Category', style: TextStyle(color: b1, fontSize: 13)),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => VideoPage(admin: 2, adth: widget.adth),
-                    ),
-                  );
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.ondemand_video, color: b1, size: 21),
-                    Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => CartDirPage(admin: 3, adth: widget.adth),
-                    ),
-                  );
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
-                    Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                  ],
-                ),
-              ),
-            ),
-            Container(
-              height: 45,
-              width: 60,
-              child: MaterialButton(
-                padding: EdgeInsets.only(bottom: 0),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => ProfilePage(
-                            adth: widget.adth,
-                            admin: widget.admin,
-                          ),
-                    ),
-                  );
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.person_outline, color: widget.adth, size: 21),
-                    Text(
-                      style: TextStyle(color: widget.adth, fontSize: 13),
-                      'Profile',
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
+          body: RefreshIndicator(
+            onRefresh: _refreshData,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  //  AppBar(
 
-        //
-        // ],
-      ),
-    );
+                  //   leading: Container(),
+                  //   title: Column(
+                  //     children: [
+                  //       Padding(
+                  //         padding: const EdgeInsets.only(top: 20.0),
+                  //         child: Row(
+                  //           children: [
+                  //             MaterialButton(
+                  //               onPressed: () {
+                  //                 _photoClick();
+                  //               },
+                  //               onLongPress: () {
+                  //                 _photoLong();
+                  //               },
+                  //               child: CircleAvatar(
+                  //                 radius: 55,
+                  //                 backgroundImage: NetworkImage(
+                  //                     'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg'),
+                  //               ),
+                  //             ),
+                  //             Padding(
+                  //               padding: const EdgeInsets.all(20.0),
+                  //               child: Column(
+                  //                   mainAxisAlignment: MainAxisAlignment.center,
+                  //                   crossAxisAlignment: CrossAxisAlignment.start,
+                  //                   children: [
+                  //                     Text(
+                  //                       "Guest",
+                  //                       style: TextStyle(
+                  //                         color: Colors.white,
+                  //                         fontSize: 18,
+                  //                         fontWeight: FontWeight.bold,
+                  //                       ),
+                  //                     ),
+                  //                     Padding(
+                  //                       padding: const EdgeInsets.only(top: 30.0),
+                  //                       child: Text(
+                  //                         "377373773",
+                  //                         style: TextStyle(
+                  //                             color: Colors.white, fontSize: 13),
+                  //                       ),
+                  //                     ),
+                  //                   ]),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //       Padding(
+                  //         padding: const EdgeInsets.all(16.0),
+                  //         child: Row(children: [
+                  //           Padding(
+                  //             padding: const EdgeInsets.only(right: 12.0),
+                  //             child: Container(
+                  //               height: 67,
+                  //               width: 90,
+                  //               child: ClipRRect(
+                  //                 borderRadius: BorderRadius.circular(10),
+                  //                 child: Container(
+                  //                   height: 67,
+                  //                   width: 90,
+                  //                   color: const Color.fromARGB(44, 122, 120, 122),
+                  //                   child: MaterialButton(
+                  //                     height: 80,
+                  //                     minWidth: 90,
+                  //                     onPressed: () {
+                  //                       Navigator.push(
+                  //                           context,
+                  //                           MaterialPageRoute(
+                  //                               builder: (context) =>
+                  //                                   TransPage(adth: widget.adth)));
+                  //                     },
+                  //                     child: Padding(
+                  //                       padding: const EdgeInsets.all(0.0),
+                  //                       child: Column(
+                  //                         mainAxisAlignment: MainAxisAlignment.center,
+                  //                         crossAxisAlignment: CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           Text(
+                  //                             '₹ 0.0',
+                  //                             style: TextStyle(
+                  //                                 fontSize: 18,
+                  //                                 color: Colors.green,
+                  //                                 fontWeight: FontWeight.bold),
+                  //                           ),
+                  //                           Padding(
+                  //                             padding: const EdgeInsets.all(1.0),
+                  //                             child: Text(
+                  //                               'Wallet',
+                  //                               style: TextStyle(
+                  //                                   fontSize: 13, color: Colors.white),
+                  //                             ),
+                  //                           )
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //           Padding(
+                  //             padding: const EdgeInsets.all(0.0),
+                  //             child: Container(
+                  //               height: 67,
+                  //               width: 90,
+                  //               child: ClipRRect(
+                  //                 borderRadius: BorderRadius.circular(10),
+                  //                 child: Container(
+                  //                   color: const Color.fromARGB(44, 122, 120, 122),
+                  //                   child: MaterialButton(
+                  //                     onPressed: () {
+                  //                       Navigator.push(
+                  //                           context,
+                  //                           MaterialPageRoute(
+                  //                               builder: (context) =>
+                  //                                   OrdersPage(adth: widget.adth)));
+                  //                     },
+                  //                     child: Padding(
+                  //                       padding: const EdgeInsets.all(0.0),
+                  //                       child: Column(
+                  //                         mainAxisAlignment: MainAxisAlignment.center,
+                  //                         crossAxisAlignment: CrossAxisAlignment.start,
+                  //                         children: [
+                  //                           Text(
+                  //                             '20',
+                  //                             style: TextStyle(
+                  //                               fontSize: 18,
+                  //                               color: Colors.green,
+                  //                               fontWeight: FontWeight.bold,
+                  //                             ),
+                  //                           ),
+                  //                           Padding(
+                  //                             padding: const EdgeInsets.only(top: 1.0),
+                  //                             child: Text(
+                  //                               'Orders',
+                  //                               style: TextStyle(
+                  //                                   fontSize: 13, color: Colors.white),
+                  //                             ),
+                  //                           )
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ]),
+                  //       ),
+                  //     ],
+                  //   ),
+                  //   backgroundColor: widget.adth,
+                  //   toolbarHeight: 260,
+                  // ),
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (userid != -1) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => AccPage(
+                                          adth: widget.adth,
+                                          userid: userid,
+                                        ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: GestureDetector(
+                              onTap: () {
+                                if (userid != -1) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => AccPage(
+                                            adth: widget.adth,
+                                            userid: userid,
+                                          ),
+                                    ),
+                                  );
+                                }
+                              },
+                              onTapDown:
+                                  (_) => setState(() => isPressed = true),
+                              onTapUp: (_) => setState(() => isPressed = false),
+                              onTapCancel:
+                                  () => setState(() => isPressed = false),
+                              child: AnimatedScale(
+                                scale: isPressed ? 0.95 : 1.0,
+                                duration: Duration(milliseconds: 950),
+                                curve: Curves.easeInOut,
+                                child: Container(
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0,
+                                          vertical: 15,
+                                        ),
+                                        child: GestureDetector(
+                                          onLongPress: _photoLong,
+                                          child: CircleAvatar(
+                                            radius: 40,
+                                            backgroundImage: NetworkImage(
+                                              (userData["avatar"] != null &&
+                                                      userData["avatar"]["url"] !=
+                                                          null)
+                                                  ? userData["avatar"]["url"]
+                                                  : 'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg',
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 0.0,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              (userData != null &&
+                                                      userData["name"] != null)
+                                                  ? userData["name"]
+                                                  : "",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              (userData != null &&
+                                                      userData["email"] != null)
+                                                  ? userData["email"]
+                                                  : "null",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            // Text(userToken),
+                                            Text(
+                                              (userData != null &&
+                                                      userData["phone"] != null)
+                                                  ? "${userData["country_code"]} ${userData["phone"]}"
+                                                  : "",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Display preference",
+                            style: TextStyle(fontSize: 15, color: Colors.grey),
+                          ),
+                          SizedBox(height: 8),
+                          Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ElevatedButton(
+                                  style: ButtonStyle(
+                                    fixedSize: WidgetStateProperty.all<Size>(
+                                      const Size(160, 40),
+                                    ),
+                                    shape:
+                                        WidgetStateOutlinedBorder.resolveWith(
+                                          (states) => RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                          ),
+                                        ),
+                                    backgroundColor:
+                                        WidgetStateProperty.all<Color>(
+                                          (ispremi == false)
+                                              ? widget.adth
+                                              : Colors.white70,
+                                        ),
+                                  ),
+                                  // height: 40,
+                                  // minWidth: 160,
+                                  // color: (ispremi == false)
+                                  //     ? widget.adth
+                                  //     : Colors.white70,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) =>
+                                                PremiumPage(adth: widget.adth),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Basic Plan",
+                                    style: TextStyle(
+                                      color:
+                                          (ispremi != false)
+                                              ? widget.adth
+                                              : Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                ElevatedButton(
+                                  style: ButtonStyle(
+                                    fixedSize: WidgetStateProperty.all<Size>(
+                                      const Size(160, 40),
+                                    ),
+                                    shape:
+                                        WidgetStateOutlinedBorder.resolveWith(
+                                          (states) => RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                          ),
+                                        ),
+                                    backgroundColor:
+                                        WidgetStateProperty.all<Color>(
+                                          (ispremi == true)
+                                              ? widget.adth
+                                              : Colors.white70,
+                                        ),
+                                  ),
+                                  // height: 40,
+                                  // minWidth: 160,
+                                  // color: (ispremi == false)
+                                  //     ? widget.adth
+                                  //     : Colors.white70,
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) =>
+                                                PremiumPage(adth: widget.adth),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    "Premium Plan",
+                                    style: TextStyle(
+                                      color:
+                                          (ispremi == true)
+                                              ? Colors.white
+                                              : widget.adth,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          GestureDetector(
+                            onTapDown: (_) => setState(() => isPressed1 = true),
+                            onTapUp: (_) => setState(() => isPressed1 = false),
+                            onTapCancel:
+                                () => setState(() => isPressed1 = false),
+                            child: AnimatedScale(
+                              scale: isPressed1 ? 0.95 : 1.0,
+                              duration: Duration(milliseconds: 950),
+                              curve: Curves.easeInOut,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                // elevation: 2,
+                                child: Card(
+                                  color: Colors.white,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Card(
+                                          color: Colors.white,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(6.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                for (
+                                                  int i = 0;
+                                                  i < tmop.length;
+                                                  i++
+                                                )
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      _takeOp(i);
+                                                    },
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            6,
+                                                          ),
+                                                      child: Container(
+                                                        color:
+                                                            (tmopn == i)
+                                                                ? widget.adth
+                                                                : Colors.white,
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              vertical: 5,
+                                                              horizontal: 2,
+                                                            ),
+                                                        child: Center(
+                                                          child: Text(
+                                                            tmop[i],
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              color:
+                                                                  (tmopn == i)
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Center(
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Text(
+                                                "$wallet",
+                                                style: TextStyle(
+                                                  fontSize: 25,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              "Total Sales",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            Text(
+                                              "+0.0% ^",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: const Color.fromARGB(
+                                                  255,
+                                                  235,
+                                                  237,
+                                                  236,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.all(20),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  Text(
+                                                    "Total oders : $orderss",
+                                                  ),
+                                                  Text(
+                                                    "Unpaid orders : $orderss",
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                children: [
+                                                  ElevatedButton(
+                                                    style: ButtonStyle(
+                                                      fixedSize:
+                                                          WidgetStateProperty.all<
+                                                            Size
+                                                          >(
+                                                            const Size(130, 40),
+                                                          ),
+                                                      shape: WidgetStateOutlinedBorder.resolveWith(
+                                                        (
+                                                          states,
+                                                        ) => RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                15,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      backgroundColor:
+                                                          WidgetStateProperty.all<
+                                                            Color
+                                                          >(Colors.white70),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (
+                                                                context,
+                                                              ) => WalletPage(
+                                                                adth:
+                                                                    widget.adth,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      "Add Fund",
+                                                      style: TextStyle(
+                                                        color: widget.adth,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  ElevatedButton(
+                                                    style: ButtonStyle(
+                                                      fixedSize:
+                                                          WidgetStateProperty.all<
+                                                            Size
+                                                          >(
+                                                            const Size(150, 40),
+                                                          ),
+                                                      shape: WidgetStateOutlinedBorder.resolveWith(
+                                                        (
+                                                          states,
+                                                        ) => RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                15,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                      backgroundColor:
+                                                          WidgetStateProperty.all<
+                                                            Color
+                                                          >(widget.adth),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (
+                                                                context,
+                                                              ) => WalletPage(
+                                                                adth:
+                                                                    widget.adth,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Text(
+                                                      "Withdraw Fund",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          Card(
+                            color: Colors.white,
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Column(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => OrdersPage(
+                                                adth: widget.adth,
+                                                page: 0,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Orders",
+                                      Icon(Icons.collections_bookmark_outlined),
+                                    ),
+                                  ),
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => CollectionPage(
+                                                adth: widget.adth,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow(
+                                      "Collection",
+                                      "Already placed $colls orders",
+                                      Icon(Icons.favorite_border_outlined),
+                                    ),
+                                  ),
+
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  BookedPage(adth: widget.adth),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Booked Products",
+                                      Icon(Icons.settings),
+                                    ),
+                                  ),
+
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => ServicesPage(
+                                                adth: widget.adth,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Service",
+                                      Icon(Icons.document_scanner),
+                                    ),
+                                  ),
+
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  CoursePAge(adth: widget.adth),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Courses",
+                                      Icon(Icons.read_more_sharp),
+                                    ),
+                                  ),
+
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => SettingsPage(
+                                                adth: widget.adth,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Settings",
+                                      Icon(Icons.settings),
+                                    ),
+                                  ),
+
+                                  Divider(height: 1),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  AddrPage(adth: widget.adth),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow(
+                                      "Location Preference",
+                                      "saved total $adrss addresses",
+                                      Icon(Icons.location_city_outlined),
+                                    ),
+                                  ),
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  WalletPage(adth: widget.adth),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Wallet",
+                                      Icon(Icons.wallet),
+                                    ),
+                                  ),
+
+                                  // getRow(),
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      _logOut();
+                                    },
+                                    child: getRow2(
+                                      "Logout",
+                                      Icon(Icons.logout),
+                                    ),
+                                  ),
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) =>
+                                                  HelpCenter(adth: widget.adth),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Help Center",
+                                      Icon(Icons.help_center),
+                                    ),
+                                  ),
+                                  Divider(height: 1),
+
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => SupportPage(
+                                                adth: widget.adth,
+                                              ),
+                                        ),
+                                      );
+                                    },
+                                    child: getRow2(
+                                      "Support",
+                                      Icon(Icons.email),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          bottomNavigationBar: BottomAppBar(
+            color: bottomback,
+            height: 68,
+            // currentIndex: 0,
+            // selectedItemColor: widget.adth,
+            // unselectedItemColor: Colors.grey,
+            // showSelectedLabels: true,
+            // showUnselectedLabels: true,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  height: 45,
+                  width: 60,
+                  child: GestureDetector(
+                    // padding: EdgeInsets.only(bottom: 0),
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => MyHome(adth: widget.adth, admin: 0),
+                        ),
+                        (context) => false,
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Icon(Icons.home_outlined, size: 21, color: b1),
+                        Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 45,
+                  width: 60,
+                  child: GestureDetector(
+                    // padding: EdgeInsets.only(bottom: 0),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => Cart1Page(
+                                adth: widget.adth,
+                                admin: widget.admin,
+                              ),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Icon(Icons.dashboard_outlined, color: b1, size: 21),
+                        Text(
+                          'Category',
+                          style: TextStyle(color: b1, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 45,
+                  width: 60,
+                  child: GestureDetector(
+                    // padding: EdgeInsets.only(bottom: 0),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  VideoPage(admin: 2, adth: widget.adth),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Icon(Icons.ondemand_video, color: b1, size: 21),
+                        Text(
+                          style: TextStyle(color: b1, fontSize: 13),
+                          'Shorts',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 45,
+                  width: 60,
+                  child: GestureDetector(
+                    // padding: EdgeInsets.only(bottom: 0),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  CartDirPage(admin: 3, adth: widget.adth),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
+                        Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 45,
+                  width: 60,
+                  child: GestureDetector(
+                    // padding: EdgeInsets.only(bottom: 0),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => ProfilePage(
+                                adth: widget.adth,
+                                admin: widget.admin,
+                              ),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.person_outline,
+                          color: widget.adth,
+                          size: 21,
+                        ),
+                        Text(
+                          style: TextStyle(color: widget.adth, fontSize: 13),
+                          'Profile',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            //
+            // ],
+          ),
+        );
   }
 
   Widget getRow(String title, String subtitle, Icon iconio) {

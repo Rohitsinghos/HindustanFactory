@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:template/loginPaages/login.dart';
 import 'package:template/loginPaages/reg.dart';
@@ -48,6 +47,7 @@ class _LandPageState extends State<LandPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           surfaceTintColor: Colors.white,
+          // surfaceTintColor: Colors.white,
           backgroundColor: widget.adth,
           toolbarHeight: 0,
         ),
@@ -112,6 +112,7 @@ class _LandPageState extends State<LandPage> {
                     ),
                   ),
                   BottomAppBar(
+                    surfaceTintColor: Colors.white,
                     color: Colors.white,
                     height: 60,
                     child: GestureDetector(

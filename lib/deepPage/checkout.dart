@@ -1,10 +1,9 @@
 import 'dart:convert';
-import 'dart:math';
 
-import 'package:template/deepPage/razerpay.dart';
-import 'package:template/extra/addaddr.dart';
+import 'package:template/usls/razerpay.dart';
+import 'package:template/usls/addaddr.dart';
 import 'package:template/models/categorymodel/cate.dart';
-import 'package:template/profilePages/Orders.dart';
+import 'package:template/deepPage/Orders.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -471,6 +470,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
+        surfaceTintColor: Colors.white,
         height: 80,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: widget.adth),

@@ -6,8 +6,8 @@ void resetModelData() {
   userToken = "";
 
   userid = -1;
-  adrss = -1;
-  wallet = -1;
+  adrss = 0;
+  wallet = 0;
 
   isPremiium = false;
   chaddr = 0;

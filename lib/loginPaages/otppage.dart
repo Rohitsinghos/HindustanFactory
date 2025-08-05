@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:template/main.dart';
 import 'package:template/models/categorymodel/cate.dart';
 import 'package:template/pages/home.dart';
 import 'package:flutter/material.dart';

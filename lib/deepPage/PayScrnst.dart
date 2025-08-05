@@ -2,35 +2,24 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:template/models/categorymodel/cate.dart';
-import 'package:template/pages/home.dart';
-import 'package:template/pages/profile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:http_parser/http_parser.dart'; // for MediaType
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:mime/mime.dart';
 
-class AccPage extends StatefulWidget {
+class GetVerMoney extends StatefulWidget {
   final Color adth;
-  final int userid;
-  AccPage({required this.adth, required this.userid});
+
+  const GetVerMoney({required this.adth});
 
   @override
-  State<AccPage> createState() => _AccPageState();
+  State<GetVerMoney> createState() => _GetVerMoneyState();
 }
 
-class _AccPageState extends State<AccPage> {
-  int avarId = -1;
+class _GetVerMoneyState extends State<GetVerMoney> {
   final picker = ImagePicker();
   File? _pickedImage;
 
-  bool onprocess = false;
-
   Future<void> uploadImage(File file) async {
-    onprocess = true;
-    if (!mounted) return;
-    setState(() {});
     final request =
         http.MultipartRequest('POST', Uri.parse('${BASE_URL}uploads'))
           ..headers['Authorization'] = 'Bearer $userToken'
@@ -40,11 +29,9 @@ class _AccPageState extends State<AccPage> {
               file.path,
             ),
           );
-    if (!mounted) return;
 
     try {
       final response = await request.send();
-      if (!mounted) return;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // final resBody = await response.stream.bytesToString();
@@ -54,36 +41,14 @@ class _AccPageState extends State<AccPage> {
         final List<dynamic> data = jsonDecode(resBody);
         final int id = data[0]['id'];
         // print(jsonDecode(jsonDecode(source))));
-        avarId = id;
 
         print('✅ File uploaded: $id');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('✅ File uploaded successfully!')),
-        );
-        onprocess = false;
-
-        if (!mounted) return;
-        setState(() {});
       } else {
         // final error = await response.stream.bytesToString();
         print('❌ Upload failed:');
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('❌ Upload failed!')));
-        onprocess = false;
-
-        if (!mounted) return;
-        setState(() {});
       }
     } catch (e) {
       print('❗ Upload error: $e');
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('❗ Upload error: $e')));
-      onprocess = false;
-
-      if (!mounted) return;
-      setState(() {});
     }
   }
 
@@ -129,6 +94,7 @@ class _AccPageState extends State<AccPage> {
     _pickedImage = File(file.path);
     // _uploadPickedImage();
 
+    if (!mounted) return;
     if (!mounted) return; // prevents calling setState if widget is disposed
 
     setState(() {});
@@ -185,99 +151,94 @@ class _AccPageState extends State<AccPage> {
     );
   }
 
-  _updateuser() async {
-    print("ududjdjd");
-    try {
-      final rs = await http.put(
-        Uri.parse('${BASE_URL}store-users/${widget.userid}'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': "Bearer ${userToken}",
-        },
-        body: jsonEncode({
-          "name": "${namc.text}",
-          "email": "${emailc.text}",
-          "phone": "${mobc.text}",
-          "AvatarId": (avarId == -1) ? null : avarId,
-        }),
-      );
-      if (rs.statusCode == 200) {
-        print("success userrrrrrrrrrrrrrrrrrrr");
+  // _updateuser() async {
+  //   print("ududjdjd");
+  //   try {
+  //     final rs =
+  //         await http.put(Uri.parse('${BASE_URL}store-users/${widget.userid}'),
+  //             headers: {
+  //               'Content-Type': 'application/json',
+  //               'Authorization': "Bearer ${userToken}",
+  //             },
+  //             body: jsonEncode({
+  //               "name": "${namc.text}",
+  //               "email": "${emailc.text}",
+  //               "phone": "${mobc.text}",
+  //               "AvatarId": (avarId == -1) ? null : avarId,
+  //             }));
+  //     if (rs.statusCode == 200) {
+  //       print("success userrrrrrrrrrrrrrrrrrrr");
 
-        if (!mounted) {
-          return;
-        }
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProfilePage(adth: widget.adth, admin: 0),
-          ),
-        );
-      } else {
-        print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        if (!mounted) {
-          return;
-        }
-        if (!mounted) return; // prevents calling setState if widget is disposed
+  //       if (!mounted) {
+  //         return;
+  //       }
+  //       Navigator.of(context).push(MaterialPageRoute(
+  //           builder: (context) => ProfilePage(adth: widget.adth, admin: 0)));
+  //     } else {
+  //       print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+  //       if (!mounted) {
+  //         return;
+  //       }
+  //       if (!mounted) return; // prevents calling setState if widget is disposed
 
-        setState(() {});
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  // setState(() {});
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
-  Future<void> _getmeuser() async {
-    try {
-      if (userData.length == 0) {
-        final res = await http.get(
-          Uri.parse('${BASE_URL}store-users/me'),
-          headers: {'Authorization': "Bearer ${userToken}"},
-        );
+  // Future<void> _getmeuser() async {
+  //   try {
+  //     if (false) {
+  //       final res =
+  //           await http.get(Uri.parse('${BASE_URL}store-users/me'), headers: {
+  //         'Authorization': "Bearer ${userToken}",
+  //       });
 
-        if (res.statusCode == 200) {
-          print("success userrrrrrrrrrrrrrrrrrrr");
-          // userData = json.decode(res.body)["data"];
+  //       if (res.statusCode == 200) {
+  //         print("success userrrrrrrrrrrrrrrrrrrr");
+  //         // userData = json.decode(res.body)["data"];
 
-          // userData = json.decode(res.body)["data"];
-          print(userData);
-          namc.text = userData["name"] ?? "";
-          emailc.text = userData["email"] == null ? "" : userData["email"];
-          mobc.text = userData["phone"] ?? "";
-          passc.text = userData["password"];
+  //         // userData = json.decode(res.body)["data"];
+  //         print(userData);
+  //         namc.text = userData["name"] ?? "";
+  //         emailc.text = userData["email"] == null ? "" : userData["email"];
+  //         mobc.text = userData["phone"] ?? "";
+  //         passc.text = userData["password"];
 
-          if (!mounted) {
-            return;
-          }
-          if (!mounted)
-            return; // prevents calling setState if widget is disposed
+  //         if (!mounted) {
+  //           return;
+  //         }
+  //         if (!mounted) return; // prevents calling setState if widget is disposed
 
-          setState(() {});
-        } else {
-          print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        }
-      } else {
-        print(userData);
-        namc.text = userData["name"] ?? "";
-        emailc.text = userData["email"] ?? "";
-        mobc.text = userData["phone"] ?? "";
-        avarId = userData["avatar"] == null ? -1 : userData["avatar"]["id"];
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  // setState(() {});
+  //       } else {
+  //         print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+  //       }
+  //     } else {
+  //       print(userData);
+  //       namc.text = userData["name"] ?? "";
+  //       emailc.text = userData["email"] ?? "";
+  //       mobc.text = userData["phone"] ?? "";
+  //       avarId = userData["avatar"] == null ? -1 : userData["avatar"]["id"];
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
-  void initState() {
-    super.initState();
-    _getmeuser();
+  // void initState() {
+  //   super.initState();
+  //   _getmeuser();
 
-    if (!mounted) {
-      return;
-    }
-    if (!mounted) return; // prevents calling setState if widget is disposed
+  //   if (!mounted) {
+  //     return;
+  //   }
+  //   if (!mounted) return; // prevents calling setState if widget is disposed
 
-    setState(() {});
-  }
+  // setState(() {});
+  // }
 
   bool showRules = false;
   @override
@@ -285,12 +246,14 @@ class _AccPageState extends State<AccPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        // surfaceTintColor: Colors.white,
         surfaceTintColor: Colors.white,
 
         toolbarHeight: 60,
         title: Center(
-          child: Text("Profile Info", style: TextStyle(color: Colors.black)),
+          child: Text(
+            "Recharge Your Wallet",
+            style: TextStyle(color: Colors.black),
+          ),
         ),
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -350,22 +313,19 @@ class _AccPageState extends State<AccPage> {
                         onLongPress: () {
                           _photoLong();
                         },
-                        child: CircleAvatar(
-                          radius: 55,
-                          backgroundImage:
+                        child: Image(
+                          height: 100,
+                          image:
                               (_pickedImage != null)
                                   ? FileImage(_pickedImage!)
                                   // ignore: unnecessary_null_comparison
                                   : NetworkImage(
-                                    (userData["avatar"] != null &&
-                                            userData["avatar"]["url"] != null)
-                                        ? userData["avatar"]["url"]
-                                        : 'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg',
+                                    'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg',
                                   ),
                         ),
                       ),
                       Text(
-                        "Edit Profile Picture",
+                        "Add your payment screenshot",
                         style: TextStyle(color: widget.adth),
                       ),
 
@@ -396,8 +356,8 @@ class _AccPageState extends State<AccPage> {
                       TextField(
                         controller: emailc,
                         decoration: InputDecoration(
-                          labelText: "Email address",
-                          prefixIcon: Icon(Icons.email_outlined),
+                          labelText: "Paid Amount",
+                          prefixIcon: Icon(Icons.money),
                           filled: true,
                           fillColor: Colors.grey.shade100,
                           border: OutlineInputBorder(
@@ -502,19 +462,17 @@ class _AccPageState extends State<AccPage> {
                         child: MaterialButton(
                           height: 50,
                           minWidth: 200,
-                          color: (onprocess) ? Colors.grey : widget.adth,
+                          color: widget.adth,
                           onPressed: () {
-                            if (onprocess == false) {
-                              if (agreeToTerms == true) {
-                                _updateuser();
-                              }
+                            if (agreeToTerms == true) {
+                              // _updateuser();
                             }
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "Save",
+                                "Send Request",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 17,

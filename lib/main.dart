@@ -1,4 +1,4 @@
-import 'package:template/api/get.dart';
+import 'package:flutter/services.dart';
 import 'package:template/models/categorymodel/cate.dart';
 import 'package:template/pages/home.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // void showNotification() async {
 //   const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-//     'channel_id',
 //     'channel_name',
 //     importance: Importance.max,
 //     priority: Priority.high,
@@ -79,6 +78,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: defaultAppTheme,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    );
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home:

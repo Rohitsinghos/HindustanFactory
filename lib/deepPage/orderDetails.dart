@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:template/Purchase/buyItem.dart';
+import 'package:template/pages/buyItem.dart';
 import 'package:template/models/categorymodel/cate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -120,21 +120,23 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
   Widget build(BuildContext context) {
     final int total = price + shippingCharge;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         surfaceTintColor: Colors.white,
+        backgroundColor: Colors.white,
 
         // toolbarHeight: 60,
         leading: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: CircleAvatar(
             backgroundColor: Colors.white,
-            radius: 25,
+            // radius: 25,
             child: IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               icon: Icon(Icons.arrow_back_ios_new_outlined),
-              iconSize: 30,
+              // iconSize: 30,
               color: widget.adth,
             ),
           ),
@@ -144,13 +146,13 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: CircleAvatar(
               backgroundColor: Colors.white,
-              radius: 25,
+              // radius: 25,
               child: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 icon: Icon(Icons.favorite_border_outlined),
-                iconSize: 30,
+                // iconSize: 30,
                 color: widget.adth,
               ),
             ),
@@ -239,6 +241,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
             ),
             // Product details
             Card(
+              color: Colors.white,
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -376,6 +379,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
             ),
             // Order summary
             Card(
+              color: Colors.white,
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Padding(
                 padding: const EdgeInsets.all(12),
@@ -425,6 +429,7 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
             ),
             // Address
             Card(
+              color: Colors.white,
               margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Padding(
                 padding: const EdgeInsets.all(12),

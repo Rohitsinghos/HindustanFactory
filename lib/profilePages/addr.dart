@@ -1,9 +1,7 @@
 import 'dart:convert';
 
-import 'package:template/extra/addaddr.dart';
+import 'package:template/usls/addaddr.dart';
 import 'package:template/models/categorymodel/cate.dart';
-import 'package:template/pages/home.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -117,6 +115,7 @@ class _AddrPageState extends State<AddrPage> {
       appBar: AppBar(
         surfaceTintColor: Colors.white,
 
+        // surfaceTintColor: Colors.white,
         title: Center(
           // padding: const EdgeInsets.only(left: 0.0),
           child: Text(
@@ -181,6 +180,7 @@ class _AddrPageState extends State<AddrPage> {
           });
         },
         child: BottomAppBar(
+          surfaceTintColor: Colors.white,
           // onPressed: () {},
           color: widget.adth,
           height: 70,

@@ -1,29 +1,23 @@
-import 'package:template/CategoryPages/category1.dart';
-import 'package:template/CategoryPages/searchPage.dart';
-import 'package:template/CategoryPages/topPage.dart';
-import 'package:template/Purchase/buyItem.dart';
-import 'package:template/Purchase/cartdirect.dart';
-import 'package:template/extra/scanner.dart';
+import 'package:template/pages/category1.dart';
+import 'package:template/pages/searchPage.dart';
+import 'package:template/pages/topPage.dart';
+import 'package:template/pages/buyItem.dart';
+import 'package:template/pages/cartdirect.dart';
+import 'package:template/usls/scanner.dart';
 import 'package:template/models/categorymodel/cate.dart';
-import 'package:template/models/model1.dart';
-import 'package:template/pages/notification.dart';
+import 'package:template/usls/notification.dart';
 import 'package:template/pages/profile.dart';
-import 'package:template/pages/video.dart';
-import 'package:template/profilePages/collection.dart';
+import 'package:template/usls/video.dart';
+import 'package:template/usls/collection.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'dart:convert';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class MyHome extends StatefulWidget {
@@ -52,9 +46,6 @@ class _MyHomeState extends State<MyHome> {
   final txcont = TextEditingController();
 
   @override
-  // void initState() {
-  //   super.initState();
-  // }
   bool _imgLoading = false;
   File? _imageFile;
   final picker = ImagePicker();
@@ -93,6 +84,8 @@ class _MyHomeState extends State<MyHome> {
     }
   }
 
+  String load = "Loading";
+
   Future<void> fetchProducts() async {
     try {
       if (productData1.length == 0) {
@@ -111,9 +104,15 @@ class _MyHomeState extends State<MyHome> {
             TopData1 = productData1;
           } else {
             print("Failed to load banner data");
+            if (!mounted) return;
+            load = "Server Error!";
+            setState(() {});
           }
         } catch (e) {
           print(e);
+          if (!mounted) return;
+          load = "Network Error!";
+          setState(() {});
         }
       }
 
@@ -137,11 +136,6 @@ class _MyHomeState extends State<MyHome> {
           final List banners = jsonBody["data"];
 
           bannerData = banners;
-          // for (var product in banners) {
-          //   bannerData.add(product);
-          // }
-
-          // print(bannerData);
 
           if (!mounted) return;
           if (!mounted)
@@ -150,19 +144,69 @@ class _MyHomeState extends State<MyHome> {
           setState(() {});
         } else {
           print("Failed to load banner data");
+          if (!mounted) return;
+          load = "Server Error!";
+          setState(() {});
         }
       }
     } catch (e) {
       print(e);
+      if (!mounted) return;
+      load = "Network Error!";
+      setState(() {});
+    }
+
+    try {
+      final res = await http.get(
+        Uri.parse('${BASE_URL}store-users/me'),
+        headers: {'Authorization': "Bearer ${userToken}"},
+      );
+
+      if (res.statusCode == 200) {
+        print("success userrrrrrrrrrrrrrrrrrrr");
+        // userData = json.decode(res.body)["data"];
+
+        userData = json.decode(res.body)["data"];
+        isPremiium = (userData["isPremium"] == true);
+        userName = userData["name"];
+        ispremi = isPremiium;
+        print(userData["isPremium"]);
+        adrss = userData["addresses"].length;
+        wallet = userData["wallet_balance"];
+        userid = userData["id"];
+
+        if (!mounted) {
+          return;
+        }
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+        setState(() {});
+        print(userData);
+      } else {
+        print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+        if (!mounted) return;
+        load = "Server Error!";
+        setState(() {});
+      }
+    } catch (e) {
+      print(e);
+      if (!mounted) return;
+      load = "Network Error!";
+      setState(() {});
     }
   }
 
   void initState() {
     super.initState();
     // fetchProducts();
+    if (!mounted) return;
+    load = "Loading";
+    setState(() {});
     _checkConnection();
     // _getrand4();
     _scrollController = ScrollController();
+
+    fetchProducts();
 
     if (!mounted) {
       return;
@@ -182,10 +226,16 @@ class _MyHomeState extends State<MyHome> {
           print("success to get random products");
         } else {
           print("failed to get random products");
+          if (!mounted) return;
+          load = "Server Error!";
+          setState(() {});
         }
       }
     } catch (e) {
       print(e);
+      if (!mounted) return;
+      load = "Network Error!";
+      setState(() {});
     }
     try {
       if (productData2i.length == 0) {
@@ -196,10 +246,16 @@ class _MyHomeState extends State<MyHome> {
           print("success to get random products");
         } else {
           print("failed to get random products");
+          if (!mounted) return;
+          load = "Server Error!";
+          setState(() {});
         }
       }
     } catch (e) {
       print(e);
+      if (!mounted) return;
+      load = "Network Error!";
+      setState(() {});
     }
     try {
       if (productData13i.length == 0) {
@@ -210,10 +266,16 @@ class _MyHomeState extends State<MyHome> {
           print("success to get random products");
         } else {
           print("failed to get random products");
+          if (!mounted) return;
+          load = "Server Error!";
+          setState(() {});
         }
       }
     } catch (e) {
       print(e);
+      if (!mounted) return;
+      load = "Network Error!";
+      setState(() {});
     }
     try {
       if (productData6i.length == 0) {
@@ -224,20 +286,29 @@ class _MyHomeState extends State<MyHome> {
           print("success to get random products");
         } else {
           print("failed to get random products");
+          if (!mounted) return;
+          load = "Server Error!";
+          setState(() {});
         }
       }
     } catch (e) {
       print(e);
+      if (!mounted) return;
+      load = "Network Error!";
+      setState(() {});
     }
   }
 
   Future<void> _refreshData() async {
+    if (!mounted) return;
     await Future.delayed(Duration(milliseconds: 100));
     if (!mounted) return;
 
     // Simulate network call
     // prevents calling setState if widget is disposed
     _checkConnection();
+    if (!mounted) return;
+    load = "Loading";
     setState(() {});
   }
 
@@ -246,8 +317,14 @@ class _MyHomeState extends State<MyHome> {
 
     if (result == ConnectivityResult.none) {
       loading = true;
+      if (!mounted) return;
+      load = "No Network !";
+      setState(() {});
     } else {
       loading = false;
+      if (!mounted) return;
+      load = "Loading";
+      setState(() {});
       fetchProducts();
       // _checkConnection();
       _getrand4();
@@ -256,10 +333,6 @@ class _MyHomeState extends State<MyHome> {
 
   @override
   Widget build(BuildContext context) {
-    if (productData1.isEmpty && ok) {
-      fetchProducts();
-    }
-
     int nfp = productData13i.length;
 
     int nfpp = nfp ~/ 2;
@@ -267,12 +340,6 @@ class _MyHomeState extends State<MyHome> {
     if (nfp != nfpp * 2) {
       nfpp = nfpp + 1;
     }
-
-    // final store = GetStorage();
-
-    // store.write("adth", widget.adth);
-
-    // Navigator.popUntil(context, (route) => route.isFirst);
 
     return WillPopScope(
       onWillPop: () async {
@@ -298,608 +365,655 @@ class _MyHomeState extends State<MyHome> {
         // If the user confirmed, exit the app
         return shouldExit ?? false;
       },
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          surfaceTintColor: Colors.white,
+      child:
+          (productData1.isEmpty)
+              ? Scaffold(
+                backgroundColor: Colors.white,
+                body: SafeArea(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
 
-          title: Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: CachedNetworkImage(
-              imageUrl:
-                  'https://mtt-s3.s3.ap-south-1.amazonaws.com/1744179549972Adobe%20Express%20-%20file.WEBP',
-              placeholder: (context, url) => Icon(Icons.image),
-              errorWidget: (context, url, error) => Icon(Icons.image),
+                      children: [
+                        Text(
+                          (load == "Loading") ? "" : load,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color:
+                                (load == "Loading") ? Colors.black : Colors.red,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            if (!mounted) return;
+                            load = "Loading";
+                            setState(() {});
+                            // _getProfileData();
+                          },
+                          icon:
+                              (load == "Loading")
+                                  ? RefreshProgressIndicator()
+                                  : Icon(Icons.refresh),
+                          //         Text(
+                          //   load,
+                          //   style: TextStyle(
+                          //     fontSize: 16,
 
-              // width: double.infinity,
-              // height: 100,
-              height: 30,
-              // fit: BoxFit.cover,
-            ),
-          ),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.qr_code, color: Colors.white),
-              onPressed: () {
-                // _openCamera();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ScannerQrrr(adth: widget.adth),
-                  ),
-                );
-                // open the QR scanner
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: .0),
-              child: IconButton(
-                icon: Icon(Icons.favorite, color: Colors.white),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CollectionPage(adth: widget.adth),
+                          //     // color: widget.adth,
+                          //   ),
+                          // ),
+                          // IconButton(
+                          //   onPressed: () {
+                          //     if (!mounted) return;
+                          //     load = "Loading";
+                          //     setState(() {});
+                          //     // _getProfileData();
+                          //   },
+                          //   icon:
+                          // ),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NotificationPage(adth: widget.adth),
                   ),
-                );
-              },
-              icon: Icon(Icons.notifications, color: Colors.white),
-            ),
-            SizedBox(width: 10),
-          ],
-          elevation: 3,
-          backgroundColor: widget.adth,
-          toolbarHeight: 35,
-        ),
-        body: RefreshIndicator(
-          onRefresh: _refreshData,
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 0),
-              color: Colors.white,
-              child: Column(
-                children: [
-                  Column(
-                    children: [
-                      // Search bar
-                      SizedBox(height: 15),
-                      MaterialButton(
+                ),
+              )
+              : Scaffold(
+                backgroundColor: Colors.white,
+                appBar: AppBar(
+                  surfaceTintColor: Colors.white,
+
+                  title: Padding(
+                    padding: const EdgeInsets.only(right: 20.0),
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          'https://mtt-s3.s3.ap-south-1.amazonaws.com/1744179549972Adobe%20Express%20-%20file.WEBP',
+                      placeholder: (context, url) => Icon(Icons.image),
+                      errorWidget: (context, url, error) => Icon(Icons.image),
+
+                      // width: double.infinity,
+                      // height: 100,
+                      height: 30,
+                      // fit: BoxFit.cover,
+                    ),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: Icon(Icons.qr_code, color: Colors.white),
+                      onPressed: () {
+                        // _openCamera();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => ScannerQrrr(adth: widget.adth),
+                          ),
+                        );
+                        // open the QR scanner
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: .0),
+                      child: IconButton(
+                        icon: Icon(Icons.favorite, color: Colors.white),
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) => SearchPage(adth: widget.adth),
+                                  (context) =>
+                                      CollectionPage(adth: widget.adth),
                             ),
                           );
                         },
-                        child: Container(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              height: 50,
-                              color: const Color.fromARGB(255, 245, 243, 243),
-                              child: Row(
-                                // crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Icon(Icons.search_sharp, size: 28),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      'Search for "Summer"',
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    NotificationPage(adth: widget.adth),
                           ),
-                        ),
-                      ),
-                      // Text(qrTexts),
-                      SizedBox(height: 10),
-
-                      _categoryBanner(4),
-
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 15.0,
-                          right: 15,
-                          bottom: 10,
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Features Brand",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => SerchTopPage(
-                                              searchpro: "",
-                                              adth: widget.adth,
-                                              index: -1,
-                                            ),
-                                      ),
-                                    );
-                                  },
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) => SerchTopPage(
-                                                searchpro: "",
-                                                adth: widget.adth,
-                                                index: -1,
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      "view more",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      (loading)
-                          ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        );
+                      },
+                      icon: Icon(Icons.notifications, color: Colors.white),
+                    ),
+                    SizedBox(width: 10),
+                  ],
+                  elevation: 3,
+                  backgroundColor: widget.adth,
+                  toolbarHeight: 35,
+                ),
+                body: RefreshIndicator(
+                  onRefresh: _refreshData,
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 0),
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          Column(
                             children: [
-                              const Icon(
-                                Icons.wifi_off,
-                                size: 80,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(height: 16),
-                              const Text(
-                                "No Internet Connection",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              const SizedBox(height: 20),
-                              IconButton(
-                                icon: Icon(Icons.refresh),
-                                onPressed: _checkConnection,
-                              ),
-                            ],
-                          )
-                          : Container(),
-
-                      Container(
-                        margin: EdgeInsets.all(10),
-                        padding: const EdgeInsets.only(
-                          left: 4.0,
-                          right: 4,
-                          bottom: 5,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            for (int i = 0; i < 4; i++)
-                              GestureDetector(
-                                onTap: () {
+                              // Search bar
+                              SizedBox(height: 15),
+                              MaterialButton(
+                                onPressed: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => SerchTopPage(
-                                            searchpro: "",
-                                            adth: widget.adth,
-                                            index: -1,
-                                          ),
+                                          (context) =>
+                                              SearchPage(adth: widget.adth),
                                     ),
                                   );
                                 },
-                                child: Column(
-                                  children: [
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(12),
-                                      child: CachedNetworkImage(
-                                        imageUrl:
-                                            "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-
-                                        placeholder:
-                                            (context, url) => Center(
-                                              child:
-                                                  CircularProgressIndicator(),
+                                child: Container(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Container(
+                                      height: 50,
+                                      color: const Color.fromARGB(
+                                        255,
+                                        245,
+                                        243,
+                                        243,
+                                      ),
+                                      child: Row(
+                                        // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Icon(
+                                              Icons.search_sharp,
+                                              size: 28,
                                             ),
-                                        errorWidget:
-                                            (context, url, error) =>
-                                                Icon(Icons.image),
-
-                                        // width: double.infinity,
-                                        // height: 100,
-                                        width: 78,
-                                        fit: BoxFit.cover,
-                                        // fit: BoxFit.cover,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Search for "Summer"',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "Hindustan Factory",
-                                        style: TextStyle(
-                                          fontSize: 7,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
-                          ],
-                        ),
-                      ),
+                              // Text(qrTexts),
+                              SizedBox(height: 10),
 
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 15.0,
-                          right: 15,
-                          bottom: 5,
-                          top: 15,
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Features Products",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (context) => SerchTopPage(
-                                              searchpro: "",
-                                              adth: widget.adth,
-                                              index: -1,
-                                            ),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    "view more",
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                              _categoryBanner(4),
 
-                      Container(
-                        color: Colors.white,
-                        padding: const EdgeInsets.only(
-                          left: 4.0,
-                          right: 4,
-                          bottom: 5,
-                        ),
-                        child:
-                            (loading && productData13i == null)
-                                ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15,
+                                  bottom: 10,
+                                ),
+                                child: Column(
                                   children: [
-                                    const Icon(
-                                      Icons.wifi_off,
-                                      size: 80,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(height: 16),
-                                    const Text(
-                                      "No Internet Connection",
-                                      style: TextStyle(fontSize: 20),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    IconButton(
-                                      icon: Icon(Icons.refresh),
-                                      onPressed: _checkConnection,
-                                    ),
-                                  ],
-                                )
-                                : Container(
-                                  height: 246,
-                                  child: ListView.builder(
-                                    // shrinkWrap: true,
-                                    // physics: NeverScrollableScrollPhysics(),
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: nfpp,
-                                    itemBuilder: (context, index) {
-                                      int xx = index * 2;
-                                      int yy = (index * 2) + 1;
-                                      return Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          GestureDetector(
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Features Brand",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) => SerchTopPage(
+                                                      searchpro: "",
+                                                      adth: widget.adth,
+                                                      index: -1,
+                                                    ),
+                                              ),
+                                            );
+                                          },
+                                          child: GestureDetector(
                                             onTap: () {
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder:
-                                                      (context) => BuyItem(
+                                                      (context) => SerchTopPage(
+                                                        searchpro: "",
                                                         adth: widget.adth,
-                                                        buyid:
-                                                            (productData13i
-                                                                        .length >
-                                                                    xx)
-                                                                ? productData13i[xx]["id"]
-                                                                : -1,
+                                                        index: -1,
                                                       ),
                                                 ),
                                               );
                                             },
-                                            child: Container(
-                                              width: 80,
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                          right: 5.0,
-                                                        ),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            12,
-                                                          ),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl:
-                                                            (productData13i
-                                                                        .length >
-                                                                    xx)
-                                                                ? productData13i[xx]["thumbnail"]["url"]
-                                                                : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-
-                                                        placeholder:
-                                                            (
-                                                              context,
-                                                              url,
-                                                            ) => Center(
-                                                              child:
-                                                                  CircularProgressIndicator(),
-                                                            ),
-                                                        errorWidget:
-                                                            (
-                                                              context,
-                                                              url,
-                                                              error,
-                                                            ) => Icon(
-                                                              Icons
-                                                                  .broken_image,
-                                                            ),
-
-                                                        width: double.infinity,
-                                                        // height: 100,
-                                                        height: 90,
-                                                        fit: BoxFit.cover,
-                                                        // fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                          8.0,
-                                                        ),
-                                                    child: Text(
-                                                      (productData13i.length >
-                                                              xx)
-                                                          ? productData13i[xx]["name"]
-                                                          : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 9,
-                                                      ),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                ],
+                                            child: Text(
+                                              "view more",
+                                              style: TextStyle(
+                                                color: Colors.grey,
                                               ),
                                             ),
                                           ),
-                                          (productData13i.length <= yy)
-                                              ? Container()
-                                              : GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder:
-                                                          (context) => BuyItem(
-                                                            adth: widget.adth,
-                                                            buyid:
-                                                                (productData13i
-                                                                            .length >
-                                                                        yy)
-                                                                    ? productData13i[yy]["id"]
-                                                                    : -1,
-                                                          ),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Container(
-                                                  width: 80,
-                                                  child: Column(
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.only(
-                                                              right: 5.0,
-                                                            ),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                12,
-                                                              ),
-                                                          child: CachedNetworkImage(
-                                                            imageUrl:
-                                                                (productData13i
-                                                                            .length >
-                                                                        yy)
-                                                                    ? productData13i[yy]["thumbnail"]["url"]
-                                                                    : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                                                            placeholder:
-                                                                (
-                                                                  context,
-                                                                  url,
-                                                                ) => Center(
-                                                                  child:
-                                                                      CircularProgressIndicator(),
-                                                                ),
-                                                            errorWidget:
-                                                                (
-                                                                  context,
-                                                                  url,
-                                                                  error,
-                                                                ) => Icon(
-                                                                  Icons
-                                                                      .broken_image,
-                                                                ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-                                                            width:
-                                                                double.infinity,
-                                                            // height: 100,
-                                                            height: 90,
-                                                            fit: BoxFit.cover,
-                                                            // fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              8.0,
-                                                            ),
-                                                        child: Text(
-                                                          (productData13i
-                                                                      .length >
-                                                                  yy)
-                                                              ? productData13i[yy]["name"]
-                                                              : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 9,
-                                                          ),
-                                                          overflow:
-                                                              TextOverflow
-                                                                  .ellipsis,
-                                                        ),
-                                                      ),
-                                                    ],
+                              (loading)
+                                  ? Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(
+                                        Icons.wifi_off,
+                                        size: 80,
+                                        color: Colors.grey,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      const Text(
+                                        "No Internet Connection",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      IconButton(
+                                        icon: Icon(Icons.refresh),
+                                        onPressed: _checkConnection,
+                                      ),
+                                    ],
+                                  )
+                                  : Container(),
+
+                              Container(
+                                margin: EdgeInsets.all(10),
+                                padding: const EdgeInsets.only(
+                                  left: 4.0,
+                                  right: 4,
+                                  bottom: 5,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    for (int i = 0; i < 4; i++)
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (context) => SerchTopPage(
+                                                    searchpro: "",
+                                                    adth: widget.adth,
+                                                    index: -1,
                                                   ),
+                                            ),
+                                          );
+                                        },
+                                        child: Column(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: CachedNetworkImage(
+                                                imageUrl:
+                                                    "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+
+                                                placeholder:
+                                                    (context, url) => Center(
+                                                      child: Icon(Icons.image),
+                                                    ),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        Icon(Icons.image),
+
+                                                // width: double.infinity,
+                                                // height: 100,
+                                                width: 78,
+                                                fit: BoxFit.cover,
+                                                // fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.all(
+                                                8.0,
+                                              ),
+                                              child: Text(
+                                                "Hindustan Factory",
+                                                style: TextStyle(
+                                                  fontSize: 7,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  ],
                                 ),
-                      ),
-
-                      Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Domenstic Shipping",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
 
-                      _buildItemsGridDom(2),
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 15.0, bottom: 20),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => SerchTopPage(
-                                      searchpro: "",
-                                      adth: widget.adth,
-                                      index: -1,
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15,
+                                  bottom: 5,
+                                  top: 15,
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Features Products",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (context) => SerchTopPage(
+                                                      searchpro: "",
+                                                      adth: widget.adth,
+                                                      index: -1,
+                                                    ),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            "view more",
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
+                                  ],
+                                ),
                               ),
-                            );
-                          },
-                          child: Center(
-                            child: Text(
-                              "View More",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
+
+                              SizedBox(height: 10),
+
+                              Container(
+                                color: Colors.white,
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 15,
+                                  bottom: 5,
+                                ),
+                                child:
+                                    (loading && productData13i == null)
+                                        ? Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(
+                                              Icons.wifi_off,
+                                              // size: 80,
+                                              color: Colors.grey,
+                                            ),
+                                            const SizedBox(height: 16),
+                                            const Text(
+                                              "No Internet Connection",
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                            const SizedBox(height: 20),
+                                            IconButton(
+                                              icon: Icon(Icons.refresh),
+                                              onPressed: _checkConnection,
+                                            ),
+                                          ],
+                                        )
+                                        : Container(
+                                          height: 246,
+                                          child: ListView.builder(
+                                            // shrinkWrap: true,
+                                            // physics: NeverScrollableScrollPhysics(),
+                                            scrollDirection: Axis.horizontal,
+                                            itemCount: nfpp,
+                                            itemBuilder: (context, index) {
+                                              int xx = index * 2;
+                                              int yy = (index * 2) + 1;
+                                              return Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder:
+                                                              (
+                                                                context,
+                                                              ) => BuyItem(
+                                                                adth:
+                                                                    widget.adth,
+                                                                buyid:
+                                                                    (productData13i.length >
+                                                                            xx)
+                                                                        ? productData13i[xx]["id"]
+                                                                        : -1,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      width: 80,
+                                                      child: Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets.only(
+                                                                  right: 5.0,
+                                                                ),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius.circular(
+                                                                    12,
+                                                                  ),
+                                                              child: CachedNetworkImage(
+                                                                imageUrl:
+                                                                    (productData13i.length >
+                                                                            xx)
+                                                                        ? productData13i[xx]["thumbnail"]["url"]
+                                                                        : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+
+                                                                placeholder:
+                                                                    (
+                                                                      context,
+                                                                      url,
+                                                                    ) => Center(
+                                                                      child: Icon(
+                                                                        Icons
+                                                                            .image,
+                                                                      ),
+                                                                    ),
+                                                                errorWidget:
+                                                                    (
+                                                                      context,
+                                                                      url,
+                                                                      error,
+                                                                    ) => Icon(
+                                                                      Icons
+                                                                          .image,
+                                                                    ),
+
+                                                                width:
+                                                                    double
+                                                                        .infinity,
+                                                                // height: 100,
+                                                                height: 90,
+                                                                fit:
+                                                                    BoxFit
+                                                                        .cover,
+                                                                // fit: BoxFit.cover,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets.all(
+                                                                  8.0,
+                                                                ),
+                                                            child: Text(
+                                                              (productData13i
+                                                                          .length >
+                                                                      xx)
+                                                                  ? productData13i[xx]["name"]
+                                                                  : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 9,
+                                                              ),
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  (productData13i.length <= yy)
+                                                      ? Container()
+                                                      : GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (
+                                                                    context,
+                                                                  ) => BuyItem(
+                                                                    adth:
+                                                                        widget
+                                                                            .adth,
+                                                                    buyid:
+                                                                        (productData13i.length >
+                                                                                yy)
+                                                                            ? productData13i[yy]["id"]
+                                                                            : -1,
+                                                                  ),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                          width: 80,
+                                                          child: Column(
+                                                            children: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets.only(
+                                                                      right:
+                                                                          5.0,
+                                                                    ),
+                                                                child: ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius.circular(
+                                                                        12,
+                                                                      ),
+                                                                  child: CachedNetworkImage(
+                                                                    imageUrl:
+                                                                        (productData13i.length >
+                                                                                yy)
+                                                                            ? productData13i[yy]["thumbnail"]["url"]
+                                                                            : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                                                    placeholder:
+                                                                        (
+                                                                          context,
+                                                                          url,
+                                                                        ) => Center(
+                                                                          child: Icon(
+                                                                            Icons.image,
+                                                                          ),
+                                                                        ),
+                                                                    errorWidget:
+                                                                        (
+                                                                          context,
+                                                                          url,
+                                                                          error,
+                                                                        ) => Icon(
+                                                                          Icons
+                                                                              .image,
+                                                                        ),
+
+                                                                    width:
+                                                                        double
+                                                                            .infinity,
+                                                                    // height: 100,
+                                                                    height: 90,
+                                                                    fit:
+                                                                        BoxFit
+                                                                            .cover,
+                                                                    // fit: BoxFit.cover,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets.all(
+                                                                      8.0,
+                                                                    ),
+                                                                child: Text(
+                                                                  (productData13i
+                                                                              .length >
+                                                                          yy)
+                                                                      ? productData13i[yy]["name"]
+                                                                      : "Laptop & pc ausdhsjj s sjs j ajaj aa ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize: 9,
+                                                                  ),
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                ],
+                                              );
+                                            },
+                                          ),
+                                        ),
                               ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        color: const Color.fromARGB(255, 249, 246, 223),
-                        child: Column(
-                          children: [
-                            Container(
-                              child: Padding(
+
+                              Padding(
                                 padding: EdgeInsets.all(15),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Trending Products",
+                                      "Domenstic Shipping",
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -908,454 +1022,338 @@ class _MyHomeState extends State<MyHome> {
                                   ],
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: 10,
-                                left: 2,
-                              ),
-                              child:
-                                  (loading && productData6i == null)
-                                      ? Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.wifi_off,
-                                            size: 80,
-                                            color: Colors.grey,
-                                          ),
-                                          const SizedBox(height: 16),
-                                          const Text(
-                                            "No Internet Connection",
-                                            style: TextStyle(fontSize: 20),
-                                          ),
-                                          const SizedBox(height: 20),
-                                          IconButton(
-                                            icon: Icon(Icons.refresh),
-                                            onPressed: _checkConnection,
-                                          ),
-                                        ],
-                                      )
-                                      : Container(
-                                        height: 350,
-                                        child: ListView.builder(
-                                          scrollDirection: Axis.horizontal,
 
-                                          itemCount: productData6i.length,
-                                          itemBuilder:
-                                              (
-                                                BuildContext context,
-                                                int i,
-                                              ) => Padding(
-                                                padding: EdgeInsets.all(3),
-                                                child: productCard21(
-                                                  name:
-                                                      (productData6i.length > i)
-                                                          ? productData6i[i]["name"]
-                                                          : "not found",
-                                                  rating:
-                                                      "${productData6i[i]["rating"] ?? "0"}",
-                                                  left:
-                                                      productData6i[i]["variants"][0]["quantity"],
-                                                  price:
-                                                      productData6i[i]["variants"][0]["price"],
-                                                  oldPrice:
-                                                      productData6i[i]["variants"][0]["strike_price"],
-                                                  id: productData6i[i]["id"],
-                                                  image:
-                                                      (productData6i.length > i)
-                                                          ? productData6i[i]["thumbnail"]["url"]
-                                                          : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
-                                                  categoryN:
-                                                      productData6i[i]["category"]["name"],
-                                                  ok: false,
-                                                ), //),
-                                              ), // ok: false,
+                              _buildItemsGridDom(2),
+
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 15.0,
+                                  bottom: 20,
+                                ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (context) => SerchTopPage(
+                                              searchpro: "",
+                                              adth: widget.adth,
+                                              index: -1,
+                                            ),
+                                      ),
+                                    );
+                                  },
+                                  child: Center(
+                                    child: Text(
+                                      "View More",
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                color: const Color.fromARGB(255, 249, 246, 223),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      child: Padding(
+                                        padding: EdgeInsets.all(15),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Trending Products",
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Deals for you",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 10,
+                                        left: 2,
+                                      ),
+                                      child:
+                                          (loading && productData6i == null)
+                                              ? Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.wifi_off,
+                                                    size: 80,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  const Text(
+                                                    "No Internet Connection",
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  IconButton(
+                                                    icon: Icon(Icons.refresh),
+                                                    onPressed: _checkConnection,
+                                                  ),
+                                                ],
+                                              )
+                                              : Container(
+                                                height: 350,
+                                                child: ListView.builder(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+
+                                                  itemCount:
+                                                      productData6i.length,
+                                                  itemBuilder:
+                                                      (
+                                                        BuildContext context,
+                                                        int i,
+                                                      ) => Padding(
+                                                        padding: EdgeInsets.all(
+                                                          3,
+                                                        ),
+                                                        child: productCard21(
+                                                          name:
+                                                              (productData6i
+                                                                          .length >
+                                                                      i)
+                                                                  ? productData6i[i]["name"]
+                                                                  : "not found",
+                                                          rating:
+                                                              "${productData6i[i]["rating"] ?? "0"}",
+                                                          left:
+                                                              productData6i[i]["variants"][0]["quantity"],
+                                                          price:
+                                                              productData6i[i]["variants"][0]["price"],
+                                                          oldPrice:
+                                                              productData6i[i]["variants"][0]["strike_price"],
+                                                          id:
+                                                              productData6i[i]["id"],
+                                                          image:
+                                                              (productData6i
+                                                                          .length >
+                                                                      i)
+                                                                  ? productData6i[i]["thumbnail"]["url"]
+                                                                  : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+                                                          categoryN:
+                                                              productData6i[i]["category"]["name"],
+                                                          ok: false,
+                                                        ), //),
+                                                      ), // ok: false,
+                                                ),
+                                              ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                              Padding(
+                                padding: EdgeInsets.all(15),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Deals for you",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              _buildItemsGridDom(4),
+
+                              _categoryBanner(-1),
+
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                ),
+                                child: _buildItemsGridDom(-1),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                bottomNavigationBar: BottomAppBar(
+                  surfaceTintColor: Colors.white,
+                  color: bottomback,
+                  height: 68,
+                  // currentIndex: 0,
+                  // selectedItemColor: widget.adth,
+                  // unselectedItemColor: Colors.grey,
+                  // showSelectedLabels: true,
+                  // showUnselectedLabels: true,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 55,
+                        width: 60,
+                        child: GestureDetector(
+                          // padding: EdgeInsets.all(0),
+                          onTap: () {},
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.home_outlined,
+                                size: 21,
+                                color: widget.adth,
+                              ),
+                              Text(
+                                style: TextStyle(
+                                  color: widget.adth,
+                                  fontSize: 13,
+                                ),
+                                'Home',
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-
-                      _buildItemsGridDom(4),
-
-                      _categoryBanner(-1),
-
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: _buildItemsGridDom(-1),
+                      Container(
+                        height: 45,
+                        width: 60,
+                        child: GestureDetector(
+                          // padding: EdgeInsets.only(bottom: 0),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => Cart1Page(
+                                      adth: widget.adth,
+                                      admin: widget.admin,
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.dashboard_outlined,
+                                color: b1,
+                                size: 21,
+                              ),
+                              Text(
+                                'Category',
+                                style: TextStyle(color: b1, fontSize: 13),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-
-                      // ListView(
-                      //   children: Items.map((item) {
-                      //     return ListTile(
-                      //       title: productCard(
-                      //         name: 'jj', //'${item['name']}',
-                      //         rating: 2,
-                      //         left: 3,
-                      //         price: 200,
-                      //         oldPrice: 5000,
-                      //         // image: '${item['image']}',
-                      //       ),
-                      //     );
-                      //   }).toList(),
-                      // ),
-                      // _GridAlsoLike(),
-
-                      // SizedBox(
-                      //   width: 200,
-                      //   child: ListView.builder(
-                      //     itemCount: 10,
-                      //     itemBuilder: (context, index) => Text("hh $index"),
-                      //   ),
-                      // ),
-
-                      // Container(
-                      //   margin: EdgeInsets.all(5),
-                      //   child: ClipRRect(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     child: Container(
-                      //         color: widget.adth,
-                      //         child: Wrap(children: [
-                      //           Padding(
-                      //             padding: const EdgeInsets.all(8.0),
-                      //             child: Text(
-                      //               "You may also like this",
-                      //               style: TextStyle(
-                      //                   fontSize: 23,
-                      //                   fontWeight: FontWeight.bold,
-                      //                   color: Colors.white),
-                      //             ),
-                      //           ),
-                      //           _GridAlsoLike(),
-                      //         ])),
-                      //   ),
-                      // ),
-
-                      // SizedBox(
-                      //   height: 20,
-                      // ),
-
-                      // _categoryBanner("assets/sale.png"),
-                      // // GridView.count(
-                      // //   crossAxisCount: 2,
-                      // //   childAspectRatio: 0.7,
-                      // //   children: [
-                      // //     productCard(
-                      // //       name: 'Lamar Weaver',
-                      // //       rating: 5,
-                      // //       left: 755,
-                      // //       price: 652,
-                      // //       oldPrice: 746,
-                      // //     ),
-                      // //     productCard(
-                      // //       name: 'Product 1',
-                      // //       rating: 1,
-                      // //       left: 123,
-                      // //       price: 160,
-                      // //       oldPrice: 180,
-                      // //     ),
-                      // //   ],
-                      // // ),
-
-                      // Container(
-                      //     child: Wrap(children: [
-                      //   Padding(
-                      //     padding: const EdgeInsets.only(top: 20.0, left: 15),
-                      //     child: Text(
-                      //       "Top selling products",
-                      //       style: TextStyle(
-                      //         fontSize: 23,
-                      //         fontWeight: FontWeight.bold,
-                      //       ),
-                      //     ),
-                      //   ),
-                      //   _buildItemsGrid(),
-                      // ])),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        bottomNavigationBar: BottomAppBar(
-          color: bottomback,
-          height: 68,
-          // currentIndex: 0,
-          // selectedItemColor: widget.adth,
-          // unselectedItemColor: Colors.grey,
-          // showSelectedLabels: true,
-          // showUnselectedLabels: true,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                height: 55,
-                width: 60,
-                child: MaterialButton(
-                  padding: EdgeInsets.all(0),
-                  onPressed: () {},
-                  child: Column(
-                    children: [
-                      Icon(Icons.home_outlined, size: 21, color: widget.adth),
-                      Text(
-                        style: TextStyle(color: widget.adth, fontSize: 13),
-                        'Home',
+                      Container(
+                        height: 45,
+                        width: 60,
+                        child: GestureDetector(
+                          // padding: EdgeInsets.only(bottom: 0),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) =>
+                                        VideoPage(admin: 2, adth: widget.adth),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(Icons.ondemand_video, color: b1, size: 21),
+                              Text(
+                                style: TextStyle(color: b1, fontSize: 13),
+                                'Shorts',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 45,
+                        width: 60,
+                        child: GestureDetector(
+                          // padding: EdgeInsets.only(bottom: 0),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => CartDirPage(
+                                      admin: 3,
+                                      adth: widget.adth,
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.shopping_cart_outlined,
+                                color: b1,
+                                size: 21,
+                              ),
+                              Text(
+                                style: TextStyle(color: b1, fontSize: 13),
+                                'Cart',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        height: 45,
+                        width: 60,
+                        child: GestureDetector(
+                          // padding: EdgeInsets.only(bottom: 0),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => ProfilePage(
+                                      adth: widget.adth,
+                                      admin: widget.admin,
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              Icon(Icons.person_outline, color: b1, size: 21),
+                              Text(
+                                style: TextStyle(color: b1, fontSize: 13),
+                                'Profile',
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
+
+                  //
+                  // ],
                 ),
               ),
-              Container(
-                height: 45,
-                width: 60,
-                child: MaterialButton(
-                  padding: EdgeInsets.only(bottom: 0),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => Cart1Page(
-                              adth: widget.adth,
-                              admin: widget.admin,
-                            ),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.dashboard_outlined, color: b1, size: 21),
-                      Text(
-                        'Category',
-                        style: TextStyle(color: b1, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 45,
-                width: 60,
-                child: MaterialButton(
-                  padding: EdgeInsets.only(bottom: 0),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => VideoPage(admin: 2, adth: widget.adth),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.ondemand_video, color: b1, size: 21),
-                      Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 45,
-                width: 60,
-                child: MaterialButton(
-                  padding: EdgeInsets.only(bottom: 0),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                CartDirPage(admin: 3, adth: widget.adth),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
-                      Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                height: 45,
-                width: 60,
-                child: MaterialButton(
-                  padding: EdgeInsets.only(bottom: 0),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => ProfilePage(
-                              adth: widget.adth,
-                              admin: widget.admin,
-                            ),
-                      ),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      Icon(Icons.person_outline, color: b1, size: 21),
-                      Text(
-                        style: TextStyle(color: b1, fontSize: 13),
-                        'Profile',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          //
-          // ],
-        ),
-      ),
     );
   }
-
-  // productCard({
-  //   required int id,
-  //   required String name,
-  //   required int rating,
-  //   required int left,
-  //   required double price,
-  //   required double oldPrice,
-  //   String? image,
-  // }) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(8.0),
-  //     child: Card(
-  //       elevation: 2,
-  //       child: Container(
-  //         width: 160,
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(12),
-  //           border: Border.all(color: Colors.grey),
-  //         ),
-  //         // color: Colors.white,
-  //         child: ClipRRect(
-  //           borderRadius: BorderRadius.circular(12),
-  //           child: Container(
-  //             width: 160,
-  //             padding: EdgeInsets.all(0),
-  //             margin: EdgeInsets.all(0),
-  //             color: Colors.white,,
-  //             child: MaterialButton(
-  //               minWidth: 160,
-  //               onPressed: () {
-  //                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-  //                   return BuyItem(
-  //                     adth: widget.adth,
-  //                     buyid: id,
-  //                   );
-  //                 }));
-  //               },
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Container(
-  //                     child: Image.asset(
-  //                       (image != null) ? image : 'assets/im.jpeg',
-  //                       height: 210,
-  //                       width: 160,
-  //                       fit: BoxFit.cover,
-
-  //                       // width: double.infinity,
-  //                     ),
-  //                   ),
-  //                   Padding(
-  //                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
-  //                     child: Text(
-  //                       name,
-  //                       style: TextStyle(fontWeight: FontWeight.bold),
-  //                       textScaler: MediaQuery.textScalerOf(context),
-  //                       overflow: TextOverflow.ellipsis,
-  //                     ),
-  //                   ),
-  //                   Padding(
-  //                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                     child: Row(
-  //                       children: List.generate(5, (index) {
-  //                         return Icon(
-  //                           Icons.star,
-  //                           size: 16,
-  //                           color: index < rating ? Colors.amber : Colors.grey,
-  //                         );
-  //                       }),
-  //                     ),
-  //                   ),
-  //                   Padding(
-  //                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-  //                     child: Text('$left Left',
-  //                         style: TextStyle(color: Colors.grey)),
-  //                   ),
-  //                   Column(
-  //                     children: [
-  //                       Row(
-  //                         children: [
-  //                           Text(
-  //                             '₹$price',
-  //                             style: TextStyle(fontWeight: FontWeight.bold),
-  //                           ),
-  //                           Text(
-  //                             '₹$oldPrice',
-  //                             style: TextStyle(
-  //                                 decoration: TextDecoration.lineThrough,
-  //                                 color: Colors.grey,
-  //                                 fontSize: 16),
-  //                           ),
-  //                           Padding(
-  //                             padding: const EdgeInsets.all(5.0),
-  //                             child: Container(
-  //                               height: 30,
-  //                               width: 20,
-  //                               child: MaterialButton(
-  //                                 onPressed: () {
-  //                                   // cartn++;
-  //                                   // cartIds.add({'id': id, 'count': 1});
-  //                                 },
-  //                                 child: Icon(
-  //                                   Icons.add_shopping_cart,
-  //                                   size: 21,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   productCard2({
     required int id,
@@ -1666,123 +1664,6 @@ class _MyHomeState extends State<MyHome> {
         );
   }
 
-  // Widget _buildCategoryTabs() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 20.0),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-  //       children: [
-  //         ClipRRect(
-  //           borderRadius: BorderRadius.circular(10),
-  //           child: Container(
-  //             height: 48,
-  //             width: 160,
-  //             color: const Color.fromARGB(255, 200, 199, 194),
-  //             child: Row(
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.all(8.0),
-  //                   child: Icon(Icons.star),
-  //                 ),
-  //                 Text("Top Picks")
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         ClipRRect(
-  //           borderRadius: BorderRadius.circular(10),
-  //           child: Container(
-  //             height: 48,
-  //             width: 160,
-  //             color: const Color.fromARGB(255, 200, 199, 194),
-  //             child: Row(
-  //               children: [
-  //                 Padding(
-  //                   padding: const EdgeInsets.all(8.0),
-  //                   child: Icon(Icons.trending_up),
-  //                 ),
-  //                 Text("New Arrivals"),
-  //               ],
-  //             ),
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildSortFilterRow() {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 16),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //       children: [
-  //         _buildIconWithText(Icons.swap_vert, "SORT BY"),
-  //         _buildIconWithText(Icons.filter_list, "FILTER"),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget callcards() {
-  //   // while (i != n) {
-  //   //   callcards();
-  //   // }
-  //   if (i < n) {
-  //     i++;
-  //     return productCard(
-  //       id: 1,
-  //       name: 'Lamar Weaver',
-  //       rating: 5,
-  //       left: 755,
-  //       price: 652,
-  //       oldPrice: 746,
-  //     );
-  //   }
-  //   return Container();
-  // }
-
-  // Widget _buildItemsGrid() {
-  //   return Container(
-
-  //       // width: BoxConstraints().maxWidth,
-  //       child: Wrap(children: [
-  //     callcards(),
-  //     productCard2(
-  //       name: 'Lamar Weaver',
-  //       rating: 5,
-  //       left: 755,
-  //       price: 652,
-  //       oldPrice: 746,
-  //       id: 0,
-  //     ),
-  //     productCard2(
-  //       name: 'Lamar Weaver',
-  //       rating: 5,
-  //       left: 755,
-  //       price: 652,
-  //       oldPrice: 746,
-  //       id: 1,
-  //     ),
-  //     productCard2(
-  //       name: 'Lamar Weaver',
-  //       rating: 5,
-  //       left: 755,
-  //       price: 652,
-  //       oldPrice: 746,
-  //       id: 2,
-  //     ),
-  //     productCard2(
-  //       name: 'Lamar Weaver',
-  //       rating: 5,
-  //       left: 755,
-  //       price: 652,
-  //       oldPrice: 746,
-  //       id: 3,
-  //     ),
-  //   ]));
-  // }
-
   productCard21({
     required int id,
     required String name,
@@ -1992,7 +1873,7 @@ class _MyHomeState extends State<MyHome> {
         ? Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.wifi_off, size: 80, color: Colors.grey),
+            // const Icon(Icons.wifi_off, size: 80, color: Colors.grey),
             const SizedBox(height: 16),
             const Text(
               "No Internet Connection",
@@ -2031,63 +1912,7 @@ class _MyHomeState extends State<MyHome> {
                 ),
           ),
         );
-
-    // Center(
-    //     child: Wrap(children: [
-    //       for (int i = 0; i < n; i++)
-    //         productCard21(
-    //           name: (showitm.length > i) ? showitm[i]["name"] : "not found",
-    //           rating: "${showitm[i]["rating"] ?? 0}",
-    //           left: showitm[i]["variants"][0]["quantity"],
-    //           price: showitm[i]["variants"][0]["price"],
-    //           oldPrice: showitm[i]["variants"][0]["strike_price"],
-    //           id: showitm[i]["id"],
-    //           image: (showitm.length > i)
-    //               ? showitm[i]["thumbnail"]["url"]
-    //               : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
-    //           ok: false,
-    //           categoryN: showitm[i]["category"]["name"],
-    //         ),
-    //     ]),
-    // );
   }
-
-  // int? ni = ItemsId[0]['Id'];
-
-  // Widget _GridAlsoLike() {
-  //   return Container(
-  //     height: 650,
-  //     child: CupertinoScrollbar(
-  //       child: ListView.builder(
-  //           controller: cntr,
-  //           scrollDirection: Axis.horizontal,
-  //           itemCount: Items.length,
-  //           itemBuilder: (BuildContext context, int index) => (index % 2 == 1)
-  //               ? Container()
-  //               : Column(children: [
-  //                   productCard(
-  //                       id: index,
-  //                       name: '${Items[index]['title']}',
-  //                       rating: 5,
-  //                       left: 755,
-  //                       price: 652,
-  //                       oldPrice: 746,
-  //                       image: '${Items[index]['image']}'),
-  //                   (9 <= index + 1)
-  //                       ? Container()
-  //                       : productCard(
-  //                           id: index + 1,
-  //                           name: '${Items[index + 1]['title']}',
-  //                           rating: 5,
-  //                           left: 755,
-  //                           price: 652,
-  //                           oldPrice: 746,
-  //                           image: '${Items[index + 1]['image']}',
-  //                         ),
-  //                 ])),
-  //     ),
-  //   );
-  // }
 
   Widget _buildIconWithText(IconData icon, String label) {
     return Row(
