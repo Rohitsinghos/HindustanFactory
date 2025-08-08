@@ -142,14 +142,19 @@ class _WalletPageState extends State<WalletPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  RazerPay(adth: widget.adth, money: 3000),
-                        ),
+                      showDialog(
+                        context: context,
+                        builder: (context) => QrPage(),
                       );
+
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder:
+                      //         (context) =>
+                      //             RazerPay(adth: widget.adth, money: 3000),
+                      //   ),
+                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: widget.adth,

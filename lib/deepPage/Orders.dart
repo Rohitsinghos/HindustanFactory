@@ -125,19 +125,9 @@ class _OrdersPageState extends State<OrdersPage> {
     "NEW",
     "ACCEPTED",
     "DECLINED",
-    "PROCESSING",
     "INTRANSIT",
-    "OUT_FOR_DELIVERY",
     "DELIVERED",
     "CANCELLED",
-    "COMPLETED",
-    "PAYOUT_DONE",
-    "RTO",
-    "RETURN_REQUEST",
-    "RETURN_ACCEPTED",
-    "RETURN_DECLINED",
-    "RETURN_RECEIVED",
-    "RETURN_PENDING",
   ];
 
   int curpg = 1;
@@ -485,11 +475,21 @@ class _OrdersPageState extends State<OrdersPage> {
                                   ),
                                 ),
                                 SizedBox(width: 5),
-                                Text(
-                                  "${status ?? ""}",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
+                                Container(
+                                  color:
+                                      (status == "ACCEPTED")
+                                          ? Colors.green
+                                          : ((status == "DECLINED")
+                                              ? Colors.red
+                                              : Colors.blue),
+                                  padding: EdgeInsets.symmetric(horizontal: 1),
+                                  child: Text(
+                                    "${status ?? ""}",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],

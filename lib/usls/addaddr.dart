@@ -128,16 +128,15 @@ class _EditAddrePageState extends State<EditAddrePage> {
           },
           body: jsonEncode({
             "houseNumber": (add[2].text != "") ? add[2].text : "420",
-            "name": (add[0].text != "") ? add[0].text : "Rohit JIiii",
-            "addressLine1":
-                (add[3].text != "") ? add[3].text : "Great gggg Road",
+            "name": (add[0].text != "") ? add[0].text : "UserName",
+            "addressLine1": (add[3].text != "") ? add[3].text : "Main Road",
             "pincode": (add[5].text != "") ? add[5].text : "122315",
-            "city": (add[7].text != "") ? add[7].text : "Rur",
-            "state": (add[8].text != "") ? add[8].text : "Chtisgarh",
-            "country": (add[9].text != "") ? add[9].text : "Indikooa",
-            "addressLine2": (add[4].text != "") ? add[4].text : "Citttvil",
-            "area": (add[6].text != "") ? add[6].text : "Civil Lifffffne",
-            "phone": (add[1].text != "") ? add[1].text : "9399274490",
+            "city": (add[7].text != "") ? add[7].text : "Raipur",
+            "state": (add[8].text != "") ? add[8].text : "Chhattisgarh",
+            "country": (add[9].text != "") ? add[9].text : "India",
+            "addressLine2": (add[4].text != "") ? add[4].text : "Civil Line",
+            "area": (add[6].text != "") ? add[6].text : "Santoshinagar",
+            "phone": (add[1].text != "") ? add[1].text : "9390004490",
             "countryCode": (add[10].text != "") ? add[10].text : "+91",
           }),
         );
@@ -168,16 +167,15 @@ class _EditAddrePageState extends State<EditAddrePage> {
           },
           body: jsonEncode({
             "houseNumber": (add[2].text != "") ? add[2].text : "420",
-            "name": (add[0].text != "") ? add[0].text : "Rohit JIiii",
-            "addressLine1":
-                (add[3].text != "") ? add[3].text : "Great gggg Road",
-            "pincode": (add[5].text != "") ? add[5].text : "122315",
-            "city": (add[7].text != "") ? add[7].text : "Rur",
-            "state": (add[8].text != "") ? add[8].text : "Chtisgarh",
-            "country": (add[9].text != "") ? add[9].text : "Indikooa",
-            "addressLine2": (add[4].text != "") ? add[4].text : "Citttvil",
-            "area": (add[6].text != "") ? add[6].text : "Civil Lifffffne",
-            "phone": (add[1].text != "") ? add[1].text : "9399274490",
+            "name": (add[0].text != "") ? add[0].text : "UserName",
+            "addressLine1": (add[3].text != "") ? add[3].text : "Highway Road",
+            "pincode": (add[5].text != "") ? add[5].text : "494001",
+            "city": (add[7].text != "") ? add[7].text : "Raipur",
+            "state": (add[8].text != "") ? add[8].text : "Chhattisgarh",
+            "country": (add[9].text != "") ? add[9].text : "India",
+            "addressLine2": (add[4].text != "") ? add[4].text : "Civil Road",
+            "area": (add[6].text != "") ? add[6].text : "Santoshinagar",
+            "phone": (add[1].text != "") ? add[1].text : "9300000090",
             "countryCode": (add[10].text != "") ? add[10].text : "+91",
           }),
         );
@@ -523,7 +521,17 @@ class _EditAddrePageState extends State<EditAddrePage> {
 
                       setState(() {});
 
-                      if (add[0].text.length >= 3 &&
+                      bool addok = true;
+
+                      for (int i = 0; i <= 9; i++) {
+                        if (add[i].text == "") {
+                          addok = false;
+                          return;
+                        }
+                      }
+
+                      if (addok &&
+                          add[0].text.length >= 3 &&
                           add[1].text.length == 10 &&
                           agreeToTerms &&
                           add[5].text.length == 6) {

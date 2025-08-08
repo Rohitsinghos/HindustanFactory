@@ -58,7 +58,7 @@ int doit = 1;
 
 class _CartDirPageState extends State<CartDirPage> {
   bool showw = false;
-  int cartnn = 0;
+  //  cartn = 0;
   bool addcheck = false, paycheck = false;
 
   void _ADDRES() {
@@ -219,6 +219,7 @@ class _CartDirPageState extends State<CartDirPage> {
             (usercartData == null) ? 0.00 : usercartData['totalPrice'] * 1.00;
         print("jsdjjhdjdjjdjdjjd cart millll gayaya  ho gyayyaya");
         // updateBadge(usercartData['Variants'].length);
+        cartnn = usercartData['Variants'].length;
         if (!mounted) return; // prevents calling setState if widget is disposed
 
         setState(() {});
@@ -452,13 +453,15 @@ class _CartDirPageState extends State<CartDirPage> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
-                                                    "${(addressdata.length > chaddr) ? addressdata[chaddr]["name"] : ""}, ${(addressdata.length > 0) ? addressdata[0]["phone"] : "no."}," +
-                                                        "${(addressdata.length > chaddr) ? addressdata[chaddr]["addressLine1"] : ""}" +
-                                                        ", ${(addressdata.length > chaddr) ? addressdata[chaddr]["addressLine2"] : ""}" +
-                                                        ", ${(addressdata.length > chaddr) ? addressdata[chaddr]["city"] : ""}, " +
-                                                        "${(addressdata.length > chaddr) ? addressdata[chaddr]["pincode"] : ""}, " +
-                                                        "${(addressdata.length > chaddr) ? addressdata[chaddr]["state"] : ""}, " +
-                                                        "${(addressdata.length > chaddr) ? addressdata[chaddr]["country"] : ""}",
+                                                    (addressdata.length == 0)
+                                                        ? "No address found"
+                                                        : "${(addressdata.length > chaddr) ? addressdata[chaddr]["name"] : ""}, ${(addressdata.length > 0) ? addressdata[0]["phone"] : "no."}," +
+                                                            "${(addressdata.length > chaddr) ? addressdata[chaddr]["addressLine1"] : ""}" +
+                                                            ", ${(addressdata.length > chaddr) ? addressdata[chaddr]["addressLine2"] : ""}" +
+                                                            ", ${(addressdata.length > chaddr) ? addressdata[chaddr]["city"] : ""}, " +
+                                                            "${(addressdata.length > chaddr) ? addressdata[chaddr]["pincode"] : ""}, " +
+                                                            "${(addressdata.length > chaddr) ? addressdata[chaddr]["state"] : ""}, " +
+                                                            "${(addressdata.length > chaddr) ? addressdata[chaddr]["country"] : ""}",
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.grey,
@@ -475,6 +478,11 @@ class _CartDirPageState extends State<CartDirPage> {
                                       ),
                                       GestureDetector(
                                         onTap: () {
+                                          if (addressdata.length == 0) {
+                                            addcheck = false;
+                                            return;
+                                          }
+
                                           _ADDRES();
                                         },
                                         child: CircleAvatar(
@@ -483,9 +491,9 @@ class _CartDirPageState extends State<CartDirPage> {
                                               (!addcheck)
                                                   ? const Color.fromARGB(
                                                     255,
-                                                    251,
-                                                    246,
-                                                    246,
+                                                    222,
+                                                    222,
+                                                    222,
                                                   )
                                                   : Colors.green,
                                           child: Icon(
@@ -511,117 +519,117 @@ class _CartDirPageState extends State<CartDirPage> {
                         ),
                       ),
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => PayMethodPage(adth: widget.adth),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 10.0,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Payment Method",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Icon(Icons.arrow_forward_ios, size: 14),
-                              ],
-                            ),
-                            Card(
-                              color: Colors.white,
-                              child: Container(
-                                padding: EdgeInsets.all(15),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Image.asset(
-                                          "assets/visa.jpg",
-                                          height: 42,
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            left: 15.0,
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                "No Card Added",
-                                                style: TextStyle(fontSize: 14),
-                                              ),
-                                              Text(
-                                                "**** **** **** 1234",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        // _PaymentcHH();
-                                      },
-                                      child: CircleAvatar(
-                                        radius: 15,
-                                        backgroundColor:
-                                            (!paycheck)
-                                                ? const Color.fromARGB(
-                                                  255,
-                                                  223,
-                                                  223,
-                                                  223,
-                                                )
-                                                : Colors.green,
-                                        child: Icon(
-                                          Icons.check,
-                                          color:
-                                              (!paycheck)
-                                                  ? const Color.fromARGB(
-                                                    255,
-                                                    228,
-                                                    227,
-                                                    227,
-                                                  )
-                                                  : Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder:
+                    //             (context) => PayMethodPage(adth: widget.adth),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     color: Colors.white,
+                    //     child: Column(
+                    //       children: [
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Padding(
+                    //               padding: const EdgeInsets.symmetric(
+                    //                 vertical: 10.0,
+                    //               ),
+                    //               child: Row(
+                    //                 children: [
+                    //                   Text(
+                    //                     "Payment Method",
+                    //                     style: TextStyle(
+                    //                       fontWeight: FontWeight.bold,
+                    //                       fontSize: 17,
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ),
+                    //             Icon(Icons.arrow_forward_ios, size: 14),
+                    //           ],
+                    //         ),
+                    //         Card(
+                    //           color: Colors.white,
+                    //           child: Container(
+                    //             padding: EdgeInsets.all(15),
+                    //             child: Row(
+                    //               mainAxisAlignment:
+                    //                   MainAxisAlignment.spaceBetween,
+                    //               children: [
+                    //                 Row(
+                    //                   children: [
+                    //                     Image.asset(
+                    //                       "assets/visa.jpg",
+                    //                       height: 42,
+                    //                     ),
+                    //                     Padding(
+                    //                       padding: const EdgeInsets.only(
+                    //                         left: 15.0,
+                    //                       ),
+                    //                       child: Column(
+                    //                         crossAxisAlignment:
+                    //                             CrossAxisAlignment.start,
+                    //                         children: [
+                    //                           Text(
+                    //                             "No Card Added",
+                    //                             style: TextStyle(fontSize: 14),
+                    //                           ),
+                    //                           Text(
+                    //                             "**** **** **** 1234",
+                    //                             style: TextStyle(
+                    //                               fontSize: 14,
+                    //                               color: Colors.grey,
+                    //                             ),
+                    //                           ),
+                    //                         ],
+                    //                       ),
+                    //                     ),
+                    //                   ],
+                    //                 ),
+                    //                 GestureDetector(
+                    //                   onTap: () {
+                    //                     // _PaymentcHH();
+                    //                   },
+                    //                   child: CircleAvatar(
+                    //                     radius: 15,
+                    //                     backgroundColor:
+                    //                         (!paycheck)
+                    //                             ? const Color.fromARGB(
+                    //                               255,
+                    //                               223,
+                    //                               223,
+                    //                               223,
+                    //                             )
+                    //                             : Colors.green,
+                    //                     child: Icon(
+                    //                       Icons.check,
+                    //                       color:
+                    //                           (!paycheck)
+                    //                               ? const Color.fromARGB(
+                    //                                 255,
+                    //                                 228,
+                    //                                 227,
+                    //                                 227,
+                    //                               )
+                    //                               : Colors.white,
+                    //                     ),
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     SizedBox(height: 20),
                   ],
                 ),
@@ -990,34 +998,56 @@ class _CartDirPageState extends State<CartDirPage> {
               ),
             ),
           ),
-          Container(
-            height: 45,
-            width: 60,
-            child: GestureDetector(
-              // padding: EdgeInsets.only(bottom: 0),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+          Stack(
+            children: [
+              if (cartnn != 0)
+                Positioned(
+                  top: 0,
+                  right: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: adth,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+
+                    child: Text(
+                      "${cartnn}",
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
                   ),
-                );
-              },
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    color: widget.adth,
-                    size: 21,
+                ),
+              Container(
+                height: 45,
+                width: 60,
+                child: GestureDetector(
+                  // padding: EdgeInsets.only(bottom: 0),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                CartDirPage(admin: 3, adth: widget.adth),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.shopping_cart_outlined,
+                        color: widget.adth,
+                        size: 21,
+                      ),
+                      Text(
+                        style: TextStyle(color: widget.adth, fontSize: 13),
+                        'Cart',
+                      ),
+                    ],
                   ),
-                  Text(
-                    style: TextStyle(color: widget.adth, fontSize: 13),
-                    'Cart',
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
           Container(
             height: 45,

@@ -36,6 +36,44 @@ class _BookedPageState extends State<BookedPage> {
   bool process = false;
   bool doit = true;
   int lowhn = 1;
+
+  Future<void> HometoCart(int id) async {
+    try {
+      final req = await http.post(
+        Uri.parse("${BASE_URL}cart/add"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+        },
+        body: jsonEncode({"VariantId": id, "quantity": 1}),
+      );
+
+      if (req.statusCode == 200) {
+        print(jsonDecode(req.body)["message"]);
+        print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
+
+        // NavigationBar.
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("✅ Added cart successfully!")));
+        cartnn++;
+        if (!mounted) return;
+        setState(() {});
+      } else {
+        print("not added to cart... abbebebebbhhdshdhhdhnananannanan");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Not added cart, Server Issue!")),
+        );
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Cannot add to cart, Network Issue!")),
+      );
+      print("jdjdjjdjdjjdjjd");
+    }
+  }
+
   _lowhigh() {
     if (!mounted) return; // prevents calling setState if widget is disposed
 
@@ -406,290 +444,214 @@ class _BookedPageState extends State<BookedPage> {
         color: Colors.white,
         elevation: 2,
         child: Container(
+          height: 160,
           width: MediaQuery.of(context).size.width - 30,
-          child: Column(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        bottomLeft: Radius.circular(12),
-                      ),
-                      child: Image.network(
-                        (image != "")
-                            ? image
-                            : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                        height: 110,
-                        width: 80,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              Padding(
+                padding: EdgeInsets.only(right: 10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
                   ),
-                  Container(
-                    margin: EdgeInsets.all(3),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 220,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "#$id",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: widget.adth,
-                                ),
-                              ),
-                              Text(
-                                createdAt!,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          width: 200,
-                          child: Text(
-                            name,
+                  child: Image.network(
+                    (image != "")
+                        ? image
+                        : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                    // height: 150,
+                    width: 80,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(3),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 220,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "#$id",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              color: widget.adth,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
+                          Text(
+                            createdAt!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 200,
+                      child: Text(
+                        name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
-                        SizedBox(height: 8),
-                        Container(
-                          width: 220,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      width: 220,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Varient",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        variant,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                                  Text(
+                                    "Varient",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
                                   ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Quantity",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        "$quantity",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                                  SizedBox(width: 5),
+                                  Text(
+                                    variant,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ],
                               ),
-
-                              Column(
+                              Row(
                                 children: [
-                                  (itemsTop[index]['bookingCancellation'])
-                                      ? Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 0.0,
-                                        ),
-                                        child: Text(
-                                          "Cancelled",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                      )
-                                      : IconButton(
-                                        padding: EdgeInsets.all(0),
-                                        onPressed: () {
-                                          _cancelBooking(int.parse(id));
-                                        },
-                                        icon: Card(
-                                          margin: EdgeInsets.all(0),
-                                          // onPressed: () {
-                                          //   // showDialog(
-                                          //   //   context: context,
-                                          //   //   builder: (context) => WithdrowPage(),
-                                          //   // );
-                                          // },
-                                          // style: ElevatedButton.styleFrom(
-                                          //   backgroundColor: Colors.white70,
-                                          //   shape: RoundedRectangleBorder(
-                                          //     borderRadius: BorderRadius.circular(10),
-                                          //   ),
-                                          // ),
-                                          child: Icon(
-                                            Icons.cancel_rounded,
-                                            color: Colors.red,
-                                          ),
-                                          //  Text(
-                                          //   "Cancel Booking",
-                                          //   style: TextStyle(
-                                          //     fontWeight: FontWeight.bold,
-                                          //     fontSize: 10,
-                                          //     color: widget.adth,
-                                          //   ),
-                                          // ),
-                                        ),
-                                      ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 0.0),
-                                    child: Text(
-                                      "₹ $price",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                      ),
+                                  Text(
+                                    "Quantity",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "$quantity",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Booking Date",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "${createdAt ?? ""}",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Booking Time",
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5),
+                                  Text(
+                                    "${status ?? ""}",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 10,
-                ),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "Amount PerDay",
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${(itemsTop[index]['amountPerDay'])}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Total Amount",
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${(itemsTop[index]['totalAmount'])}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
 
-                    Row(
-                      children: [
-                        Text(
-                          "Product Quantity",
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${(itemsTop[index]['productQuantity'])}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                          Column(
+                            children: [
+                              (itemsTop[index]['bookingCancellation'])
+                                  ? Padding(
+                                    padding: const EdgeInsets.only(left: 0.0),
+                                    child: Text(
+                                      "Cancelled",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  )
+                                  : Column(
+                                    children: [
+                                      IconButton(
+                                        padding: EdgeInsets.all(0),
+                                        onPressed: () {
+                                          _cancelBooking(int.parse(id));
+                                        },
+                                        icon: Card(
+                                          margin: EdgeInsets.all(2),
+                                          child: Icon(
+                                            Icons.cancel_rounded,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ),
+                                      // SizedBox(height: 15),
+                                      IconButton(
+                                        padding: EdgeInsets.all(0),
+                                        onPressed: () {
+                                          _cancelBooking(int.parse(id));
+                                        },
+                                        icon: Card(
+                                          margin: EdgeInsets.all(2),
+                                          child: Icon(
+                                            Icons.shopping_cart_outlined,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(left: 0.0),
+                              //   child: Text(
+                              //     "₹ $price",
+                              //     style: TextStyle(
+                              //       fontWeight: FontWeight.bold,
+                              //       fontSize: 14,
+                              //     ),
+                              //   ),
+                              // ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Booking Cancellation",
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${(itemsTop[index]['bookingCancellation']) ? "Yes" : 'No'}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    Row(
-                      children: [
-                        Text(
-                          "Booking Date",
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${createdAt ?? ""}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "Expiry Date",
-                          style: TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          "${status ?? ""}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -750,12 +712,16 @@ class _BookedPageState extends State<BookedPage> {
                   name: itemsTop[i]?["product"]?["name"] ?? "Failed name",
                   quantity: itemsTop[i]["productQuantity"].toString(),
                   variant: itemsTop[i]["variant"]["name"] ?? "hfdsd",
-                  createdAt: DateFormat('dd MMM yyyy, hh:mm a').format(
+                  createdAt: DateFormat('dd-MMM-yyyy').format(
                     DateTime.parse(itemsTop[i]["bookingDate"]).toLocal(),
                   ),
-                  status: DateFormat(
-                    'dd MMM yyyy, hh:mm a',
-                  ).format(DateTime.parse(itemsTop[i]["expireDate"]).toLocal()),
+
+                  status: DateFormat('hh:mm a').format(
+                    DateTime.parse(itemsTop[i]["bookingDate"]).toLocal(),
+                  ),
+                  // status: DateFormat(
+                  //   'dd MMM yyyy, hh:mm a',
+                  // ).format(DateTime.parse(itemsTop[i]["expireDate"]).toLocal()),
                 ),
               ),
       ],

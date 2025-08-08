@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:template/pages/cartdirect.dart';
+import 'package:template/pages/home.dart';
 import 'package:template/usls/premium.dart';
 import 'package:template/models/categorymodel/cate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -38,44 +39,49 @@ int total = 0;
 
 bool ok = true;
 
+Future<void> shareImageAndText() async {
+  // 1. Load image from assets or network (here: from assets)
+  final byteData = await rootBundle.load('assets/shirt.jpg');
+
+  // 2. Save it to a temporary file
+  final tempDir = await getTemporaryDirectory();
+  final file = File('${tempDir.path}/shared_image.jpg');
+  await file.writeAsBytes(byteData.buffer.asUint8List());
+
+  // 3. Share the image and text
+  await Share.shareXFiles([XFile(file.path)], text: 'Check out this image!');
+}
+
+String shareText1 = 'Check out this awesome image!';
+Future<void> shareNetworkImageWithText(String MainPhoto) async {
+  final imageUrl = "$MainPhoto"; // Replace with your image URL
+  final shareText = shareText1;
+
+  if (imageUrl == "") {
+    await Share.share(shareText);
+  }
+
+  try {
+    // Step 1: Download image bytes
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+      // Step 2: Save to temp file
+      final tempDir = await getTemporaryDirectory();
+      final file = File('${tempDir.path}/shared_image.jpg');
+      await file.writeAsBytes(response.bodyBytes);
+
+      // Step 3: Share
+      await Share.shareXFiles([XFile(file.path)], text: shareText);
+    } else {
+      throw Exception('Failed to download image');
+    }
+  } catch (e) {
+    print("Error sharing: $e");
+  }
+}
+
 class _BuyItemState extends State<BuyItem> {
   String load = "Loading";
-  String shareText1 = 'Check out this awesome image!';
-  Future<void> shareNetworkImageWithText() async {
-    final imageUrl = "$MainPhoto"; // Replace with your image URL
-    final shareText = shareText1;
-
-    try {
-      // Step 1: Download image bytes
-      final response = await http.get(Uri.parse(imageUrl));
-      if (response.statusCode == 200) {
-        // Step 2: Save to temp file
-        final tempDir = await getTemporaryDirectory();
-        final file = File('${tempDir.path}/shared_image.jpg');
-        await file.writeAsBytes(response.bodyBytes);
-
-        // Step 3: Share
-        await Share.shareXFiles([XFile(file.path)], text: shareText);
-      } else {
-        throw Exception('Failed to download image');
-      }
-    } catch (e) {
-      print("Error sharing: $e");
-    }
-  }
-
-  Future<void> _shareImageAndText() async {
-    // 1. Load image from assets or network (here: from assets)
-    final byteData = await rootBundle.load('assets/shirt.jpg');
-
-    // 2. Save it to a temporary file
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/shared_image.jpg');
-    await file.writeAsBytes(byteData.buffer.asUint8List());
-
-    // 3. Share the image and text
-    await Share.shareXFiles([XFile(file.path)], text: 'Check out this image!');
-  }
 
   dialogEnquire(String sta) {
     return showDialog(
@@ -311,7 +317,7 @@ class _BuyItemState extends State<BuyItem> {
   }
 
   Decoration deco = BoxDecoration();
-  int deconi = 1;
+  int deconi = 0;
 
   // int productIndex = -1;
 
@@ -470,8 +476,8 @@ class _BuyItemState extends State<BuyItem> {
       borderRadius: BorderRadius.circular(5),
     );
     decoVar = BoxDecoration(
-      border: Border.all(color: widget.adth),
-      borderRadius: BorderRadius.circular(7),
+      border: Border.all(color: Colors.black, width: 2),
+      borderRadius: BorderRadius.circular(50),
     );
 
     return (buyItemData.isEmpty)
@@ -523,7 +529,7 @@ class _BuyItemState extends State<BuyItem> {
                   Center(
                     child: Container(
                       margin: EdgeInsets.all(20),
-                      height: 280,
+                      height: 360,
                       child: CachedNetworkImage(
                         imageUrl:
                             (MainPhoto != null)
@@ -561,7 +567,7 @@ class _BuyItemState extends State<BuyItem> {
                                   "Hi, I love this product and sharing this amazing product. Check it out: " +
                                   "${(buyItemData != -1 && buyItemData['name'] != null) ? buyItemData['name'] : "The title of the product"} from Hindan Factory. https://hindustanfactory.socialseller.in/product/${widget.buyid}";
                               // _shareImageAndText();
-                              shareNetworkImageWithText();
+                              shareNetworkImageWithText(MainPhoto);
                               // url_launcher(
                               //   "https://wa.me/91${productData[productIndex]['whatsapp']}"
                               // );
@@ -737,7 +743,7 @@ class _BuyItemState extends State<BuyItem> {
                             ),
                           ],
                         ),
-                        _getszx(),
+                        Container(height: 70, child: _getszx()),
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Row(
@@ -762,70 +768,88 @@ class _BuyItemState extends State<BuyItem> {
                                         buyItemData['variants'] != null)
                                     ? buyItemData['variants'].length
                                     : 0,
-                            itemBuilder:
-                                (context, index) => Padding(
-                                  padding: const EdgeInsets.all(3.0),
-                                  child: Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          _vars(index);
-                                        },
-                                        child: Container(
-                                          decoration:
-                                              (decVarn == index)
-                                                  ? decoVar
-                                                  : null,
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              7,
-                                            ),
-                                            child: CachedNetworkImage(
-                                              imageUrl:
-                                                  (buyItemData != null &&
-                                                          buyItemData['thumbnail'] !=
-                                                              null)
-                                                      ? buyItemData['thumbnail']['url']
-                                                      : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                                              placeholder:
-                                                  (context, url) => Center(
-                                                    child: Icon(Icons.image),
+                            itemBuilder: (context, index) {
+                              print(buyItemData?['variants']?[index]);
+                              return Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        _vars(index);
+                                      },
+                                      child: Container(
+                                        // width: 30,
+                                        // height: 50,
+                                        decoration:
+                                            (decVarn == index)
+                                                ? decoVar
+                                                : BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Colors.grey,
+                                                    width: 2,
                                                   ),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Icon(Icons.image),
-
-                                              // width: double.infinity,
-                                              height: 70,
-                                              // fit: BoxFit.cover,
-                                            ),
-
-                                            //  Image.network(
-                                            //   (productIndex != -1 && productData != null)
-                                            //       ? productData[productIndex]['image']
-                                            //       : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
-                                            //   height: 70,
-                                            // ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(50),
+                                                ),
+                                        child: CircleAvatar(
+                                          backgroundColor: HexColor(
+                                            buyItemData?['variants']?[index]?['primary_attribute']?['hex_code'] ??
+                                                "#FFFFFFF",
                                           ),
+                                          radius: 25,
+
+                                          // child:  ClipRRect(
+                                          //   borderRadius:
+                                          //       BorderRadius.circular(7),
+                                          //   child: CachedNetworkImage(
+                                          //     imageUrl:
+                                          //         (buyItemData != null &&
+                                          //                 buyItemData['thumbnail'] !=
+                                          //                     null)
+                                          //             ? buyItemData['thumbnail']['url']
+                                          //             : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                          //     placeholder:
+                                          //         (context, url) => Center(
+                                          //           child: Icon(Icons.image),
+                                          //         ),
+                                          //     errorWidget:
+                                          //         (context, url, error) =>
+                                          //             Icon(Icons.image),
+
+                                          //     // width: double.infinity,
+                                          //     height: 70,
+                                          //     // fit: BoxFit.cover,
+                                          //   ),
+
+                                          //   //  Image.network(
+                                          //   //   (productIndex != -1 && productData != null)
+                                          //   //       ? productData[productIndex]['image']
+                                          //   //       : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                                          //   //   height: 70,
+                                          //   // ),
+                                          // ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Text(
-                                          "${(buyItemData['variants'] == null) ? "Colors" : buyItemData['variants'][index]['name']}",
-                                          style: TextStyle(fontSize: 8),
-                                        ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Text(
+                                        "${(buyItemData['variants'] == null) ? "Colors" : buyItemData['variants'][index]['name']}",
+                                        style: TextStyle(fontSize: 12),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Text(
-                                          "${(buyItemData['variants'] == null) ? 20 : buyItemData['variants'][index]['quantity']} Left",
-                                          style: TextStyle(fontSize: 8),
-                                        ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(2.0),
+                                      child: Text(
+                                        "${(buyItemData['variants'] == null) ? 20 : buyItemData['variants'][index]['quantity']} Left",
+                                        style: TextStyle(fontSize: 12),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
+                              );
+                            },
                           ),
                         ),
                         Row(
@@ -1034,87 +1058,89 @@ class _BuyItemState extends State<BuyItem> {
                       ),
                     ),
                   ),
+                ],
+              ),
+            ),
+          ),
+          bottomNavigationBar: BottomAppBar(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Center(
+                    child: Container(
+                      height: 55,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: widget.adth),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: MaterialButton(
+                          highlightColor: widget.adth,
+                          color: Colors.white,
+                          onPressed: () {
+                            if (isPremiium) {
+                              _getbookedproduct();
+                            } else {
+                              dialogEnquire(msg);
+                            }
+                          },
+                          child: Text(
+                            "Book Now",
+                            style: TextStyle(color: widget.adth),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 55,
+                    width: 150,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: MaterialButton(
+                        color: widget.adth,
+                        onPressed: () {
+                          // _AddCardDialog();
 
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Center(
-                          child: Container(
-                            height: 55,
-                            width: 150,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: widget.adth),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: MaterialButton(
-                                highlightColor: widget.adth,
-                                color: Colors.white,
-                                onPressed: () {
-                                  if (isPremiium) {
-                                    _getbookedproduct();
-                                  } else {
-                                    dialogEnquire(msg);
-                                  }
-                                },
-                                child: Text(
-                                  "Book Now",
-                                  style: TextStyle(color: widget.adth),
-                                ),
-                              ),
+                          // (productIndex != -1) ? productData1[productIndex]['variants'][decVarn]['price'] : widget.buyid;
+
+                          // if (cartn == 0 || !cartIds.contains(widget.buyid)) {
+                          //   cartn++;
+
+                          //   cartIds.add(widget.buyid);
+                          //   cartCnts.add(1);
+                          // } else {
+                          //   cartCnts[cartIds.indexOf(widget.buyid)] += 1;
+                          // }
+
+                          _addtoCart(
+                            (buyItemData != null)
+                                ? buyItemData['variants'][decVarn]['id']
+                                : widget.buyid,
+                            1,
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 14.0,
+                            bottom: 14,
+                            left: 5,
+                            right: 5,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 5.0),
+                            child: Text(
+                              "Add to Cart",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 55,
-                          width: 150,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: MaterialButton(
-                              color: widget.adth,
-                              onPressed: () {
-                                // _AddCardDialog();
-
-                                // (productIndex != -1) ? productData1[productIndex]['variants'][decVarn]['price'] : widget.buyid;
-
-                                // if (cartn == 0 || !cartIds.contains(widget.buyid)) {
-                                //   cartn++;
-
-                                //   cartIds.add(widget.buyid);
-                                //   cartCnts.add(1);
-                                // } else {
-                                //   cartCnts[cartIds.indexOf(widget.buyid)] += 1;
-                                // }
-
-                                _addtoCart(
-                                  (buyItemData != null)
-                                      ? buyItemData['variants'][decVarn]['id']
-                                      : widget.buyid,
-                                  1,
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  top: 14.0,
-                                  bottom: 14,
-                                  left: 5,
-                                  right: 5,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 5.0),
-                                  child: Text(
-                                    "Add to Cart",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
@@ -1125,9 +1151,12 @@ class _BuyItemState extends State<BuyItem> {
   }
 
   Widget _getszx() {
-    List<String> lsz = ['S', "M", "L", "XL", "XXL", "XXXL"];
+    print(buyItemData?['variants']?[decVarn]?['secondary_attribute']?['value']);
+    List<dynamic> lsz =
+        buyItemData?['variants']?[decVarn]?['secondary_attribute']?['value'] ??
+        [];
     Row rsz = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [for (int i = 0; i < lsz.length; i++) _getszcontent(lsz[i], i)],
     );
@@ -1141,6 +1170,7 @@ class _BuyItemState extends State<BuyItem> {
         _sizes(index);
       },
       child: Container(
+        margin: EdgeInsets.only(right: 8),
         decoration: (deconi == index) ? deco : BoxDecoration(),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(5),

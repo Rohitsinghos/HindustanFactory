@@ -383,6 +383,12 @@ class _AddrPageState extends State<AddrPage> {
             phone: addressdata[i]["phone"] ?? "9999999999",
             countryCode: addressdata[i]["countryCode"] ?? "+91",
           ),
+
+        if (addressdata.length == 0)
+          Container(
+            padding: EdgeInsets.all(20),
+            child: Center(child: Text("No data found!")),
+          ),
       ],
     );
     return a;

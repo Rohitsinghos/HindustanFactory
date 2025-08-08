@@ -293,6 +293,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
+          bottomNavigationBar: bottombr(),
         )
         : Scaffold(
           backgroundColor: Colors.white,
@@ -347,161 +348,6 @@ class _ProfilePageState extends State<ProfilePage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  //  AppBar(
-
-                  //   leading: Container(),
-                  //   title: Column(
-                  //     children: [
-                  //       Padding(
-                  //         padding: const EdgeInsets.only(top: 20.0),
-                  //         child: Row(
-                  //           children: [
-                  //             MaterialButton(
-                  //               onPressed: () {
-                  //                 _photoClick();
-                  //               },
-                  //               onLongPress: () {
-                  //                 _photoLong();
-                  //               },
-                  //               child: CircleAvatar(
-                  //                 radius: 55,
-                  //                 backgroundImage: NetworkImage(
-                  //                     'https://img.freepik.com/free-vector/smiling-young-account_box_outlined-illustration_1308-174669.jpg'),
-                  //               ),
-                  //             ),
-                  //             Padding(
-                  //               padding: const EdgeInsets.all(20.0),
-                  //               child: Column(
-                  //                   mainAxisAlignment: MainAxisAlignment.center,
-                  //                   crossAxisAlignment: CrossAxisAlignment.start,
-                  //                   children: [
-                  //                     Text(
-                  //                       "Guest",
-                  //                       style: TextStyle(
-                  //                         color: Colors.white,
-                  //                         fontSize: 18,
-                  //                         fontWeight: FontWeight.bold,
-                  //                       ),
-                  //                     ),
-                  //                     Padding(
-                  //                       padding: const EdgeInsets.only(top: 30.0),
-                  //                       child: Text(
-                  //                         "377373773",
-                  //                         style: TextStyle(
-                  //                             color: Colors.white, fontSize: 13),
-                  //                       ),
-                  //                     ),
-                  //                   ]),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //       Padding(
-                  //         padding: const EdgeInsets.all(16.0),
-                  //         child: Row(children: [
-                  //           Padding(
-                  //             padding: const EdgeInsets.only(right: 12.0),
-                  //             child: Container(
-                  //               height: 67,
-                  //               width: 90,
-                  //               child: ClipRRect(
-                  //                 borderRadius: BorderRadius.circular(10),
-                  //                 child: Container(
-                  //                   height: 67,
-                  //                   width: 90,
-                  //                   color: const Color.fromARGB(44, 122, 120, 122),
-                  //                   child: MaterialButton(
-                  //                     height: 80,
-                  //                     minWidth: 90,
-                  //                     onPressed: () {
-                  //                       Navigator.push(
-                  //                           context,
-                  //                           MaterialPageRoute(
-                  //                               builder: (context) =>
-                  //                                   TransPage(adth: widget.adth)));
-                  //                     },
-                  //                     child: Padding(
-                  //                       padding: const EdgeInsets.all(0.0),
-                  //                       child: Column(
-                  //                         mainAxisAlignment: MainAxisAlignment.center,
-                  //                         crossAxisAlignment: CrossAxisAlignment.start,
-                  //                         children: [
-                  //                           Text(
-                  //                             '₹ 0.0',
-                  //                             style: TextStyle(
-                  //                                 fontSize: 18,
-                  //                                 color: Colors.green,
-                  //                                 fontWeight: FontWeight.bold),
-                  //                           ),
-                  //                           Padding(
-                  //                             padding: const EdgeInsets.all(1.0),
-                  //                             child: Text(
-                  //                               'Wallet',
-                  //                               style: TextStyle(
-                  //                                   fontSize: 13, color: Colors.white),
-                  //                             ),
-                  //                           )
-                  //                         ],
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //           Padding(
-                  //             padding: const EdgeInsets.all(0.0),
-                  //             child: Container(
-                  //               height: 67,
-                  //               width: 90,
-                  //               child: ClipRRect(
-                  //                 borderRadius: BorderRadius.circular(10),
-                  //                 child: Container(
-                  //                   color: const Color.fromARGB(44, 122, 120, 122),
-                  //                   child: MaterialButton(
-                  //                     onPressed: () {
-                  //                       Navigator.push(
-                  //                           context,
-                  //                           MaterialPageRoute(
-                  //                               builder: (context) =>
-                  //                                   OrdersPage(adth: widget.adth)));
-                  //                     },
-                  //                     child: Padding(
-                  //                       padding: const EdgeInsets.all(0.0),
-                  //                       child: Column(
-                  //                         mainAxisAlignment: MainAxisAlignment.center,
-                  //                         crossAxisAlignment: CrossAxisAlignment.start,
-                  //                         children: [
-                  //                           Text(
-                  //                             '20',
-                  //                             style: TextStyle(
-                  //                               fontSize: 18,
-                  //                               color: Colors.green,
-                  //                               fontWeight: FontWeight.bold,
-                  //                             ),
-                  //                           ),
-                  //                           Padding(
-                  //                             padding: const EdgeInsets.only(top: 1.0),
-                  //                             child: Text(
-                  //                               'Orders',
-                  //                               style: TextStyle(
-                  //                                   fontSize: 13, color: Colors.white),
-                  //                             ),
-                  //                           )
-                  //                         ],
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ]),
-                  //       ),
-                  //     ],
-                  //   ),
-                  //   backgroundColor: widget.adth,
-                  //   toolbarHeight: 260,
                   // ),
                   SingleChildScrollView(
                     child: Padding(
@@ -1023,7 +869,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     },
                                     child: getRow2(
                                       "Booked Products",
-                                      Icon(Icons.settings),
+                                      Icon(Icons.collections_sharp),
                                     ),
                                   ),
 
@@ -1184,156 +1030,165 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          bottomNavigationBar: BottomAppBar(
-            color: bottomback,
-            height: 68,
-            // currentIndex: 0,
-            // selectedItemColor: widget.adth,
-            // unselectedItemColor: Colors.grey,
-            // showSelectedLabels: true,
-            // showUnselectedLabels: true,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  height: 45,
-                  width: 60,
-                  child: GestureDetector(
-                    // padding: EdgeInsets.only(bottom: 0),
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => MyHome(adth: widget.adth, admin: 0),
-                        ),
-                        (context) => false,
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.home_outlined, size: 21, color: b1),
-                        Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 45,
-                  width: 60,
-                  child: GestureDetector(
-                    // padding: EdgeInsets.only(bottom: 0),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => Cart1Page(
-                                adth: widget.adth,
-                                admin: widget.admin,
-                              ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.dashboard_outlined, color: b1, size: 21),
-                        Text(
-                          'Category',
-                          style: TextStyle(color: b1, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 45,
-                  width: 60,
-                  child: GestureDetector(
-                    // padding: EdgeInsets.only(bottom: 0),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  VideoPage(admin: 2, adth: widget.adth),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.ondemand_video, color: b1, size: 21),
-                        Text(
-                          style: TextStyle(color: b1, fontSize: 13),
-                          'Shorts',
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 45,
-                  width: 60,
-                  child: GestureDetector(
-                    // padding: EdgeInsets.only(bottom: 0),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  CartDirPage(admin: 3, adth: widget.adth),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
-                        Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 45,
-                  width: 60,
-                  child: GestureDetector(
-                    // padding: EdgeInsets.only(bottom: 0),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => ProfilePage(
-                                adth: widget.adth,
-                                admin: widget.admin,
-                              ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      children: [
-                        Icon(
-                          Icons.person_outline,
-                          color: widget.adth,
-                          size: 21,
-                        ),
-                        Text(
-                          style: TextStyle(color: widget.adth, fontSize: 13),
-                          'Profile',
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            //
-            // ],
-          ),
+          bottomNavigationBar: bottombr(),
         );
+  }
+
+  Widget bottombr() {
+    return BottomAppBar(
+      color: bottomback,
+      height: 68,
+      // currentIndex: 0,
+      // selectedItemColor: widget.adth,
+      // unselectedItemColor: Colors.grey,
+      // showSelectedLabels: true,
+      // showUnselectedLabels: true,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            height: 45,
+            width: 60,
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyHome(adth: widget.adth, admin: 0),
+                  ),
+                  (context) => false,
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.home_outlined, size: 21, color: b1),
+                  Text(style: TextStyle(color: b1, fontSize: 13), 'Home'),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: 60,
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            Cart1Page(adth: widget.adth, admin: widget.admin),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.dashboard_outlined, color: b1, size: 21),
+                  Text('Category', style: TextStyle(color: b1, fontSize: 13)),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 45,
+            width: 60,
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) => VideoPage(admin: 2, adth: widget.adth),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.ondemand_video, color: b1, size: 21),
+                  Text(style: TextStyle(color: b1, fontSize: 13), 'Shorts'),
+                ],
+              ),
+            ),
+          ),
+          Stack(
+            children: [
+              if (cartnn != 0)
+                Positioned(
+                  top: 0,
+                  right: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: adth,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+
+                    child: Text(
+                      "${cartnn}",
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                  ),
+                ),
+              Container(
+                height: 45,
+                width: 60,
+                child: GestureDetector(
+                  // padding: EdgeInsets.only(bottom: 0),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                CartDirPage(admin: 3, adth: widget.adth),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
+                      Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Container(
+            height: 45,
+            width: 60,
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            ProfilePage(adth: widget.adth, admin: widget.admin),
+                  ),
+                );
+              },
+              child: Column(
+                children: [
+                  Icon(Icons.person_outline, color: widget.adth, size: 21),
+                  Text(
+                    style: TextStyle(color: widget.adth, fontSize: 13),
+                    'Profile',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      //
+      // ],
+    );
   }
 
   Widget getRow(String title, String subtitle, Icon iconio) {

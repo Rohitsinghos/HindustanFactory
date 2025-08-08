@@ -191,7 +191,11 @@ class _Cart1PageState extends State<Cart1Page> {
                             )
                             : Column(
                               children: [
-                                for (int i = 0; i < categoData.length; i++)
+                                for (
+                                  int i = categoData.length - 1;
+                                  i < categoData.length && i >= 0;
+                                  i++
+                                )
                                   buildCategoryTile(
                                     categoData[i]["name"],
                                     categoData[i]['thumbnail']["url"],
@@ -200,10 +204,6 @@ class _Cart1PageState extends State<Cart1Page> {
                                   ),
                               ],
                             ),
-                        // buildCategoryTile('New', 'assets/jean.jpg'),
-                        // buildCategoryTile('Clothes', 'assets/shirt.jpg'),
-                        // buildCategoryTile('Shoes', 'assets/jean.jpg'),
-                        // buildCategoryTile('Accessories', 'assets/shirt.jpg'),
                       ],
                     ),
                   ),
@@ -245,7 +245,7 @@ class _Cart1PageState extends State<Cart1Page> {
                             )
                             : Column(
                               children: [
-                                for (int i = 0; i < categoData.length; i++)
+                                for (int i = 0; i < categoData.length - 1; i++)
                                   buildCategoryTile(
                                     categoData[i]["name"],
                                     categoData[i]['thumbnail']["url"],
@@ -295,13 +295,13 @@ class _Cart1PageState extends State<Cart1Page> {
                             )
                             : Column(
                               children: [
-                                for (int i = 0; i < categoData.length; i++)
-                                  buildCategoryTile(
-                                    categoData[i]["name"],
-                                    categoData[i]['thumbnail']["url"],
-                                    i,
-                                    categoData[i]["id"] ?? 0,
-                                  ),
+                                // for (int i = 0; i < categoData.length; i++)
+                                //   buildCategoryTile(
+                                //     categoData[i]["name"],
+                                //     categoData[i]['thumbnail']["url"],
+                                //     i,
+                                //     categoData[i]["id"] ?? 0,
+                                //   ),
                               ],
                             ),
                       ],
@@ -569,27 +569,50 @@ class _Cart1PageState extends State<Cart1Page> {
               ),
             ),
           ),
-          Container(
-            height: 45,
-            width: 60,
-            child: GestureDetector(
-              // padding: EdgeInsets.only(bottom: 0),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+
+          Stack(
+            children: [
+              if (cartnn != 0)
+                Positioned(
+                  top: 0,
+                  right: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: adth,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+
+                    child: Text(
+                      "${cartnn}",
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
                   ),
-                );
-              },
-              child: Column(
-                children: [
-                  Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
-                  Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                ],
+                ),
+              Container(
+                height: 45,
+                width: 60,
+                child: GestureDetector(
+                  // padding: EdgeInsets.only(bottom: 0),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                CartDirPage(admin: 3, adth: widget.adth),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
+                      Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
           Container(
             height: 45,

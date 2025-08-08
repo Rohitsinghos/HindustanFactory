@@ -53,22 +53,26 @@ class _RazerPayState extends State<RazerPay> {
     }
   }
 
-  Future<void> _verifyPay() async {
+  Future<void> _verifyPay(String pyid, String od, String sgn) async {
     try {
       final res = await http.post(
         Uri.parse("${BASE_URL}razorpay/verify"),
         headers: {'Authorization': "Bearer ${userToken}"},
         body: jsonEncode({
-          "razorpay_order_id": "order_QnPBm5V65GDTLy",
-          "razorpay_payment_id": "pay_QnPFCRqO9mH8OB",
-          "razorpay_signature":
-              "7901628360502ef72c002c842496b6bfca229c4a1fc2ad0b42da709333652823",
+          "razorpay_order_id": "$od",
+          "razorpay_payment_id": "${pyid}",
+          "razorpay_signature": "${sgn}",
         }),
       );
       print(res.body);
       if (!mounted) return; // prevents calling setState if widget is disposed
-
-      setState(() {});
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => OrdersPage(adth: widget.adth, page: 0),
+        ),
+      );
+      // setState(() {});
     } catch (e) {
       print(e);
     }
@@ -77,17 +81,19 @@ class _RazerPayState extends State<RazerPay> {
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     print("✅ SUCCESS: ${response.paymentId}");
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("✅ Payment Successful: ${response.paymentId}")),
-    );
-
-    if (!mounted) return;
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrdersPage(adth: widget.adth, page: 0),
+      SnackBar(
+        content: Text(
+          "✅ Payment Successful: ${response.paymentId} ${response.orderId} ${response.signature}",
+        ),
       ),
     );
+
+    _verifyPay(
+      "${response.paymentId}",
+      "${response.orderId}",
+      "${response.signature}",
+    );
+    if (!mounted) return;
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {

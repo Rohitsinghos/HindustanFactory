@@ -130,6 +130,43 @@ class _SerchTopPageState extends State<SerchTopPage> {
   // ];
 
   @override
+  Future<void> HometoCart(int id) async {
+    try {
+      final req = await http.post(
+        Uri.parse("${BASE_URL}cart/add"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+        },
+        body: jsonEncode({"VariantId": id, "quantity": 1}),
+      );
+
+      if (req.statusCode == 200) {
+        print(jsonDecode(req.body)["message"]);
+        print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
+
+        // NavigationBar.
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("✅ Added cart successfully!")));
+        cartnn++;
+        if (!mounted) return;
+        setState(() {});
+      } else {
+        print("not added to cart... abbebebebbhhdshdhhdhnananannanan");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Not added cart, Server Issue!")),
+        );
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Cannot add to cart, Network Issue!")),
+      );
+      print("jdjdjjdjdjjdjjd");
+    }
+  }
+
   Future<void> _getSearchData(String ser) async {
     // TopData1 = [];
     // doit = false;
@@ -524,19 +561,38 @@ class _SerchTopPageState extends State<SerchTopPage> {
                                   ),
                                 ],
                               ),
-                              Text(
-                                "₹ $price",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "₹ $price",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      "₹ ${oldPrice}",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.add_circle_rounded,
-                            color: widget.adth,
-                            size: 35,
+                          IconButton(
+                            onPressed: () {
+                              HometoCart(id2);
+                            },
+                            icon: Icon(
+                              Icons.add_circle_rounded,
+                              color: widget.adth,
+                              size: 30,
+                            ),
                           ),
                         ],
                       ),
@@ -598,8 +654,8 @@ class _SerchTopPageState extends State<SerchTopPage> {
                     child: Center(
                       child: Text(
                         textAlign: TextAlign.center,
-                        "no data found from " +
-                            "${(widget.searchpro == "") ? "Category :${widget.index}" : "keyword :${widget.searchpro}"}.",
+                        "No data found With " +
+                            "${(widget.searchpro == "") ? "${widget.index} Category!" : "${widget.searchpro} keyword"}!",
                       ),
                     ),
                   ),
@@ -674,7 +730,7 @@ class _SerchTopPageState extends State<SerchTopPage> {
   Widget bottomnn() {
     return BottomAppBar(
       surfaceTintColor: Colors.white,
-      color: Colors.white,
+      color: bottomback,
       height: 68,
       // currentIndex: 0,
       // selectedItemColor: widget.adth,
@@ -687,9 +743,9 @@ class _SerchTopPageState extends State<SerchTopPage> {
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
@@ -709,10 +765,10 @@ class _SerchTopPageState extends State<SerchTopPage> {
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
-                Navigator.push(
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder:
@@ -734,9 +790,9 @@ class _SerchTopPageState extends State<SerchTopPage> {
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -753,34 +809,57 @@ class _SerchTopPageState extends State<SerchTopPage> {
               ),
             ),
           ),
-          Container(
-            height: 45,
-            width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+
+          Stack(
+            children: [
+              if (cartnn != 0)
+                Positioned(
+                  top: 0,
+                  right: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: adth,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+
+                    child: Text(
+                      "${cartnn}",
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
                   ),
-                );
-              },
-              child: Column(
-                children: [
-                  Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
-                  Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                ],
+                ),
+              Container(
+                height: 45,
+                width: 60,
+                child: GestureDetector(
+                  // padding: EdgeInsets.only(bottom: 0),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                CartDirPage(admin: 3, adth: widget.adth),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
+                      Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

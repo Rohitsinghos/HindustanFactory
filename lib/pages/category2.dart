@@ -187,7 +187,7 @@ class _Cart2PageState extends State<Cart2Page> {
   Widget bottomnn() {
     return BottomAppBar(
       surfaceTintColor: Colors.white,
-      color: Colors.white,
+      color: bottomback,
       height: 68,
       // currentIndex: 0,
       // selectedItemColor: widget.adth,
@@ -200,9 +200,9 @@ class _Cart2PageState extends State<Cart2Page> {
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(
@@ -222,10 +222,10 @@ class _Cart2PageState extends State<Cart2Page> {
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
-                Navigator.push(
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
                     builder:
@@ -247,9 +247,9 @@ class _Cart2PageState extends State<Cart2Page> {
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -266,34 +266,57 @@ class _Cart2PageState extends State<Cart2Page> {
               ),
             ),
           ),
-          Container(
-            height: 45,
-            width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => CartDirPage(admin: 3, adth: widget.adth),
+
+          Stack(
+            children: [
+              if (cartnn != 0)
+                Positioned(
+                  top: 0,
+                  right: 10,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: adth,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 3),
+
+                    child: Text(
+                      "${cartnn}",
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
                   ),
-                );
-              },
-              child: Column(
-                children: [
-                  Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
-                  Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
-                ],
+                ),
+              Container(
+                height: 45,
+                width: 60,
+                child: GestureDetector(
+                  // padding: EdgeInsets.only(bottom: 0),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                CartDirPage(admin: 3, adth: widget.adth),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      Icon(Icons.shopping_cart_outlined, color: b1, size: 21),
+                      Text(style: TextStyle(color: b1, fontSize: 13), 'Cart'),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
           Container(
             height: 45,
             width: 60,
-            child: MaterialButton(
-              padding: EdgeInsets.only(bottom: 0),
-              onPressed: () {
+            child: GestureDetector(
+              // padding: EdgeInsets.only(bottom: 0),
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(

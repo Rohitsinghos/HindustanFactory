@@ -7,8 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'package:template/pages/buyItem.dart';
 import 'dart:io';
 import 'package:open_file/open_file.dart';
+import 'package:template/profilePages/compo.dart';
 
 class OrderDetailsCard extends StatefulWidget {
   final Color adth;
@@ -103,6 +106,40 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
       // );
     } catch (e) {
       print(e);
+    }
+  }
+
+  Future<void> _Cancel() async {
+    try {
+      final res = await http.put(
+        Uri.parse('${BASE_URL}orders/${widget.orderid}/cancel'),
+        // headers: {'Authorization': "Bearer ${userToken}"},
+      );
+
+      if (res.statusCode == 200) {
+        print(res.body);
+        _getmeuseroderss();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Product Cancelled!")));
+
+        // if (!mounted) return; // prevents calling setState if widget is disposed
+
+        // setState(() {});
+      } else {
+        print(res.body);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Server Error!")));
+        if (!mounted) return; // prevents calling setState if widget is disposed
+
+        setState(() {});
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Network Error!")));
     }
   }
 
@@ -336,10 +373,12 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                         ),
                       ],
                     ),
+                    SizedBox(height: 20),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Card(
+                          color: Colors.white,
                           child: MaterialButton(
                             child: Row(
                               children: [
@@ -351,11 +390,16 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                               ],
                             ),
                             onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => ReviewPage(),
+                              );
                               /* Delete logic */
                             },
                           ),
                         ),
                         Card(
+                          color: Colors.white,
                           child: MaterialButton(
                             child: Row(
                               children: [
@@ -363,10 +407,16 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text("Share \nTracking"),
                                 ),
-                                Icon(Icons.reviews),
+                                Icon(Icons.track_changes),
                               ],
                             ),
                             onPressed: () {
+                              shareText1 =
+                                  "Hi, I love this product and sharing this amazing product. Check it out: " +
+                                  " ${productName}  from Hindan Factory. https://hindustanfactory.socialseller.in/product/${variId}";
+                              // _shareImageAndText();
+                              shareNetworkImageWithText("");
+
                               /* Delete logic */
                             },
                           ),
@@ -455,25 +505,60 @@ class _OrderDetailsCardState extends State<OrderDetailsCard> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-          ),
-          onPressed: () {
-            /* reorder action */
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => BuyItem(adth: widget.adth, buyid: variId),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            if (statusord != "CANCELLED")
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 5,
+                    horizontal: 14,
+                  ),
+                ),
+                onPressed: () {
+                  /* reorder action */
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => BuyItem(adth: widget.adth, buyid: variId),
+                  //   ),
+                  // );
+                  _Cancel();
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text("Processing!")));
+                },
+                child: const Text(
+                  'Cancel Order',
+                  style: TextStyle(fontSize: 14, color: Colors.white),
+                ),
               ),
-            );
-          },
-          child: const Text(
-            'Reorder Product',
-            style: TextStyle(fontSize: 16, color: Colors.white),
-          ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 14,
+                ),
+              ),
+              onPressed: () {
+                /* reorder action */
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BuyItem(adth: widget.adth, buyid: variId),
+                  ),
+                );
+              },
+              child: const Text(
+                'Reorder Product',
+                style: TextStyle(fontSize: 14, color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
     );

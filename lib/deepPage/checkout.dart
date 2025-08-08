@@ -17,8 +17,9 @@ class CheckOutPage extends StatefulWidget {
 }
 
 class _CheckOutPageState extends State<CheckOutPage> {
+  int proc = 0;
   int checked = -1;
-  int addid = 0;
+
   bool cod = true;
   bool isprem = false;
 
@@ -122,6 +123,10 @@ class _CheckOutPageState extends State<CheckOutPage> {
           }
         } else {
           print("failure userrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text("Try again!")));
         }
       }
     } catch (e) {
@@ -363,22 +368,22 @@ class _CheckOutPageState extends State<CheckOutPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: widget.adth),
-                      borderRadius: BorderRadius.circular(10),
-                      color: (!cash) ? widget.adth : Colors.white,
-                    ),
-                    child: MaterialButton(
-                      onPressed: () {
-                        cash = false;
-                        if (!mounted)
-                          return; // prevents calling setState if widget is disposed
+                  GestureDetector(
+                    onTap: () {
+                      cash = false;
+                      if (!mounted)
+                        return; // prevents calling setState if widget is disposed
 
-                        setState(() {});
-                      },
+                      setState(() {});
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: widget.adth),
+                        borderRadius: BorderRadius.circular(10),
+                        color: (!cash) ? widget.adth : Colors.white,
+                      ),
                       child: Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: const EdgeInsets.all(14.0),
                         child: Column(
                           children: [
                             Text(
@@ -394,22 +399,23 @@ class _CheckOutPageState extends State<CheckOutPage> {
                       ),
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: widget.adth),
-                      borderRadius: BorderRadius.circular(10),
-                      color: (cash) ? widget.adth : Colors.white,
-                    ),
-                    child: MaterialButton(
-                      onPressed: () {
-                        if (isprem) cash = true;
-                        if (!mounted)
-                          return; // prevents calling setState if widget is disposed
+                  GestureDetector(
+                    onTap: () {
+                      if (isprem) cash = true;
+                      if (!mounted)
+                        return; // prevents calling setState if widget is disposed
 
-                        setState(() {});
-                      },
+                      setState(() {});
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: widget.adth),
+                        borderRadius: BorderRadius.circular(10),
+                        color: (cash) ? widget.adth : Colors.white,
+                      ),
+
                       child: Padding(
-                        padding: const EdgeInsets.all(4.0),
+                        padding: const EdgeInsets.all(14.0),
                         child: Column(
                           children: [
                             Text(
@@ -477,7 +483,17 @@ class _CheckOutPageState extends State<CheckOutPage> {
           // color: widget.adth,
           onPressed: () {
             if (addid != -1) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text("Processing...")));
+
               _getorderuser();
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Please select an address or add address!"),
+                ),
+              );
             }
           },
           child: Row(

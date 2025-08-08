@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:template/pages/buyItem.dart';
 import 'package:template/models/categorymodel/cate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,6 +16,43 @@ class CollectionPage extends StatefulWidget {
 }
 
 class _CollectionPageState extends State<CollectionPage> {
+  Future<void> HometoCart(int id) async {
+    try {
+      final req = await http.post(
+        Uri.parse("${BASE_URL}cart/add"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+        },
+        body: jsonEncode({"VariantId": id, "quantity": 1}),
+      );
+
+      if (req.statusCode == 200) {
+        print(jsonDecode(req.body)["message"]);
+        print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
+
+        // NavigationBar.
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("✅ Added cart successfully!")));
+        cartnn++;
+        if (!mounted) return;
+        setState(() {});
+      } else {
+        print("not added to cart... abbebebebbhhdshdhhdhnananannanan");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Not added cart, Server Issue!")),
+        );
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Cannot add to cart, Network Issue!")),
+      );
+      print("jdjdjjdjdjjdjjd");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,25 +101,27 @@ class _CollectionPageState extends State<CollectionPage> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child:
-                  (productData1.length == 0)
-                      ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Center(
-                            child: Container(
-                              child: Text("No Collection items found"),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child:
+              (favIds.length == 0)
+                  ? Container(
+                    margin: EdgeInsets.symmetric(vertical: 120),
+                    child: Column(
+                      // mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Center(
+                          child: Container(
+                            child: Text(
+                              "No items found",
+                              style: TextStyle(fontSize: 14),
                             ),
                           ),
-                        ],
-                      )
-                      : _buildItemsGridDom(-1),
-            ),
-          ],
+                        ),
+                      ],
+                    ),
+                  )
+                  : _buildItemsGridDom(-1),
         ),
       ),
     );
@@ -272,15 +314,23 @@ class _CollectionPageState extends State<CollectionPage> {
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.add_circle_rounded,
-                            color: widget.adth,
-                            size: 35,
+                          IconButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Processing...")),
+                              );
+                              HometoCart(id);
+                            },
+                            icon: Icon(
+                              Icons.add_circle_rounded,
+                              color: widget.adth,
+                              size: 35,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    (ok == true)
+                    (true)
                         ? Container()
                         : Container(
                           margin: EdgeInsets.symmetric(horizontal: 15),
@@ -308,6 +358,8 @@ class _CollectionPageState extends State<CollectionPage> {
                             ],
                           ),
                         ),
+
+                    SizedBox(height: 20),
                   ],
                 ),
               ),

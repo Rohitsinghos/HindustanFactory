@@ -8,11 +8,25 @@ String BASE_URL = "https://hindustanapi.mtlapi.socialseller.in/api/";
 // token for test
 String userToken = "";
 
+List CourseL = [];
+//vvideo data
+List vddataa = [];
+List<String> videoUrls = [
+  "https://mtt-s3.s3.ap-south-1.amazonaws.com/1749709738560WhatsApp+Video+2025-06-12+at+11.57.44_9a59f530.mp4",
+];
+
+int addid = -1;
+
+int cartnn = 0;
+
 String userName = "";
 
 bool ispremi = false;
 int userid = -1;
 int adrss = 0;
+
+List colii = [[], [], [], []];
+
 int wallet = 0;
 
 bool isPremiium = false;
@@ -22,6 +36,8 @@ int chaddr = 0;
 int cartn = 0;
 
 Color adth = Colors.deepOrange;
+
+List WalletaddData = [];
 
 String qrTexts = "";
 
@@ -76,31 +92,6 @@ List<Map<String, dynamic>> productData = [];
 
 List<Map<String, dynamic>> products = [];
 
-List<Map<String, String>> categories = [
-  {'title': 'Jeans', 'image': 'assets/shirt.jpg'},
-  {'title': 'Shirt', 'image': 'assets/jean.jpg'},
-  {'title': 'Women Wear', 'image': 'assets/shirt.jpg'},
-  {'title': 'Shirt', 'image': 'assets/jean.jpg'},
-  {'title': 'Women Wear', 'image': 'assets/shirt.jpg'},
-  {'title': 'Shirt', 'image': 'assets/jean.jpg'},
-  {'title': 'Women Wear', 'image': 'assets/shirt.jpg'},
-  {'title': 'Shirt', 'image': 'assets/jean.jpg'},
-  {'title': 'Women Wear', 'image': 'assets/shirt.jpg'},
-  {'title': 'Shirt', 'image': 'assets/jean.jpg'},
-  {'title': 'Women Wear', 'image': 'assets/shirt.jpg'},
-];
-
-List<Map<String, String>> Items = [
-  {'title': 'Jeans', 'image': 'assets/im.jpeg'},
-  {'title': 'Shirt', 'image': 'assets/im2.jpeg'},
-  {'title': 'Women Wear', 'image': 'assets/im3.jpeg'},
-  {'title': 'Shirt2', 'image': 'assets/im1.jpeg'},
-  {'title': 'Women Wear', 'image': 'assets/im1.jpeg'},
-  {'title': 'Shirt3', 'image': 'assets/im3.jpeg'},
-  {'title': 'Women Wear', 'image': 'assets/im2.jpeg'},
-  {'title': 'Shirt4', 'image': 'assets/im1.jpeg'},
-  {'title': 'Women Wear', 'image': 'assets/im1.jpeg'},
-];
 List<Map<String, dynamic>> ItemsInt = [
   {'price': 100},
   {'price': 600},

@@ -1,3 +1,4 @@
+import 'package:template/main.dart';
 import 'package:template/pages/category1.dart';
 import 'package:template/pages/searchPage.dart';
 import 'package:template/pages/topPage.dart';
@@ -30,11 +31,6 @@ class MyHome extends StatefulWidget {
 }
 
 int n = 5;
-
-Color b2 = const Color.fromARGB(255, 169, 169, 169);
-Color b3 = const Color.fromARGB(255, 169, 169, 169);
-Color b4 = const Color.fromARGB(255, 169, 169, 169);
-Color b5 = const Color.fromARGB(255, 169, 169, 169);
 
 int i = 0;
 int activeIndex = 0;
@@ -93,7 +89,7 @@ class _MyHomeState extends State<MyHome> {
           final responseBanner1 = await http.get(
             Uri.parse(
               BASE_URL +
-                  "products?&&pagination[page]=1&pagination[pageSize]=14",
+                  "products", //?&&pagination[page]=1&pagination[pageSize]=14",
             ),
           );
 
@@ -102,6 +98,7 @@ class _MyHomeState extends State<MyHome> {
 
             productData1 = jsonBody["data"];
             TopData1 = productData1;
+            colii[0] = (List.filled(productData1.length, 0));
           } else {
             print("Failed to load banner data");
             if (!mounted) return;
@@ -120,9 +117,7 @@ class _MyHomeState extends State<MyHome> {
 
       if (bannerData.length == 0) {
         final responseBanner = await http.get(
-          Uri.parse(
-            "https://hindustanapi.mtlapi.socialseller.in/api/store-banners",
-          ),
+          Uri.parse("${BASE_URL}store-banners"),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -187,6 +182,12 @@ class _MyHomeState extends State<MyHome> {
         if (!mounted) return;
         load = "Server Error!";
         setState(() {});
+        if (!mounted) return;
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyApp(isLoggedIn: false)),
+          (context) => false,
+        );
       }
     } catch (e) {
       print(e);
@@ -223,6 +224,7 @@ class _MyHomeState extends State<MyHome> {
 
         if (rs.statusCode == 200) {
           productData4i = json.decode(rs.body)["data"];
+          colii[2] = (List.filled(productData4i.length, 0));
           print("success to get random products");
         } else {
           print("failed to get random products");
@@ -243,6 +245,7 @@ class _MyHomeState extends State<MyHome> {
 
         if (rs.statusCode == 200) {
           productData2i = json.decode(rs.body)["data"];
+          colii[1] = (List.filled(productData2i.length, 0));
           print("success to get random products");
         } else {
           print("failed to get random products");
@@ -283,6 +286,7 @@ class _MyHomeState extends State<MyHome> {
 
         if (rs.statusCode == 200) {
           productData6i = json.decode(rs.body)["data"];
+          colii[3] = (List.filled(productData6i.length, 0));
           print("success to get random products");
         } else {
           print("failed to get random products");
@@ -299,6 +303,43 @@ class _MyHomeState extends State<MyHome> {
     }
   }
 
+  Future<void> HometoCart(int id) async {
+    try {
+      final req = await http.post(
+        Uri.parse("${BASE_URL}cart/add"),
+        headers: {
+          'Content-type': 'application/json',
+          'Authorization': "Bearer ${userToken}",
+        },
+        body: jsonEncode({"VariantId": id, "quantity": 1}),
+      );
+
+      if (req.statusCode == 200) {
+        print(jsonDecode(req.body)["message"]);
+        print("jsdjjhdjdjjdjdjjd  ho gyayyaya");
+
+        // NavigationBar.
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("✅ Added cart successfully!")));
+        cartnn++;
+        if (!mounted) return;
+        setState(() {});
+      } else {
+        print("not added to cart... abbebebebbhhdshdhhdhnananannanan");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Not added cart, Server Issue!")),
+        );
+      }
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Cannot add to cart, Network Issue!")),
+      );
+      print("jdjdjjdjdjjdjjd");
+    }
+  }
+
   Future<void> _refreshData() async {
     if (!mounted) return;
     await Future.delayed(Duration(milliseconds: 100));
@@ -311,6 +352,8 @@ class _MyHomeState extends State<MyHome> {
     load = "Loading";
     setState(() {});
   }
+
+  int pp = 1;
 
   Future<void> _checkConnection() async {
     final result = await Connectivity().checkConnectivity();
@@ -553,159 +596,158 @@ class _MyHomeState extends State<MyHome> {
 
                               _categoryBanner(4),
 
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 15.0,
-                                  right: 15,
-                                  bottom: 10,
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Features Brand",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (context) => SerchTopPage(
-                                                      searchpro: "",
-                                                      adth: widget.adth,
-                                                      index: -1,
-                                                    ),
-                                              ),
-                                            );
-                                          },
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (context) => SerchTopPage(
-                                                        searchpro: "",
-                                                        adth: widget.adth,
-                                                        index: -1,
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                            child: Text(
-                                              "view more",
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // Padding(
+                              //   padding: const EdgeInsets.only(
+                              //     left: 15.0,
+                              //     right: 15,
+                              //     bottom: 10,
+                              //   ),
+                              //   child: Column(
+                              //     children: [
+                              //       Row(
+                              //         mainAxisAlignment:
+                              //             MainAxisAlignment.spaceBetween,
+                              //         children: [
+                              //           Text(
+                              //             "Features Brand",
+                              //             style: TextStyle(
+                              //               fontSize: 16,
+                              //               fontWeight: FontWeight.bold,
+                              //             ),
+                              //           ),
+                              //           GestureDetector(
+                              //             onTap: () {
+                              //               Navigator.push(
+                              //                 context,
+                              //                 MaterialPageRoute(
+                              //                   builder:
+                              //                       (context) => SerchTopPage(
+                              //                         searchpro: "",
+                              //                         adth: widget.adth,
+                              //                         index: -1,
+                              //                       ),
+                              //                 ),
+                              //               );
+                              //             },
+                              //             child: GestureDetector(
+                              //               onTap: () {
+                              //                 Navigator.push(
+                              //                   context,
+                              //                   MaterialPageRoute(
+                              //                     builder:
+                              //                         (context) => SerchTopPage(
+                              //                           searchpro: "",
+                              //                           adth: widget.adth,
+                              //                           index: -1,
+                              //                         ),
+                              //                   ),
+                              //                 );
+                              //               },
+                              //               child: Text(
+                              //                 "view more",
+                              //                 style: TextStyle(
+                              //                   color: Colors.grey,
+                              //                 ),
+                              //               ),
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
 
-                              (loading)
-                                  ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.wifi_off,
-                                        size: 80,
-                                        color: Colors.grey,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      const Text(
-                                        "No Internet Connection",
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                      const SizedBox(height: 20),
-                                      IconButton(
-                                        icon: Icon(Icons.refresh),
-                                        onPressed: _checkConnection,
-                                      ),
-                                    ],
-                                  )
-                                  : Container(),
+                              // (loading)
+                              //     ? Column(
+                              //       mainAxisAlignment: MainAxisAlignment.center,
+                              //       children: [
+                              //         const Icon(
+                              //           Icons.wifi_off,
+                              //           size: 80,
+                              //           color: Colors.grey,
+                              //         ),
+                              //         const SizedBox(height: 16),
+                              //         const Text(
+                              //           "No Internet Connection",
+                              //           style: TextStyle(fontSize: 20),
+                              //         ),
+                              //         const SizedBox(height: 20),
+                              //         IconButton(
+                              //           icon: Icon(Icons.refresh),
+                              //           onPressed: _checkConnection,
+                              //         ),
+                              //       ],
+                              //     )
+                              //     : Container(),
 
-                              Container(
-                                margin: EdgeInsets.all(10),
-                                padding: const EdgeInsets.only(
-                                  left: 4.0,
-                                  right: 4,
-                                  bottom: 5,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    for (int i = 0; i < 4; i++)
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (context) => SerchTopPage(
-                                                    searchpro: "",
-                                                    adth: widget.adth,
-                                                    index: -1,
-                                                  ),
-                                            ),
-                                          );
-                                        },
-                                        child: Column(
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: CachedNetworkImage(
-                                                imageUrl:
-                                                    "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
+                              // Container(
+                              //   margin: EdgeInsets.all(10),
+                              //   padding: const EdgeInsets.only(
+                              //     left: 4.0,
+                              //     right: 4,
+                              //     bottom: 5,
+                              //   ),
+                              //   child: Row(
+                              //     mainAxisAlignment:
+                              //         MainAxisAlignment.spaceBetween,
+                              //     children: [
+                              //       for (int i = 0; i < 4; i++)
+                              //         GestureDetector(
+                              //           onTap: () {
+                              //             Navigator.push(
+                              //               context,
+                              //               MaterialPageRoute(
+                              //                 builder:
+                              //                     (context) => SerchTopPage(
+                              //                       searchpro: "",
+                              //                       adth: widget.adth,
+                              //                       index: -1,
+                              //                     ),
+                              //               ),
+                              //             );
+                              //           },
+                              //           child: Column(
+                              //             children: [
+                              //               ClipRRect(
+                              //                 borderRadius:
+                              //                     BorderRadius.circular(12),
+                              //                 child: CachedNetworkImage(
+                              //                   imageUrl:
+                              //                       "https://mtt-s3.s3.ap-south-1.amazonaws.com/1721284931557MAIN-IMAGE_c75004a7-8279-4778-86e0-6a1a53041ff8_1080x.jpg",
 
-                                                placeholder:
-                                                    (context, url) => Center(
-                                                      child: Icon(Icons.image),
-                                                    ),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        Icon(Icons.image),
+                              //                   placeholder:
+                              //                       (context, url) => Center(
+                              //                         child: Icon(Icons.image),
+                              //                       ),
+                              //                   errorWidget:
+                              //                       (context, url, error) =>
+                              //                           Icon(Icons.image),
 
-                                                // width: double.infinity,
-                                                // height: 100,
-                                                width: 78,
-                                                fit: BoxFit.cover,
-                                                // fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(
-                                                8.0,
-                                              ),
-                                              child: Text(
-                                                "Hindustan Factory",
-                                                style: TextStyle(
-                                                  fontSize: 7,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                              ),
-
+                              //                   // width: double.infinity,
+                              //                   // height: 100,
+                              //                   width: 78,
+                              //                   fit: BoxFit.cover,
+                              //                   // fit: BoxFit.cover,
+                              //                 ),
+                              //               ),
+                              //               Padding(
+                              //                 padding: const EdgeInsets.all(
+                              //                   8.0,
+                              //                 ),
+                              //                 child: Text(
+                              //                   "Hindustan Factory",
+                              //                   style: TextStyle(
+                              //                     fontSize: 7,
+                              //                     fontWeight: FontWeight.bold,
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //             ],
+                              //           ),
+                              //         ),
+                              //     ],
+                              //   ),
+                              // ),
                               Padding(
                                 padding: const EdgeInsets.only(
                                   left: 15.0,
@@ -1109,7 +1151,7 @@ class _MyHomeState extends State<MyHome> {
                                                 ],
                                               )
                                               : Container(
-                                                height: 350,
+                                                height: 335,
                                                 child: ListView.builder(
                                                   scrollDirection:
                                                       Axis.horizontal,
@@ -1131,6 +1173,7 @@ class _MyHomeState extends State<MyHome> {
                                                                       i)
                                                                   ? productData6i[i]["name"]
                                                                   : "not found",
+                                                          index: i,
                                                           rating:
                                                               "${productData6i[i]["rating"] ?? "0"}",
                                                           left:
@@ -1141,6 +1184,7 @@ class _MyHomeState extends State<MyHome> {
                                                               productData6i[i]["variants"][0]["strike_price"],
                                                           id:
                                                               productData6i[i]["id"],
+                                                          coli: 3,
                                                           image:
                                                               (productData6i
                                                                           .length >
@@ -1285,37 +1329,61 @@ class _MyHomeState extends State<MyHome> {
                           ),
                         ),
                       ),
-                      Container(
-                        height: 45,
-                        width: 60,
-                        child: GestureDetector(
-                          // padding: EdgeInsets.only(bottom: 0),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => CartDirPage(
-                                      admin: 3,
-                                      adth: widget.adth,
-                                    ),
+                      Stack(
+                        children: [
+                          Container(
+                            height: 45,
+                            width: 60,
+                            child: GestureDetector(
+                              // padding: EdgeInsets.only(bottom: 0),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => CartDirPage(
+                                          admin: 3,
+                                          adth: widget.adth,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Icon(
+                                    Icons.shopping_cart_outlined,
+                                    color: b1,
+                                    size: 21,
+                                  ),
+                                  Text(
+                                    style: TextStyle(color: b1, fontSize: 13),
+                                    'Cart',
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.shopping_cart_outlined,
-                                color: b1,
-                                size: 21,
-                              ),
-                              Text(
-                                style: TextStyle(color: b1, fontSize: 13),
-                                'Cart',
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          if (cartnn != 0)
+                            Positioned(
+                              top: 0,
+                              right: 10,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: adth,
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 3),
+
+                                child: Text(
+                                  "${cartnn}",
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                       Container(
                         height: 45,
@@ -1355,219 +1423,222 @@ class _MyHomeState extends State<MyHome> {
     );
   }
 
-  productCard2({
-    required int id,
-    required String name,
-    required String rating,
-    required int left,
-    required String price,
-    required String oldPrice,
-    required String image,
-    String? categoryN,
-  }) {
-    return Padding(
-      padding: EdgeInsets.all(10.0),
-      child: Card(
-        elevation: 1,
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return BuyItem(adth: widget.adth, buyid: id);
-                },
-              ),
-            );
-          },
-          child: Container(
-            width: 164,
-            // height: 250,
+  // productCard2({
+  //   required int id,
+  //   required String name,
+  //   required String rating,
+  //   required int left,
+  //   required String price,
+  //   required String oldPrice,
+  //   required String image,
+  //   String? categoryN,
+  // }) {
+  //   return Padding(
+  //     padding: EdgeInsets.all(10.0),
+  //     child: Card(
+  //       elevation: 1,
+  //       child: GestureDetector(
+  //         onTap: () {
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //               builder: (context) {
+  //                 return BuyItem(adth: widget.adth, buyid: id);
+  //               },
+  //             ),
+  //           );
+  //         },
+  //         child: Container(
+  //           width: 164,
+  //           // height: 250,
 
-            // color: Colors.white,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: Container(
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: image,
-                          placeholder: (context, url) => Icon(Icons.image),
-                          errorWidget:
-                              (context, url, error) => Icon(Icons.image),
+  //           // color: Colors.white,
+  //           child: ClipRRect(
+  //             borderRadius: BorderRadius.circular(15),
+  //             child: Container(
+  //               color: Colors.white,
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Stack(
+  //                     children: [
+  //                       CachedNetworkImage(
+  //                         imageUrl: image,
+  //                         placeholder: (context, url) => Icon(Icons.image),
+  //                         errorWidget:
+  //                             (context, url, error) => Icon(Icons.image),
 
-                          // width: double.infinity,
-                          // height: 100,
-                          height: 220,
-                          fit: BoxFit.cover,
-                        ),
-                        // Image.network(
-                        //   '$image',
-                        //   // height: 110,
-                        //   fit: BoxFit.cover,
+  //                         // width: double.infinity,
+  //                         // height: 100,
+  //                         height: 220,
+  //                         fit: BoxFit.cover,
+  //                       ),
+  //                       // Image.network(
+  //                       //   '$image',
+  //                       //   // height: 110,
+  //                       //   fit: BoxFit.cover,
 
-                        //   // width: double.infinity,
-                        // ),
-                        Positioned(
-                          top: 1,
-                          right: 1,
-                          // ignore: avoid_unnecessary_containers
-                          child: Container(
-                            child: IconButton(
-                              icon: Icon(
-                                (favIds.contains(id))
-                                    ? Icons.favorite
-                                    : Icons.favorite_border_outlined,
-                                color:
-                                    (favIds.contains(id)) ? Colors.red : null,
-                              ),
-                              onPressed: () {
-                                // _getans(id);
-                                (favIds.contains(id))
-                                    ? {favIds.remove(id)}
-                                    : favIds.add(id);
-                                if (!mounted)
-                                  return; // prevents calling setState if widget is disposed
+  //                       //   // width: double.infinity,
+  //                       // ),
+  //                       Positioned(
+  //                         top: 1,
+  //                         right: 1,
+  //                         // ignore: avoid_unnecessary_containers
+  //                         child: Container(
+  //                           child: IconButton(
+  //                             icon: Icon(
+  //                               (favIds.contains(id))
+  //                                   ? Icons.favorite
+  //                                   : Icons.favorite_border_outlined,
+  //                               color:
+  //                                   (favIds.contains(id)) ? Colors.red : null,
+  //                             ),
+  //                             onPressed: () {
+  //                               // _getans(id);
+  //                               (favIds.contains(id))
+  //                                   ? {favIds.remove(id)}
+  //                                   : favIds.add(id);
+  //                               if (!mounted)
+  //                                 return; // prevents calling setState if widget is disposed
 
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 1,
-                          left: 1,
-                          // ignore: avoid_unnecessary_containers
-                          child: Container(
-                            padding: EdgeInsets.only(top: 10, left: 5),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
-                                // height: 30,
-                                color: Colors.black,
-                                padding: const EdgeInsets.all(5.0),
-                                child: Text(
-                                  " NEW ",
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Text(
-                        name,
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                        textScaler: MediaQuery.textScalerOf(context),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Text(
-                        categoryN!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10,
-                        ),
-                        textScaler: MediaQuery.textScalerOf(context),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12.0,
-                        vertical: 5,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.star,
-                                    color: Colors.amberAccent,
-                                    size: 15,
-                                  ),
-                                  Text(
-                                    "($rating)",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    "250k+",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                "₹ $price",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Icon(
-                            Icons.add_circle_rounded,
-                            color: widget.adth,
-                            size: 35,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 15),
-                      // padding: EdgeInsets.only(bottom: 5),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          CircleAvatar(
-                            radius: 10,
-                            backgroundColor: CupertinoColors.systemYellow,
-                          ),
-                          CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Colors.deepPurpleAccent,
-                          ),
-                          CircleAvatar(radius: 10, backgroundColor: Colors.red),
-                          CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Colors.brown,
-                          ),
-                          Text("+0"),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  //                               setState(() {});
+  //                             },
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       Positioned(
+  //                         top: 1,
+  //                         left: 1,
+  //                         // ignore: avoid_unnecessary_containers
+  //                         child: Container(
+  //                           padding: EdgeInsets.only(top: 10, left: 5),
+  //                           child: ClipRRect(
+  //                             borderRadius: BorderRadius.circular(12),
+  //                             child: Container(
+  //                               // height: 30,
+  //                               color: Colors.black,
+  //                               padding: const EdgeInsets.all(5.0),
+  //                               child: Text(
+  //                                 " NEW ",
+  //                                 style: TextStyle(
+  //                                   fontSize: 9,
+  //                                   color: Colors.white,
+  //                                   fontWeight: FontWeight.bold,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   SizedBox(height: 5),
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
+  //                     child: Text(
+  //                       name,
+  //                       style: TextStyle(fontWeight: FontWeight.bold),
+  //                       textScaler: MediaQuery.textScalerOf(context),
+  //                       overflow: TextOverflow.ellipsis,
+  //                     ),
+  //                   ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
+  //                     child: Text(
+  //                       categoryN!,
+  //                       style: TextStyle(
+  //                         fontWeight: FontWeight.bold,
+  //                         fontSize: 10,
+  //                       ),
+  //                       textScaler: MediaQuery.textScalerOf(context),
+  //                     ),
+  //                   ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(
+  //                       horizontal: 12.0,
+  //                       vertical: 5,
+  //                     ),
+  //                     child: Row(
+  //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                       children: [
+  //                         Column(
+  //                           crossAxisAlignment: CrossAxisAlignment.start,
+  //                           children: [
+  //                             Row(
+  //                               children: [
+  //                                 Icon(
+  //                                   Icons.star,
+  //                                   color: Colors.amberAccent,
+  //                                   size: 15,
+  //                                 ),
+  //                                 Text(
+  //                                   "($rating)",
+  //                                   style: TextStyle(
+  //                                     fontSize: 12,
+  //                                     color: Colors.grey,
+  //                                   ),
+  //                                 ),
+  //                                 Text(
+  //                                   "250k+",
+  //                                   style: TextStyle(
+  //                                     fontSize: 12,
+  //                                     color: Colors.grey,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                             Text(
+  //                               "₹ $price",
+  //                               style: TextStyle(
+  //                                 fontWeight: FontWeight.bold,
+  //                                 fontSize: 12,
+  //                               ),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         IconButton(
+  //                           onPressed: () {},
+  //                           icon: Icon(
+  //                             Icons.add_circle_rounded,
+  //                             color: widget.adth,
+  //                             size: 30,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   Container(
+  //                     margin: EdgeInsets.symmetric(horizontal: 15),
+  //                     // padding: EdgeInsets.only(bottom: 5),
+  //                     child: Row(
+  //                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                       children: [
+  //                         CircleAvatar(
+  //                           radius: 10,
+  //                           backgroundColor: CupertinoColors.systemYellow,
+  //                         ),
+  //                         CircleAvatar(
+  //                           radius: 10,
+  //                           backgroundColor: Colors.deepPurpleAccent,
+  //                         ),
+  //                         CircleAvatar(radius: 10, backgroundColor: Colors.red),
+  //                         CircleAvatar(
+  //                           radius: 10,
+  //                           backgroundColor: Colors.brown,
+  //                         ),
+  //                         Text("+0"),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   _categoryBanner(int leng) {
     int ind = 0;
@@ -1674,6 +1745,8 @@ class _MyHomeState extends State<MyHome> {
     required String image,
     required bool ok,
     String? categoryN,
+    required int index,
+    required int coli,
   }) {
     return Padding(
       padding: const EdgeInsets.all(0.0),
@@ -1723,6 +1796,7 @@ class _MyHomeState extends State<MyHome> {
                           // ignore: avoid_unnecessary_containers
                           child: Container(
                             child: IconButton(
+                              // color: Colors.white,
                               icon: Icon(
                                 (favIds.contains(id))
                                     ? Icons.favorite
@@ -1784,63 +1858,174 @@ class _MyHomeState extends State<MyHome> {
                                     size: 15,
                                   ),
                                   Text(
-                                    "($rating.0)",
+                                    "($rating)",
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
                                     ),
                                   ),
+                                  // Text(
+                                  //   "250k+",
+                                  //   style: TextStyle(
+                                  //     fontSize: 12,
+                                  //     color: Colors.grey,
+                                  //   ),
+                                  // ),
+                                ],
+                              ),
+                              Row(
+                                children: [
                                   Text(
-                                    "250k+",
+                                    "₹ $price",
                                     style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                       fontSize: 12,
-                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      "₹ ${oldPrice}",
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        decoration: TextDecoration.lineThrough,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              Text(
-                                "₹ $price",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
                             ],
                           ),
-                          Icon(
-                            Icons.add_circle_rounded,
-                            color: widget.adth,
-                            size: 35,
+                          IconButton(
+                            onPressed: () {
+                              HometoCart(id);
+                            },
+                            icon: Icon(
+                              Icons.add_circle_rounded,
+                              color: widget.adth,
+                              size: 30,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    (ok == true)
+                    (true)
                         ? Container()
                         : Container(
                           margin: EdgeInsets.symmetric(horizontal: 15),
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              CircleAvatar(
-                                radius: 10,
-                                backgroundColor: CupertinoColors.systemYellow,
-                              ),
-                              CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.deepPurpleAccent,
-                              ),
-                              CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.red,
-                              ),
-                              CircleAvatar(
-                                radius: 10,
-                                backgroundColor: Colors.brown,
-                              ),
-                              Text("+0"),
+                              for (
+                                int i = 0;
+                                i < showitm[index]["variants"].length && i < 4;
+                                i++
+                              )
+                                GestureDetector(
+                                  // padding: EdgeInsets.all(0),
+                                  onTap: () {
+                                    colii[coli][index] = i;
+                                    setState(() {});
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 3),
+                                    decoration:
+                                        (colii[coli][index] != i)
+                                            ? BoxDecoration()
+                                            : BoxDecoration(
+                                              border: Border.all(
+                                                width: 2,
+                                                color: adth,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                    child: CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: HexColor(
+                                        showitm?[index]?["variants"]?[i]?['primary_attribute']?['hex_code'] ??
+                                            "#B74093",
+                                      ),
+                                      child: Text(
+                                        "${showitm?[index]?["variants"]?[i]?['name'] ?? ""}",
+                                        style: TextStyle(fontSize: 6),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     colii[coli][index] = 1;
+                              //     setState(() {});
+                              //   },
+                              //   child: Container(
+                              //     decoration:
+                              //         (colii[coli][index] != 1)
+                              //             ? BoxDecoration()
+                              //             : BoxDecoration(
+                              //               border: Border.all(width: 2),
+                              //               borderRadius: BorderRadius.circular(
+                              //                 20,
+                              //               ),
+                              //             ),
+                              //     child: CircleAvatar(
+                              //       radius: 10,
+                              //       backgroundColor: Colors.deepPurpleAccent,
+                              //     ),
+                              //   ),
+                              // ),
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     colii[coli][index] = 2;
+                              //     setState(() {});
+                              //     // setState(() {});
+                              //   },
+                              //   child: Container(
+                              //     decoration:
+                              //         (colii[coli][index] != 2)
+                              //             ? BoxDecoration()
+                              //             : BoxDecoration(
+                              //               border: Border.all(width: 2),
+                              //               borderRadius: BorderRadius.circular(
+                              //                 20,
+                              //               ),
+                              //             ),
+                              //     child: CircleAvatar(
+                              //       radius: 10,
+                              //       backgroundColor: Colors.red,
+                              //     ),
+                              //   ),
+                              // ),
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     colii[coli][index] = 3;
+                              //     setState(() {});
+                              //   },
+                              //   child: Container(
+                              //     decoration:
+                              //         (colii[coli][index] != 3)
+                              //             ? BoxDecoration()
+                              //             : BoxDecoration(
+                              //               border: Border.all(width: 2),
+                              //               borderRadius: BorderRadius.circular(
+                              //                 20,
+                              //               ),
+                              //             ),
+                              //     child: CircleAvatar(
+                              //       radius: 10,
+                              //       backgroundColor: Colors.brown,
+                              //     ),
+                              //   ),
+                              //   //
+                              //   //
+                              //   //
+                              // ),
+                              if (showitm[index]["variants"].length > 4)
+                                Text(
+                                  "+${showitm[index]["variants"].length - 4}",
+                                ),
                             ],
                           ),
                         ),
@@ -1854,18 +2039,33 @@ class _MyHomeState extends State<MyHome> {
     );
   }
 
+  List showitm = [];
+
   Widget _buildItemsGridDom(int mxi) {
-    List showitm = [];
+    List cco = [];
+    int colnu = 0;
+    showitm = productData1;
 
     if (mxi == 2) {
       showitm = productData2i;
+      cco = colii[1];
+      colnu = 1;
     } else if (mxi == 4) {
       showitm = productData4i;
+      colnu = 2;
+      cco = colii[2];
     } else if (mxi == 6) {
       showitm = productData6i;
+      colnu = 3;
+
+      cco = colii[3];
     } else {
       showitm = productData1;
+      colnu = 0;
+      cco = colii[0];
     }
+
+    // print(showitm[i]["variants"]);
 
     int n = showitm.length;
 
@@ -1890,26 +2090,37 @@ class _MyHomeState extends State<MyHome> {
             physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              childAspectRatio: 0.52,
+              childAspectRatio: 0.53,
               // mainAxisSpacing: 5,
               // crossAxisSpacing: 5,
             ),
             itemCount: n,
-            itemBuilder:
-                (context, i) => productCard21(
-                  name: (showitm.length > i) ? showitm[i]["name"] : "not found",
-                  rating: "${showitm[i]["rating"] ?? 0}",
-                  left: showitm[i]["variants"][0]["quantity"],
-                  price: showitm[i]["variants"][0]["price"],
-                  oldPrice: showitm[i]["variants"][0]["strike_price"],
-                  id: showitm[i]["id"],
-                  image:
-                      (showitm.length > i)
-                          ? showitm[i]["thumbnail"]["url"]
-                          : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
-                  ok: false,
-                  categoryN: showitm[i]["category"]["name"],
-                ),
+            itemBuilder: (context, i) {
+              // print(
+              //   showitm?[i]?["variants"]?[0]?['primary_attribute']?['hex_code'],
+              // );
+              // print(showitm?[i]?["variants"]?[0]);
+              return productCard21(
+                name: (showitm.length > i) ? showitm[i]["name"] : "not found",
+                rating: "${showitm[i]["rating"] ?? 0}",
+                left: showitm[i]["variants"][colii[colnu][i]]["quantity"],
+                price: showitm[i]["variants"][colii[colnu][i]]["price"],
+                oldPrice:
+                    showitm[i]["variants"][colii[colnu][i]]["strike_price"],
+                id:
+                    // showitm[i]["variants"][colii[colnu][i]]["id"] ??
+                    // 0,
+                    showitm[i]["id"],
+                index: i,
+                image:
+                    (showitm.length > i)
+                        ? showitm[i]["thumbnail"]["url"]
+                        : "https://mtt-s3.s3.ap-south-1.amazonaws.com/1744806170850xilinks.jpg",
+                ok: false,
+                categoryN: showitm[i]["category"]["name"],
+                coli: colnu,
+              );
+            },
           ),
         );
   }
@@ -1919,4 +2130,16 @@ class _MyHomeState extends State<MyHome> {
       children: [Icon(icon, size: 20), SizedBox(width: 5), Text(label)],
     );
   }
+}
+
+class HexColor extends Color {
+  static int _getColorFromHex(String hexColor) {
+    hexColor = hexColor.toUpperCase().replaceAll("#", "");
+    if (hexColor.length == 6) {
+      hexColor = "FF" + hexColor; // Add FF for full opacity if not provided
+    }
+    return int.parse(hexColor, radix: 16);
+  }
+
+  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
 }
